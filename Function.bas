@@ -1,65 +1,60 @@
-Sub CreateNewSheet()
+Sub BuatSheetBaru()
+    ' Cara Penggunaan: Jalankan makro ini untuk membuat sheet baru
     Sheets.Add
 End Sub
 
-Sub DeleteSheet(sheetName As String)
+Sub HapusSheet(NamaSheet As String)
+    ' Cara Penggunaan: Jalankan makro ini dengan menyebutkan nama sheet yang ingin dihapus
     On Error Resume Next
-    Sheets(sheetName).Delete
+    Sheets(NamaSheet).Delete
     On Error GoTo 0
 End Sub
 
-Sub RenameSheet(oldName As String, newName As String)
+Sub GantiNamaSheet(NamaLama As String, NamaBaru As String)
+    ' Cara Penggunaan: Jalankan makro ini dengan menyebutkan nama sheet yang ingin diganti dan nama baru
     On Error Resume Next
-    Sheets(oldName).Name = newName
+    Sheets(NamaLama).Name = NamaBaru
     On Error GoTo 0
 End Sub
 
-Sub MoveSheet(sheetName As String, afterSheet As String)
+Sub PindahSheet(NamaSheet As String, IndexTujuan As Integer)
+    ' Cara Penggunaan: Jalankan makro ini dengan menyebutkan nama sheet dan indeks tempat tujuan
     On Error Resume Next
-    Sheets(sheetName).Move After:=Sheets(afterSheet)
+    Sheets(NamaSheet).Move Before:=Sheets(IndexTujuan)
     On Error GoTo 0
 End Sub
 
-Sub CopySheet(sheetName As String, newName As String)
-    On Error Resume Next
-    Sheets(sheetName).Copy Before:=Sheets(1)
-    ActiveSheet.Name = newName
-    On Error GoTo 0
+Sub SalinSheet(NamaSheet As String)
+    ' Cara Penggunaan: Jalankan makro ini dengan menyebutkan nama sheet yang ingin disalin
+    Sheets(NamaSheet).Copy
 End Sub
 
-Sub ProtectSheet(sheetName As String, password As String)
-    On Error Resume Next
-    Sheets(sheetName).Protect Password:=password
-    On Error GoTo 0
+Sub LindungiSheet(NamaSheet As String, KataSandi As String)
+    ' Cara Penggunaan: Jalankan makro ini dengan menyebutkan nama sheet dan kata sandi
+    Sheets(NamaSheet).Protect Password:=KataSandi
 End Sub
 
-Sub UnprotectSheet(sheetName As String, password As String)
-    On Error Resume Next
-    Sheets(sheetName).Unprotect Password:=password
-    On Error GoTo 0
+Sub HapusPerlindunganSheet(NamaSheet As String, KataSandi As String)
+    ' Cara Penggunaan: Jalankan makro ini dengan menyebutkan nama sheet dan kata sandi
+    Sheets(NamaSheet).Unprotect Password:=KataSandi
 End Sub
 
-Sub HideSheet(sheetName As String)
-    On Error Resume Next
-    Sheets(sheetName).Visible = xlSheetHidden
-    On Error GoTo 0
+Sub SembunyikanSheet(NamaSheet As String)
+    ' Cara Penggunaan: Jalankan makro ini dengan menyebutkan nama sheet yang ingin disembunyikan
+    Sheets(NamaSheet).Visible = xlSheetHidden
 End Sub
 
-Sub UnhideSheet(sheetName As String)
-    On Error Resume Next
-    Sheets(sheetName).Visible = xlSheetVisible
-    On Error GoTo 0
+Sub TampilkanSheet(NamaSheet As String)
+    ' Cara Penggunaan: Jalankan makro ini dengan menyebutkan nama sheet yang ingin ditampilkan
+    Sheets(NamaSheet).Visible = xlSheetVisible
 End Sub
 
-Sub SelectAllSheets()
-    Dim ws As Worksheet
-    For Each ws In ThisWorkbook.Sheets
-        ws.Select
-    Next ws
+Sub PilihSemuaSheet()
+    ' Cara Penggunaan: Jalankan makro ini untuk memilih semua sheet dalam workbook
+    Sheets.Select
 End Sub
 
-Sub SetTabColor(sheetName As String, tabColor As Long)
-    On Error Resume Next
-    Sheets(sheetName).Tab.Color = tabColor
-    On Error GoTo 0
+Sub GantiWarnaTab(NamaSheet As String, Warna As Long)
+    ' Cara Penggunaan: Jalankan makro ini dengan menyebutkan nama sheet dan warna yang diinginkan (misalnya RGB(255, 0, 0) untuk merah)
+    Sheets(NamaSheet).Tab.Color = Warna
 End Sub
