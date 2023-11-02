@@ -54,18 +54,13 @@ Sub GsheetData()
         .Refresh
     End With
     
-    ' Loop melalui semua koneksi data dalam workbook
-    Dim conn As WorkbookConnection
-    For Each conn In ThisWorkbook.Connections
-        conn.Delete
-    Next conn
-    
     ' Melindungi kembali worksheet dengan password
-    ws.Protect password
+    If password <> "" Then
+        ws.Protect password
+    End If
     
     ' Pesan dialog ketika proses selesai
     MsgBox "Proses selesai.", vbInformation
-    
 End Sub
 
 Function IsInternetConnected() As Boolean
