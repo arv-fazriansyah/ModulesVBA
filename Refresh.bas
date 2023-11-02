@@ -45,6 +45,7 @@ Sub GsheetData()
     
     url = "https://spreadsheets.google.com/tq?tqx=out:html&key=" & key & "&gid=" & gid
     
+    On Error GoTo RefreshError
     Set qt = ws.QueryTables.Add(Connection:="URL;" & url, Destination:=ws.Range(startCell))
     
     With qt
@@ -53,14 +54,25 @@ Sub GsheetData()
         .BackgroundQuery = False
         .Refresh
     End With
+    On Error GoTo 0
     
     ' Melindungi kembali worksheet dengan password
     If password <> "" Then
         ws.Protect password
     End If
     
+    ' Loop melalui semua koneksi data dalam workbook
+    For Each conn In ThisWorkbook.Connections
+    conn.Delete
+    Next conn
+
+    
     ' Pesan dialog ketika proses selesai
-    MsgBox "Proses selesai.", vbInformation
+    MsgBox "Update selesai.", vbInformation
+    Exit Sub
+
+RefreshError:
+    MsgBox "Terjadi kesalahan saat melakukan update data.", vbExclamation
 End Sub
 
 Function IsInternetConnected() As Boolean
