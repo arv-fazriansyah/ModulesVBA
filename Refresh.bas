@@ -1,8 +1,7 @@
 Sub GsheetData()
     Dim ws As Worksheet
-    Dim key As String, gid As String, sheetName As String, startCell As String
-    Dim qt As QueryTable
-    Dim url As String
+    Dim sheetName As String, startCell As String
+    Dim url As String, key As String, gid As String
     Dim password As String
 
     ' Atur variabel berikut sesuai kebutuhan Anda
@@ -18,7 +17,7 @@ Sub GsheetData()
         Exit Sub
     End If
 
-    ' Memeriksa atau membuat worksheet
+    ' Mengecek atau membuat worksheet
     On Error Resume Next
     Set ws = ThisWorkbook.Sheets(sheetName)
     On Error GoTo 0
@@ -28,10 +27,12 @@ Sub GsheetData()
         Set ws = ThisWorkbook.Sheets.Add
         ws.Name = sheetName
     Else
-        ' Unprotect password
-        On Error Resume Next
-        ws.Unprotect password
-        On Error GoTo 0
+        ' Unprotect worksheet dengan kata sandi jika diperlukan
+        If password <> "" Then
+            On Error Resume Next
+            ws.Unprotect password
+            On Error GoTo 0
+        End If
     End If
 
     ' Hapus tabel kueri jika ada
@@ -42,12 +43,10 @@ Sub GsheetData()
 
     ' Buat URL untuk mengambil data dari Google Sheets
     url = "https://spreadsheets.google.com/tq?tqx=out:html&key=" & key & "&gid=" & gid
-
+    
     ' Set QueryTable dan mengambil data dari Google Sheets
     On Error GoTo RefreshError
-    Set qt = ws.QueryTables.Add(Connection:="URL;" & url, Destination:=ws.Range(startCell))
-
-    With qt
+    With ws.QueryTables.Add(Connection:="URL;" & url, Destination:=ws.Range(startCell))
         .WebSelectionType = xlAllTables
         .WebFormatting = xlWebFormattingNone
         .BackgroundQuery = False
@@ -55,7 +54,7 @@ Sub GsheetData()
     End With
     On Error GoTo 0
 
-    ' Protect
+    ' Proteksi worksheet jika password diberikan
     If password <> "" Then ws.Protect password
 
     ' Hapus semua koneksi data dalam workbook
