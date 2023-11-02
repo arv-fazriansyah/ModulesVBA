@@ -80,4 +80,3 @@ Function IsInternetConnected() As Boolean
     IsInternetConnected = (xhr.Status = 200)
     On Error GoTo 0
 End Function
-
