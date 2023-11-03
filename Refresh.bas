@@ -4,9 +4,9 @@ Sub GsheetData()
     Dim url As String, key As String, gid As String
     Dim password As String
 
-    ' Atur variabel berikut sesuai kebutuhan Anda
-    key = "14V7IxlKuEXi7275zO2gxK2I47h6IlIL2UU82FUSrBNM"
-    gid = "0"
+    ' Validasi Input
+    key = "14V7IxlKuEXi7275zO2gxK2I47h6IlIL2UU82FUSrBNM" ' Ganti dengan kunci Google Sheets yang valid
+    gid = "0" ' Ganti dengan ID grup Google Sheets yang valid
     sheetName = "Sheet1" ' Ganti dengan nama worksheet yang Anda inginkan
     startCell = "A1" ' Ganti dengan sel awal yang Anda inginkan
     password = "ADMIN" ' Ganti dengan kata sandi perlindungan (jika diperlukan)
@@ -40,7 +40,9 @@ Sub GsheetData()
     End If
 
     ' Hapus tabel kueri jika ada
-    If ws.QueryTables.Count > 0 Then ws.QueryTables(1).Delete
+    If ws.QueryTables.Count > 0 Then
+        ws.QueryTables(1).Delete
+    End If
 
     ' Hapus isi worksheet
     ws.Cells.Clear
@@ -59,7 +61,9 @@ Sub GsheetData()
     On Error GoTo 0
 
     ' Proteksi worksheet jika password diberikan
-    If password <> "" Then ws.Protect password
+    If password <> "" Then
+        ws.Protect password
+    End If
 
     ' Hapus semua koneksi data dalam workbook
     For Each conn In ThisWorkbook.Connections
@@ -71,7 +75,7 @@ Sub GsheetData()
     Exit Sub
 
 RefreshError:
-    MsgBox "Terjadi kesalahan saat melakukan update data.", vbExclamation
+    MsgBox "Terjadi kesalahan saat melakukan update data: " & Err.Description, vbExclamation
 End Sub
 
 Function IsInternetConnected() As Boolean
@@ -80,6 +84,10 @@ Function IsInternetConnected() As Boolean
     Set xhr = CreateObject("MSXML2.ServerXMLHTTP")
     xhr.Open "GET", "https://www.google.com", False
     xhr.send
-    IsInternetConnected = (xhr.Status = 200)
+    If Err.Number <> 0 Then
+        IsInternetConnected = False
+    Else
+        IsInternetConnected = (xhr.Status = 200)
+    End If
     On Error GoTo 0
 End Function
