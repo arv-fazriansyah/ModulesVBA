@@ -32,6 +32,10 @@ Sub GsheetData()
             On Error Resume Next
             ws.Unprotect password
             On Error GoTo 0
+            If ws.ProtectContents Then
+                MsgBox "Kata sandi yang dimasukkan salah. Data tidak dapat diperbarui.", vbExclamation
+                Exit Sub
+            End If
         End If
     End If
 
