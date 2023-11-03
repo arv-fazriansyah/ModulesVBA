@@ -62,18 +62,19 @@ Sub GsheetData()
 
     ' Buat URL untuk mengambil data dari Google Sheets
     url = "https://spreadsheets.google.com/tq?tqx=out:html&key=" & key & "&gid=" & gid & "&tx=tx"
-    
+
     ' Set QueryTable dan mengambil data dari Google Sheets
     On Error GoTo RefreshError
     With ws.QueryTables.Add(Connection:="URL;" & url, Destination:=ws.Range(startCell))
-        .WebSelectionType = xlAllTables
-        .WebFormatting = xlWebFormattingNone
-        .RefreshStyle = xlInsertDeleteCells
-        .HasAutoFormat = True
-        .TablesOnlyFromHTML = False
-        .SaveData = True
-        .BackgroundQuery = False
-        .Refresh BackgroundQuery:=False
+        ' Konfigurasi QueryTable
+        .WebSelectionType = xlAllTables ' Memilih semua tabel dari halaman web
+        .WebFormatting = xlWebFormattingNone ' Tidak melakukan pemformatan web
+        .RefreshStyle = xlInsertDeleteCells ' Memasukkan data baru dan menghapus data lama
+        .HasAutoFormat = True ' Mengaktifkan otomatisasi pemformatan
+        .TablesOnlyFromHTML = False ' Mengambil semua tabel dari HTML, bukan hanya yang memiliki format khusus
+        .SaveData = True ' Menyimpan data setelah penyegaran
+        .BackgroundQuery = False ' Melakukan penyegaran query dalam mode sinkron (tidak dijalankan di latar belakang)
+        .Refresh BackgroundQuery:=False ' Menjalankan penyegaran query tanpa mengganggu pengguna
     End With
     On Error GoTo 0
 
