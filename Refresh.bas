@@ -68,8 +68,12 @@ Sub GsheetData()
     With ws.QueryTables.Add(Connection:="URL;" & url, Destination:=ws.Range(startCell))
         .WebSelectionType = xlAllTables
         .WebFormatting = xlWebFormattingNone
+        .RefreshStyle = xlInsertDeleteCells
+        .HasAutoFormat = True
+        .TablesOnlyFromHTML = False
+        .SaveData = True
         .BackgroundQuery = False
-        .Refresh
+        .Refresh BackgroundQuery:=False
     End With
     On Error GoTo 0
 
