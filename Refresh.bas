@@ -11,9 +11,22 @@ Sub GsheetData()
     startCell = "A1" ' Ganti dengan sel awal yang Anda inginkan
     password = "ADMIN" ' Ganti dengan kata sandi perlindungan (jika diperlukan)
 
+    ' Pesan-pesan MsgBox
+    Dim internetErrorMsg As String
+    internetErrorMsg = "Tidak ada koneksi internet. Pastikan Anda terhubung ke internet dan coba lagi."
+
+    Dim wrongPasswordMsg As String
+    wrongPasswordMsg = "Kata sandi yang dimasukkan salah. Data tidak dapat diperbarui."
+
+    Dim updateCompleteMsg As String
+    updateCompleteMsg = "Update selesai."
+
+    Dim updateErrorMsg As String
+    updateErrorMsg = "Terjadi kesalahan saat melakukan update data: "
+
     ' Mengecek koneksi internet
     If Not IsInternetConnected() Then
-        MsgBox "Tidak ada koneksi internet. Pastikan Anda terhubung ke internet dan coba lagi.", vbExclamation
+        MsgBox internetErrorMsg, vbExclamation
         Exit Sub
     End If
 
@@ -33,7 +46,7 @@ Sub GsheetData()
             ws.Unprotect password
             On Error GoTo 0
             If ws.ProtectContents Then
-                MsgBox "Kata sandi yang dimasukkan salah. Data tidak dapat diperbarui.", vbExclamation
+                MsgBox wrongPasswordMsg, vbExclamation
                 Exit Sub
             End If
         End If
@@ -71,11 +84,11 @@ Sub GsheetData()
     Next conn
 
     ' Tampilkan pesan ketika proses selesai
-    MsgBox "Update selesai.", vbInformation
+    MsgBox updateCompleteMsg, vbInformation
     Exit Sub
 
 RefreshError:
-    MsgBox "Terjadi kesalahan saat melakukan update data: " & Err.Description, vbExclamation
+    MsgBox updateErrorMsg & Err.Description, vbExclamation
 End Sub
 
 Function IsInternetConnected() As Boolean
