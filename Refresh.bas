@@ -4,13 +4,18 @@ Sub GsheetData()
     Dim url As String, key As String, gid As String
     Dim password As String
 
-    ' Validasi Input
-    key = "14V7IxlKuEXi7275zO2gxK2I47h6IlIL2UU82FUSrBNM" ' Ganti dengan kunci Google Sheets yang valid
-    gid = "0" ' Ganti dengan ID grup Google Sheets yang valid
-    sheetName = "Sheet1" ' Ganti dengan nama worksheet yang Anda inginkan
-    startCell = "A1" ' Ganti dengan sel awal yang Anda inginkan
-    password = "ADMIN" ' Ganti dengan kata sandi perlindungan (jika diperlukan)
-
+    ' Validasi Input Konfigurasi
+    ' Ganti dengan kunci Google Sheets yang valid
+    key = "14V7IxlKuEXi7275zO2gxK2I47h6IlIL2UU82FUSrBNM"
+    ' Ganti dengan ID grup Google Sheets yang valid
+    gid = "0"
+    ' Ganti dengan nama worksheet yang Anda inginkan
+    sheetName = "Sheet1"
+    ' Ganti dengan sel awal yang Anda inginkan
+    startCell = "A1"
+    ' Ganti dengan kata sandi perlindungan (jika diperlukan)
+    password = "ADMIN"
+    
     ' Pesan-pesan MsgBox
     Dim internetErrorMsg As String
     internetErrorMsg = "Tidak ada koneksi internet. Pastikan Anda terhubung ke internet dan coba lagi."
