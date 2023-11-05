@@ -9,6 +9,8 @@ Sub GsheetData()
     key = "14V7IxlKuEXi7275zO2gxK2I47h6IlIL2UU82FUSrBNM"
     ' Ganti dengan ID grup Google Sheets yang valid
     gid = "0"
+    user = "20206687"
+    
     ' Ganti dengan nama worksheet yang Anda inginkan
     sheetName = "Sheet1"
     ' Ganti dengan sel awal yang Anda inginkan
@@ -63,7 +65,7 @@ Sub GsheetData()
     ws.Cells.Clear
 
     ' Buat URL untuk mengambil data dari Google Sheets
-    url = "https://spreadsheets.google.com/tq?tqx=out:html&key=" & key & "&gid=" & gid & ""
+    url = "https://docs.google.com/spreadsheets/u/0/d/" & key & "/gviz/tq?tqx=out:html&gid=" & gid & "&tq=SELECT+*+WHERE+B%3D" & user
 
     ' Set QueryTable dan mengambil data dari Google Sheets
     On Error GoTo RefreshError
