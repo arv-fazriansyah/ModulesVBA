@@ -9,6 +9,7 @@ Sub GsheetData()
     key = "14V7IxlKuEXi7275zO2gxK2I47h6IlIL2UU82FUSrBNM"
     ' Ganti dengan ID grup Google Sheets yang valid
     gid = "0"
+    ' Ganti dengan user untuk filter
     user = "20206687"
     
     ' Ganti dengan nama worksheet yang Anda inginkan
