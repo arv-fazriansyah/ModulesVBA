@@ -23,9 +23,6 @@ Sub GsheetData()
     Dim wrongPasswordMsg As String
     wrongPasswordMsg = "Kata sandi yang dimasukkan salah. Data tidak dapat diperbarui."
 
-    Dim updateCompleteMsg As String
-    updateCompleteMsg = "Update selesai."
-
     Dim updateErrorMsg As String
     updateErrorMsg = "Terjadi kesalahan saat melakukan update data: "
 
@@ -94,7 +91,7 @@ Sub GsheetData()
     Next conn
 
     ' Tampilkan pesan ketika proses selesai
-    MsgBox updateCompleteMsg, vbInformation
+    ShowRefreshMessage
     Exit Sub
 
 RefreshError:
@@ -114,3 +111,11 @@ Function IsInternetConnected() As Boolean
     End If
     On Error GoTo 0
 End Function
+
+Sub ShowRefreshMessage()
+    Dim updateCompleteMsg As String
+    updateCompleteMsg = "Hay"
+
+    ' Tampilkan pesan setelah refresh selesai
+    MsgBox updateCompleteMsg, vbInformation, "Informasi"
+End Sub
