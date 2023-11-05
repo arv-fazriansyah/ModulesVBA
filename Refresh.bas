@@ -101,7 +101,7 @@ End Sub
 Function IsInternetConnected() As Boolean
     On Error Resume Next
     Dim xhr As Object
-    Set xhr = CreateObject("MSXML2.ServerXMLHTTP")
+    Set xhr = CreateObject("MSXML2.ServerXMLHTTP.6.0")
     xhr.Open "GET", "https://www.google.com", False
     xhr.send
     If Err.Number <> 0 Then
