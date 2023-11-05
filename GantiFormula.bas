@@ -1,11 +1,18 @@
 Sub CopyFormulas()
     Dim sourceSheetName As String
+    Dim sourceColumnFormula As String
+    Dim destinationColumnSheet As String
+    Dim destinationColumnCell As String
+    
+    sourceSheetName = "Sheet1"  ' Ganti dengan nama sheet sumber yang diinginkan
+    sourceColumnFormula = "D"    ' Kolom yang berisi formula
+    destinationColumnSheet = "E"  ' Kolom yang berisi nama sheet tujuan
+    destinationColumnCell = "F"  ' Kolom yang berisi sel tujuan
+    
     Dim wsSource As Worksheet
     Dim wsDestination As Worksheet
     Dim lastRow As Long
     Dim i As Long
-    
-    sourceSheetName = "Sheet1"  ' Ganti dengan nama sheet sumber yang diinginkan
     
     On Error Resume Next
     Set wsSource = ThisWorkbook.Sheets(sourceSheetName)
@@ -16,18 +23,18 @@ Sub CopyFormulas()
         Exit Sub
     End If
     
-    lastRow = wsSource.Cells(wsSource.Rows.Count, "D").End(xlUp).Row
+    lastRow = wsSource.Cells(wsSource.Rows.Count, sourceColumnFormula).End(xlUp).Row
     
-    For i = 2 To lastRow ' Anggap baris 1 adalah untuk header
+    For i = 2 To lastRow
         Set wsDestination = Nothing
         On Error Resume Next
-        Set wsDestination = ThisWorkbook.Sheets(wsSource.Cells(i, "E").Value)
+        Set wsDestination = ThisWorkbook.Sheets(wsSource.Cells(i, destinationColumnSheet).Value)
         On Error GoTo 0
         
         If Not wsDestination Is Nothing Then
-            wsDestination.Range(wsSource.Cells(i, "F").Value).Formula = wsSource.Cells(i, "D").Formula
+            wsDestination.Range(wsSource.Cells(i, destinationColumnCell).Value).Formula = wsSource.Cells(i, sourceColumnFormula).Formula
         Else
-            MsgBox "Sheet tujuan '" & wsSource.Cells(i, "E").Value & "' tidak ditemukan.", vbExclamation
+            MsgBox "Sheet tujuan '" & wsSource.Cells(i, destinationColumnSheet).Value & "' tidak ditemukan.", vbExclamation
         End If
     Next i
 End Sub
