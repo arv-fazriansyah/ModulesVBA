@@ -1,85 +1,58 @@
-Attribute VB_Name = "GantiFormula"
-Sub UpdateFormulas()
-    Dim databaseSheetName As String
-    Dim formulaColumn As String
-    Dim sheetTujuanColumn As String
-    Dim cellTujuanColumn As String
-    Dim wsDatabase As Worksheet
+Sub CopyFormulas()
+    Dim wsSource As Worksheet
     Dim lastRow As Long
     Dim i As Long
     
-    ' Tentukan variabel-variabel untuk nama sheet "Database" dan kolom data.
-    databaseSheetName = "Database"
-    formulaColumn = "A"
-    sheetTujuanColumn = "B"
-    cellTujuanColumn = "C"
+    ' Set worksheet sumber
+    On Error Resume Next
+    Set wsSource = ThisWorkbook.Sheets("Sheet1")
+    On Error GoTo 0
     
-    ' Cek apakah sheet "Database" ada.
-    If Not WorksheetExists(databaseSheetName) Then
-        MsgBox "Sheet '" & databaseSheetName & "' tidak ditemukan!", vbExclamation, "Kesalahan"
-        Exit Sub ' Menghentikan eksekusi skrip jika sheet "Database" tidak ditemukan.
+    If wsSource Is Nothing Then
+        MsgBox "Sheet sumber 'Sheet1' tidak ditemukan.", vbExclamation
+        Exit Sub
     End If
     
-    ' Ganti "Database" dengan nama sheet Anda yang berisi data formula, sheet tujuan, dan cell tujuan.
-    Set wsDatabase = ThisWorkbook.Worksheets(databaseSheetName)
+    ' Kolom-kolom yang bisa diatur
+    Dim kolomFormula As String
+    Dim kolomTujuanSheet As String
+    Dim kolomTujuanCell As String
     
-    ' Temukan jumlah baris data di sheet database (asumsi data dimulai dari baris 2).
-    lastRow = wsDatabase.Cells(wsDatabase.Rows.Count, formulaColumn).End(xlUp).Row
+    kolomFormula = "D"  ' Kolom yang berisi formula
+    kolomTujuanSheet = "E"  ' Kolom yang berisi nama sheet tujuan
+    kolomTujuanCell = "F"  ' Kolom yang berisi sel tujuan
     
-    Dim sheetTujuanExists As Boolean
-    sheetTujuanExists = True
-    Dim missingSheetNames As String ' Ini akan digunakan untuk menyimpan nama-nama sheet yang tidak ditemukan.
+    ' Loop melalui setiap baris di kolom D
+    lastRow = wsSource.Cells(wsSource.Rows.Count, kolomFormula).End(xlUp).Row
     
-    ' Loop melalui setiap baris data di sheet database.
-    For i = 2 To lastRow
-        Dim formula As String
-        Dim sheetTujuan As String
-        Dim cellTujuan As String
+    On Error Resume Next
+    Dim wsDestination As Worksheet
+    
+    For i = 2 To lastRow ' Anggap baris 1 adalah untuk header
+        ' Dapatkan nama sheet tujuan dan sel tujuan dari kolom E dan F
+        Dim destinationSheetName As String
+        Dim destinationCell As String
         
-        ' Ambil formula, sheet tujuan, dan cell tujuan dari kolom A, B, dan C.
-        formula = wsDatabase.Cells(i, formulaColumn).Value
-        sheetTujuan = wsDatabase.Cells(i, sheetTujuanColumn).Value
-        cellTujuan = wsDatabase.Cells(i, cellTujuanColumn).Value
+        destinationSheetName = wsSource.Cells(i, kolomTujuanSheet).Value
+        destinationCell = wsSource.Cells(i, kolomTujuanCell).Value
         
-        ' Cek apakah sheet tujuan sudah ada.
-        If Not WorksheetExists(sheetTujuan) Then
-            sheetTujuanExists = False
-            missingSheetNames = missingSheetNames & sheetTujuan & ", "
-        End If
-    Next i
-    
-    If Not sheetTujuanExists Then
-        ' Hapus koma dan spasi terakhir dari daftar nama sheet yang hilang.
-        missingSheetNames = Left(missingSheetNames, Len(missingSheetNames) - 2)
-        MsgBox "Sheet tujuan (" & missingSheetNames & ") tidak ditemukan!", vbExclamation, "Kesalahan"
-    Else
-        ' Lanjutkan dengan pembaruan formula jika semua sheet tujuan ada.
-        For i = 2 To lastRow
-            ' Ambil kembali formula, sheet tujuan, dan cell tujuan dari kolom A, B, dan C.
-            formula = wsDatabase.Cells(i, formulaColumn).Value
-            sheetTujuan = wsDatabase.Cells(i, sheetTujuanColumn).Value
-            cellTujuan = wsDatabase.Cells(i, cellTujuanColumn).Value
-            
-            ' Coba menerapkan formula ke sel yang ditentukan.
+        ' Periksa apakah sheet tujuan ada
+        On Error Resume Next
+        Set wsDestination = ThisWorkbook.Sheets(destinationSheetName)
+        On Error GoTo 0
+        
+        If wsDestination Is Nothing Then
+            MsgBox "Sheet tujuan '" & destinationSheetName & "' tidak ditemukan.", vbExclamation
+        Else
+            ' Salin formula dari kolom D ke sel yang ditentukan di sheet tujuan
             On Error Resume Next
-            ThisWorkbook.Worksheets(sheetTujuan).Range(cellTujuan).formula = formula
+            wsDestination.Range(destinationCell).Formula = wsSource.Cells(i, kolomFormula).Formula
             On Error GoTo 0
             
-            ' Periksa kesalahan dan laporkan jika ditemukan.
             If Err.Number <> 0 Then
-                MsgBox "Kesalahan pada baris " & i & ": " & Err.Description, vbExclamation, "Kesalahan"
+                MsgBox "Terjadi kesalahan saat menyalin formula ke '" & destinationSheetName & "' di sel '" & destinationCell & "'.", vbExclamation
                 Err.Clear
             End If
-        Next i
-        
-        ' Beri tahu pengguna bahwa proses telah selesai.
-        MsgBox "Pembaruan formula telah selesai!", vbInformation, "Selesai"
-    End If
+        End If
+    Next i
 End Sub
-
-Function WorksheetExists(wsName As String) As Boolean
-    On Error Resume Next
-    WorksheetExists = Not ThisWorkbook.Worksheets(wsName) Is Nothing
-    On Error GoTo 0
-End Function
-
