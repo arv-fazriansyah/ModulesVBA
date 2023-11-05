@@ -1,9 +1,9 @@
-Sub Unhide()
+Sub ShowForm()
     Application.Visible = False ' Sembunyikan jendela Excel
     HalamanLogin.Show ' Tampilkan UserForm login
 End Sub
 
-Sub Hide()
+Sub HideForm()
     Application.Visible = True ' Tampilkan jendela Excel
     HalamanLogin.Hide ' Sembunyikan UserForm login
 End Sub
