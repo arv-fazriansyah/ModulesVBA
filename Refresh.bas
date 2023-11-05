@@ -63,7 +63,7 @@ Sub GsheetData()
     ws.Cells.Clear
 
     ' Buat URL untuk mengambil data dari Google Sheets
-    url = "https://spreadsheets.google.com/tq?tqx=out:html&key=" & key & "&gid=" & gid & "&tx=tx"
+    url = "https://spreadsheets.google.com/tq?tqx=out:html&key=" & key & "&gid=" & gid & ""
 
     ' Set QueryTable dan mengambil data dari Google Sheets
     On Error GoTo RefreshError
