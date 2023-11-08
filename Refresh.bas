@@ -11,7 +11,7 @@ Sub GsheetData()
     ' Konfigurasi worksheet
     sheetName = "Sheet1"
     startCell = "A1"
-    password = ""
+    password = "ADMIN"
 
     ' Pesan Kesalahan
     Dim internetErrorMsg As String
@@ -61,7 +61,7 @@ Sub GsheetData()
     On Error GoTo RefreshError
     ' Menyiapkan QueryTable dan mengambil data dari Google Sheets
     With ws.QueryTables.Add(Connection:="URL;" & url, Destination:=ws.Range(startCell))
-        .WebSelectionType = xlEntirePage  ' Mengambil seluruh halaman (termasuk sel kosong)
+        .WebSelectionType = xlAllTables  ' Mengambil semua tabel
         .WebFormatting = xlWebFormattingNone
         .RefreshStyle = xlInsertDeleteCells
         .HasAutoFormat = True
