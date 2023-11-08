@@ -4,19 +4,23 @@ Sub GsheetData()
     Dim url As String, key As String, gid As String, user As String, password As String
 
     ' Konfigurasi Google Sheets
-    key = "14V7IxlKuEXi7275zO2gxK2I47h6IlIL2UU82FUSrBNM"
+    key = "118AndzuOaW9_M4byl9UdVGoiYX2II8JhmtjvOvRC9cM"
     gid = "0"
-    user = "20206687"
+    user = ""
     
     ' Konfigurasi worksheet
     sheetName = "Sheet1"
     startCell = "A1"
-    password = "ADMIN"
+    password = ""
 
     ' Pesan Kesalahan
     Dim internetErrorMsg As String
     Dim wrongPasswordMsg As String
     Dim updateErrorMsg As String
+
+    internetErrorMsg = "Tidak ada koneksi internet. Pastikan Anda terhubung ke internet dan coba lagi."
+    wrongPasswordMsg = "Kata sandi yang dimasukkan salah. Data tidak dapat diperbarui."
+    updateErrorMsg = "Terjadi kesalahan saat melakukan update data: "
 
     internetErrorMsg = "Tidak ada koneksi internet. Pastikan Anda terhubung ke internet dan coba lagi."
     wrongPasswordMsg = "Kata sandi yang dimasukkan salah. Data tidak dapat diperbarui."
@@ -48,7 +52,7 @@ Sub GsheetData()
     End If
 
     ' Menghapus tabel kueri jika ada
-    If ws.QueryTables.Count > 0 Then
+    If ws.QueryTables.count > 0 Then
         ws.QueryTables(1).Delete
     End If
 
@@ -56,12 +60,12 @@ Sub GsheetData()
     ws.Cells.Clear
 
     ' Membuat URL untuk mengambil data dari Google Sheets
-    url = "https://docs.google.com/spreadsheets/u/0/d/" & key & "/gviz/tq?tqx=out:html&gid=" & gid & "&tq=SELECT+*+WHERE+B%3D" & user
+    url = "https://docs.google.com/spreadsheets/u/0/d/" & key & "/gviz/tq?tqx=out:html&gid=" & gid
 
     On Error GoTo RefreshError
     ' Menyiapkan QueryTable dan mengambil data dari Google Sheets
     With ws.QueryTables.Add(Connection:="URL;" & url, Destination:=ws.Range(startCell))
-        .WebSelectionType = xlAllTables
+        .WebSelectionType = xlEntirePage  ' Mengambil seluruh halaman (termasuk sel kosong)
         .WebFormatting = xlWebFormattingNone
         .RefreshStyle = xlInsertDeleteCells
         .HasAutoFormat = True
@@ -71,6 +75,16 @@ Sub GsheetData()
         .Refresh BackgroundQuery:=False
     End With
     On Error GoTo 0
+
+    ' Menghapus sel kosong setelah mengimpor data
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
+    Dim i As Long
+    For i = lastRow To 1 Step -1
+        If WorksheetFunction.CountA(ws.Rows(i)) = 0 Then
+            ws.Rows(i).Delete
+        End If
+    Next i
 
     ' Melindungi worksheet jika password diberikan
     If password <> "" Then ws.Protect password
@@ -99,5 +113,5 @@ Function IsInternetConnected() As Boolean
 End Function
 
 Sub ShowRefreshMessage()
-    MsgBox "Hay", vbInformation, "Informasi"
+    MsgBox "Data telah berhasil diperbarui.", vbInformation, "Informasi"
 End Sub
