@@ -22,10 +22,6 @@ Sub GsheetData()
     wrongPasswordMsg = "Kata sandi yang dimasukkan salah. Data tidak dapat diperbarui."
     updateErrorMsg = "Terjadi kesalahan saat melakukan update data: "
 
-    internetErrorMsg = "Tidak ada koneksi internet. Pastikan Anda terhubung ke internet dan coba lagi."
-    wrongPasswordMsg = "Kata sandi yang dimasukkan salah. Data tidak dapat diperbarui."
-    updateErrorMsg = "Terjadi kesalahan saat melakukan update data: "
-
     ' Mengecek koneksi internet
     If Not IsInternetConnected() Then
         MsgBox internetErrorMsg, vbExclamation
