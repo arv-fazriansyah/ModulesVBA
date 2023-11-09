@@ -1,32 +1,57 @@
 function doGet() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("TOKEN");
-  var data = sheet.getRange("A:B").getValues();
-  
-  var html = '<html><head><style>table {font-family: Arial, sans-serif; border-collapse: collapse; width: 100%;} th, td {border: 1px solid #dddddd; text-align: left; padding: 8px;} th {background-color: #f2f2f2;} </style></head><body>';
-  
-  html += '<table>';
-  
-  // Header
-  html += '<tr>';
-  for (var i = 0; i < data[0].length; i++) {
-    if (data[0][i] !== "") {
-      html += '<th>' + data[0][i] + '</th>';
-    }
-  }
-  html += '</tr>';
-  
-  // Data
+  var dataRange = sheet.getRange("A:B");
+  var data = dataRange.getValues();
+
+  var jsonData = [];
+
+  // Assuming the first row contains headers
+  var headers = data[0];
+
+  // Loop through the rows starting from the second row
   for (var i = 1; i < data.length; i++) {
-    html += '<tr>';
-    for (var j = 0; j < data[i].length; j++) {
-      if (data[i][j] !== "") {
-        html += '<td>' + data[i][j] + '</td>';
-      }
+    var row = data[i];
+
+    // Skip the row if the first cell is empty
+    if (!row[0]) {
+      continue;
     }
-    html += '</tr>';
+
+    var rowData = {};
+
+    // Loop through each cell in the row
+    for (var j = 0; j < headers.length; j++) {
+      rowData[headers[j]] = row[j];
+    }
+
+    // Add the row data to the JSON array
+    jsonData.push(rowData);
   }
-  
-  html += '</table></body></html>';
-  
-  return HtmlService.createHtmlOutput(html);
+
+  // Convert the JSON array to a string
+  var jsonString = JSON.stringify(jsonData);
+
+  // Create HTML table
+  var htmlTable = '<html><body><table border="1"><tr>';
+
+  // Add headers to the table
+  for (var k = 0; k < headers.length; k++) {
+    htmlTable += '<th>' + headers[k] + '</th>';
+  }
+
+  htmlTable += '</tr>';
+
+  // Add data rows to the table
+  for (var l = 0; l < jsonData.length; l++) {
+    htmlTable += '<tr>';
+    for (var m = 0; m < headers.length; m++) {
+      htmlTable += '<td>' + jsonData[l][headers[m]] + '</td>';
+    }
+    htmlTable += '</tr>';
+  }
+
+  htmlTable += '</table></body></html>';
+
+  // Set the content type and return the HTML string
+  return ContentService.createTextOutput(htmlTable).setMimeType(ContentService.MimeType.HTML);
 }
