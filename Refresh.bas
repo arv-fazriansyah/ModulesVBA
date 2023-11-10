@@ -70,5 +70,7 @@ Function IsInternetConnected() As Boolean
 End Function
 
 Sub ShowRefreshMessage()
-    MsgBox "Data telah berhasil diperbarui.", vbInformation, "Informasi"
+    Dim MessageUpdate As String
+    MessageUpdate = ThisWorkbook.Sheets("DATAUSER").Range("B1").value
+    MsgBox MessageUpdate, vbInformation, "Informasi"
 End Sub
