@@ -1,76 +1,45 @@
 Sub GsheetData()
     Dim ws As Worksheet
-    Dim sheetName As String, startCell As String
-    Dim URL As String, Path As String, Password As String, Author As String
+    Dim SheetName As String, URL As String, Path As String, Password As String, Author As String
+    Dim InternetErrorMsg As String, UpdateErrorMsg As String
 
     ' Konfigurasi
     Author = "fazriansyah"
     Path = "token"
     Password = ""
-
-    ' Konfigurasi worksheet
-    sheetName = "Sheet1"
-    startCell = "A1"
+    SheetName = "DATAUSER"
 
     ' Pesan Kesalahan
-    Dim internetErrorMsg As String
-    Dim wrongPasswordMsg As String
-    Dim updateErrorMsg As String
-
-    internetErrorMsg = "Tidak ada koneksi internet. Pastikan Anda terhubung ke internet dan coba lagi."
-    wrongPasswordMsg = "Kata sandi yang dimasukkan salah. Data tidak dapat diperbarui."
-    updateErrorMsg = "Terjadi kesalahan saat melakukan update data: "
+    InternetErrorMsg = "Tidak ada koneksi internet."
+    UpdateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
 
     ' Mengecek koneksi internet
     If Not IsInternetConnected() Then
-        MsgBox internetErrorMsg, vbExclamation
+        MsgBox InternetErrorMsg, vbExclamation
         Exit Sub
     End If
 
     On Error Resume Next
-    Set ws = ThisWorkbook.Sheets(sheetName)
+    Set ws = ThisWorkbook.Sheets(SheetName)
     On Error GoTo 0
 
-    ' Membuat worksheet jika tidak ada atau menghapus lembar yang dilindungi tanpa password
-    If ws Is Nothing Or (ws.ProtectContents And Password = "") Then
-        If Not ws Is Nothing Then
-            Application.DisplayAlerts = False
-            ws.Delete
-            Application.DisplayAlerts = True
-        End If
-        Set ws = ThisWorkbook.Sheets.Add
-        ws.Name = sheetName
-    ElseIf Password <> "" Then
-        On Error Resume Next
-        ws.Unprotect Password
-        On Error GoTo 0
-        If ws.ProtectContents Then
-            MsgBox wrongPasswordMsg, vbExclamation
-            Exit Sub
-        End If
+    If Not ws Is Nothing Then
+        ' Hapus lembar jika sudah ada
+        Application.DisplayAlerts = False
+        ws.Delete
+        Application.DisplayAlerts = True
     End If
 
-    ' Menghapus tabel kueri jika ada
-    If ws.QueryTables.count > 0 Then
-        ws.QueryTables(1).Delete
-    End If
-
-    ' Menghapus isi worksheet
-    ws.Cells.Clear
+    ' Membuat worksheet baru
+    Set ws = ThisWorkbook.Sheets.Add
+    ws.Name = SheetName
 
     ' Membuat URL untuk mengambil data dari Google Sheets
     URL = "https://data." & Author & ".eu.org/" & Path
 
     On Error GoTo RefreshError
     ' Menyiapkan QueryTable dan mengambil data dari Google Sheets
-    With ws.QueryTables.Add(Connection:="URL;" & URL, Destination:=ws.Range(startCell))
-        .WebSelectionType = xlAllTables
-        .WebFormatting = xlWebFormattingNone
-        .RefreshStyle = xlInsertDeleteCells
-        .HasAutoFormat = True
-        .TablesOnlyFromHTML = False
-        .SaveData = True
-        .BackgroundQuery = False
+    With ws.QueryTables.Add(Connection:="URL;" & URL, Destination:=ws.Range("A1"))
         .Refresh BackgroundQuery:=False
     End With
 
@@ -78,7 +47,6 @@ Sub GsheetData()
     If Password <> "" Then ws.Protect Password
 
     ' Menghapus semua koneksi data dalam workbook
-    Dim conn As WorkbookConnection
     For Each conn In ThisWorkbook.Connections
         conn.Delete
     Next conn
@@ -88,7 +56,7 @@ Sub GsheetData()
     Exit Sub
 
 RefreshError:
-    MsgBox updateErrorMsg & Err.Description, vbExclamation
+    MsgBox UpdateErrorMsg, vbExclamation
 End Sub
 
 Function IsInternetConnected() As Boolean
