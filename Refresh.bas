@@ -72,16 +72,6 @@ Sub GsheetData()
     End With
     On Error GoTo 0
 
-    ' Menghapus sel kosong setelah mengimpor data
-    Dim lastRow As Long
-    lastRow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
-    Dim i As Long
-    For i = lastRow To 1 Step -1
-        If WorksheetFunction.CountA(ws.Rows(i)) = 0 Then
-            ws.Rows(i).Delete
-        End If
-    Next i
-
     ' Melindungi worksheet jika password diberikan
     If password <> "" Then ws.Protect password
 
