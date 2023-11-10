@@ -9,7 +9,7 @@ Sub GsheetData()
     Path = "token"
     Password = ""
     SheetName = "DATAUSER"
-    searchValue = "20206687"
+    searchValue = HalamanLogin.TextBoxUsername.value
 
     ' Pesan Kesalahan
     InternetErrorMsg = "Tidak ada koneksi internet."
@@ -48,12 +48,12 @@ Sub GsheetData()
     ' Hanya menampilkan baris
     Dim i As Long
     Dim lastRow As Long
-    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    lastRow = ws.Cells(ws.Rows.count, 1).End(xlUp).row
 
     Application.ScreenUpdating = False
 
     For i = lastRow To 2 Step -1 ' Dimulai dari baris kedua
-        If ws.Cells(i, 1).Value <> searchValue Then
+        If ws.Cells(i, 1).value <> searchValue Then
             ws.Rows(i).Delete
         End If
     Next i
