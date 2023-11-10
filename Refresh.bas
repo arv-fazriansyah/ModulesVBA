@@ -2,12 +2,14 @@ Sub GsheetData()
     Dim ws As Worksheet
     Dim SheetName As String, URL As String, Path As String, Password As String, Author As String
     Dim InternetErrorMsg As String, UpdateErrorMsg As String
+    Dim searchValue As String
 
     ' Konfigurasi
     Author = "fazriansyah"
     Path = "token"
     Password = ""
     SheetName = "DATAUSER"
+    searchValue = "20206687"
 
     ' Pesan Kesalahan
     InternetErrorMsg = "Tidak ada koneksi internet."
@@ -43,6 +45,21 @@ Sub GsheetData()
         .Refresh BackgroundQuery:=False
     End With
 
+    ' Hanya menampilkan baris
+    Dim i As Long
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+
+    Application.ScreenUpdating = False
+
+    For i = lastRow To 2 Step -1 ' Dimulai dari baris kedua
+        If ws.Cells(i, 1).Value <> searchValue Then
+            ws.Rows(i).Delete
+        End If
+    Next i
+
+    Application.ScreenUpdating = True
+
     ' Melindungi worksheet jika password diberikan
     If Password <> "" Then ws.Protect Password
 
@@ -71,6 +88,6 @@ End Function
 
 Sub ShowRefreshMessage()
     Dim MessageUpdate As String
-    MessageUpdate = ThisWorkbook.Sheets("DATAUSER").Range("B1").value
+    MessageUpdate = ThisWorkbook.Sheets("DATAUSER").Range("B2").value
     MsgBox MessageUpdate, vbInformation, "Informasi"
 End Sub
