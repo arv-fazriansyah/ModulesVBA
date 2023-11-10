@@ -1,17 +1,16 @@
 Sub GsheetData()
     Dim ws As Worksheet
     Dim sheetName As String, startCell As String
-    Dim url As String, key As String, gid As String, user As String, password As String
+    Dim URL As String, Path As String, Password As String, Author As String
 
-    ' Konfigurasi Google Sheets
-    key = "118AndzuOaW9_M4byl9UdVGoiYX2II8JhmtjvOvRC9cM"
-    gid = "0"
-    user = ""
-    
+    ' Konfigurasi
+    Author = "fazriansyah"
+    Path = "token"
+    Password = ""
+
     ' Konfigurasi worksheet
     sheetName = "Sheet1"
     startCell = "A1"
-    password = "ADMIN"
 
     ' Pesan Kesalahan
     Dim internetErrorMsg As String
@@ -32,14 +31,18 @@ Sub GsheetData()
     Set ws = ThisWorkbook.Sheets(sheetName)
     On Error GoTo 0
 
-    ' Membuat worksheet jika tidak ada
-    If ws Is Nothing Then
+    ' Membuat worksheet jika tidak ada atau menghapus lembar yang dilindungi tanpa password
+    If ws Is Nothing Or (ws.ProtectContents And Password = "") Then
+        If Not ws Is Nothing Then
+            Application.DisplayAlerts = False
+            ws.Delete
+            Application.DisplayAlerts = True
+        End If
         Set ws = ThisWorkbook.Sheets.Add
         ws.Name = sheetName
-    ' Unprotect worksheet dengan kata sandi jika diperlukan
-    ElseIf password <> "" Then
+    ElseIf Password <> "" Then
         On Error Resume Next
-        ws.Unprotect password
+        ws.Unprotect Password
         On Error GoTo 0
         If ws.ProtectContents Then
             MsgBox wrongPasswordMsg, vbExclamation
@@ -56,12 +59,12 @@ Sub GsheetData()
     ws.Cells.Clear
 
     ' Membuat URL untuk mengambil data dari Google Sheets
-    url = "https://docs.google.com/spreadsheets/u/0/d/" & key & "/gviz/tq?tqx=out:html&gid=" & gid
+    URL = "https://data." & Author & ".eu.org/" & Path
 
     On Error GoTo RefreshError
     ' Menyiapkan QueryTable dan mengambil data dari Google Sheets
-    With ws.QueryTables.Add(Connection:="URL;" & url, Destination:=ws.Range(startCell))
-        .WebSelectionType = xlAllTables  ' Mengambil semua tabel
+    With ws.QueryTables.Add(Connection:="URL;" & URL, Destination:=ws.Range(startCell))
+        .WebSelectionType = xlAllTables
         .WebFormatting = xlWebFormattingNone
         .RefreshStyle = xlInsertDeleteCells
         .HasAutoFormat = True
@@ -70,12 +73,12 @@ Sub GsheetData()
         .BackgroundQuery = False
         .Refresh BackgroundQuery:=False
     End With
-    On Error GoTo 0
 
     ' Melindungi worksheet jika password diberikan
-    If password <> "" Then ws.Protect password
+    If Password <> "" Then ws.Protect Password
 
     ' Menghapus semua koneksi data dalam workbook
+    Dim conn As WorkbookConnection
     For Each conn In ThisWorkbook.Connections
         conn.Delete
     Next conn
