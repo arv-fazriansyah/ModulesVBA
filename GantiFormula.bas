@@ -17,7 +17,7 @@ Sub CopyFormula()
     Dim PasswordX As String
     
     wrongPasswordMsg = "Kata sandi yang Anda berikan salah."
-    PasswordX = "boskbb24" ' Ganti "yourpassword" dengan sandi Anda
+    PasswordX = "" ' Ganti "yourpassword" dengan sandi Anda
 
     On Error Resume Next
     Set wsSource = ThisWorkbook.Sheets(sourceSheetName)
