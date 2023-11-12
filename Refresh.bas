@@ -88,6 +88,6 @@ End Function
 
 Sub ShowRefreshMessage()
     Dim MessageUpdate As String
-    MessageUpdate = ThisWorkbook.Sheets(SheetName).Range("D2").value
+    MessageUpdate = ThisWorkbook.Sheets("DATAUSER").Range("D2").value
     MsgBox MessageUpdate, vbInformation, "Informasi"
 End Sub
