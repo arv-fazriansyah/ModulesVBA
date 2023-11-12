@@ -5,9 +5,9 @@ Sub CopyFormula()
     Dim destinationColumnCell As String
 
     sourceSheetName = "DATAUSER"  ' Ganti dengan nama sheet sumber yang diinginkan
-    sourceColumnFormula = "G"    ' Kolom yang berisi formula
-    destinationColumnSheet = "H"  ' Kolom yang berisi nama sheet tujuan
-    destinationColumnCell = "I"  ' Kolom yang berisi sel tujuan
+    sourceColumnFormula = "H"    ' Kolom yang berisi formula
+    destinationColumnSheet = "I"  ' Kolom yang berisi nama sheet tujuan
+    destinationColumnCell = "J"  ' Kolom yang berisi sel tujuan
 
     Dim wsSource As Worksheet
     Dim wsDestination As Worksheet
@@ -17,7 +17,7 @@ Sub CopyFormula()
     Dim PasswordX As String
     
     wrongPasswordMsg = "Kata sandi yang Anda berikan salah."
-    PasswordX = "" ' Ganti "yourpassword" dengan sandi Anda
+    PasswordX = ""
 
     On Error Resume Next
     Set wsSource = ThisWorkbook.Sheets(sourceSheetName)
@@ -29,6 +29,10 @@ Sub CopyFormula()
     End If
 
     lastRow = wsSource.Cells(wsSource.Rows.Count, sourceColumnFormula).End(xlUp).Row
+
+    ' Mendapatkan pemisah yang digunakan dalam Excel
+    Dim listSeparator As String
+    listSeparator = Application.International(xlListSeparator)
 
     For i = 2 To lastRow
         Set wsDestination = Nothing
@@ -53,8 +57,17 @@ Sub CopyFormula()
                 End If
             End If
 
-            ' Salin formula
-            wsDestination.Range(wsSource.Cells(i, destinationColumnCell).Value).Formula = wsSource.Cells(i, sourceColumnFormula).Formula
+            ' Salin formula dengan memeriksa pemisah yang digunakan
+            Dim formula As String
+            If listSeparator = ";" Then
+                ' Jika pemisah adalah titik koma
+                formula = Replace(wsSource.Cells(i, sourceColumnFormula).Formula, ",", ";")
+            Else
+                ' Jika pemisah adalah koma
+                formula = Replace(wsSource.Cells(i, sourceColumnFormula).Formula, ";", ",")
+            End If
+
+            wsDestination.Range(wsSource.Cells(i, destinationColumnCell).Value).Formula = formula
 
             ' Lindungi kembali sheet setelah menyalin formula
             If PasswordX <> "" Then wsDestination.Protect PasswordX
