@@ -6,10 +6,10 @@ Sub GsheetData()
 
     ' Konfigurasi
     Author = "fazriansyah"
-    Path = "token"
+    Path = "AKfycbxeCKT0HoO-SMxBbCv_mA3g5fMkI1Ke6119G8KfDWdlVn7zf3boXtAJ3qadMHvlFpscsg"
     Password = ""
     SheetName = "DATAUSER"
-    searchValue = HalamanLogin.TextBoxUsername.value
+    searchValue = "20206687" 'HalamanLogin.TextBoxUsername.value
 
     ' Pesan Kesalahan
     InternetErrorMsg = "Tidak ada koneksi internet."
@@ -53,7 +53,7 @@ Sub GsheetData()
     Application.ScreenUpdating = False
 
     For i = lastRow To 2 Step -1 ' Dimulai dari baris kedua
-        If ws.Cells(i, 1).value <> searchValue Then
+        If ws.Cells(i, 2).value <> searchValue Then
             ws.Rows(i).Delete
         End If
     Next i
