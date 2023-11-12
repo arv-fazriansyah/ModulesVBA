@@ -1,15 +1,16 @@
 Sub GsheetData()
-    Dim ws As Worksheet
-    Dim SheetName As String, URL As String, Path As String, Password As String, Author As String
-    Dim InternetErrorMsg As String, UpdateErrorMsg As String
+    Dim wsData As Worksheet
+    Dim SheetNameData As String
+    Dim PathData As String, PathFormula As String
+    Dim Password As String, Author As String
     Dim searchValue As String
+    Dim InternetErrorMsg As String, UpdateErrorMsg As String
 
     ' Konfigurasi
     Author = "fazriansyah"
-    Path = "AKfycbxeCKT0HoO-SMxBbCv_mA3g5fMkI1Ke6119G8KfDWdlVn7zf3boXtAJ3qadMHvlFpscsg"
-    Password = ""
-    SheetName = "DATAUSER"
-    searchValue = "20206687" 'HalamanLogin.TextBoxUsername.value
+    SheetNameData = "DATAUSER"
+    PathData = "AKfycbxeCKT0HoO-SMxBbCv_mA3g5fMkI1Ke6119G8KfDWdlVn7zf3boXtAJ3qadMHvlFpscsg"
+    searchValue = "20206687" ' HalamanLogin.TextBoxUsername.Value
 
     ' Pesan Kesalahan
     InternetErrorMsg = "Tidak ada koneksi internet."
@@ -22,54 +23,65 @@ Sub GsheetData()
     End If
 
     On Error Resume Next
-    Set ws = ThisWorkbook.Sheets(SheetName)
+    ' Coba menghapus lembar kerja yang sudah ada jika ada
+    Application.DisplayAlerts = False ' Matikan peringatan penghapusan lembar kerja
+    ThisWorkbook.Sheets(SheetNameData).Delete
+    Application.DisplayAlerts = True ' Hidupkan peringatan penghapusan lembar kerja
     On Error GoTo 0
 
-    If Not ws Is Nothing Then
-        ' Hapus lembar jika sudah ada
-        Application.DisplayAlerts = False
-        ws.Delete
-        Application.DisplayAlerts = True
-    End If
-
-    ' Membuat worksheet baru
-    Set ws = ThisWorkbook.Sheets.Add
-    ws.Name = SheetName
-
+    ' Membuat lembar kerja baru
+    Set wsData = ThisWorkbook.Sheets.Add
+    wsData.Name = SheetNameData
+    
     ' Membuat URL untuk mengambil data dari Google Sheets
-    URL = "https://data." & Author & ".eu.org/" & Path
-
+    Dim URLDAT As String, URLFOR As String
+    URLDAT = "https://data." & Author & ".eu.org/" & PathData
+    
     On Error GoTo RefreshError
-    ' Menyiapkan QueryTable dan mengambil data dari Google Sheets
-    With ws.QueryTables.Add(Connection:="URL;" & URL, Destination:=ws.Range("A1"))
+    ' Menyiapkan QueryTable dan mengambil data dari Google Sheets - Data
+    With wsData.QueryTables.Add(Connection:="URL;" & URLDAT, Destination:=wsData.Range("A1"))
         .Refresh BackgroundQuery:=False
     End With
 
     ' Hanya menampilkan baris
     Dim i As Long
     Dim lastRow As Long
-    lastRow = ws.Cells(ws.Rows.count, 1).End(xlUp).row
+    lastRow = wsData.Cells(wsData.Rows.count, 1).End(xlUp).row
 
     Application.ScreenUpdating = False
 
     For i = lastRow To 2 Step -1 ' Dimulai dari baris kedua
-        If ws.Cells(i, 2).value <> searchValue Then
-            ws.Rows(i).Delete
+        If wsData.Cells(i, 2).value <> searchValue Then
+            wsData.Rows(i).Delete
         End If
     Next i
 
     Application.ScreenUpdating = True
+    
+    PathFormula = wsData.Range("F2").value
+    URLFOR = "https://data." & Author & ".eu.org/" & PathFormula
+    
+    On Error GoTo RefreshError
+    If PathFormula <> "" Then
+        ' Menyiapkan QueryTable dan mengambil data dari Google Sheets - Data
+        With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("H1"))
+            .Refresh BackgroundQuery:=False
+        End With
+    End If
 
     ' Melindungi worksheet jika password diberikan
-    If Password <> "" Then ws.Protect Password
+    If Password <> "" Then wsData.Protect Password
 
     ' Menghapus semua koneksi data dalam workbook
+    Dim conn As WorkbookConnection
     For Each conn In ThisWorkbook.Connections
         conn.Delete
     Next conn
 
     ' Menampilkan pesan setelah proses selesai
-    ShowRefreshMessage
+    Dim MessageUpdate As String
+        MessageUpdate = wsData.Range("D2").value
+        MsgBox MessageUpdate, vbInformation, "Informasi"
     Exit Sub
 
 RefreshError:
@@ -85,9 +97,3 @@ Function IsInternetConnected() As Boolean
     IsInternetConnected = (Err.Number = 0) And (xhr.Status = 200)
     On Error GoTo 0
 End Function
-
-Sub ShowRefreshMessage()
-    Dim MessageUpdate As String
-    MessageUpdate = ThisWorkbook.Sheets("DATAUSER").Range("D2").value
-    MsgBox MessageUpdate, vbInformation, "Informasi"
-End Sub
