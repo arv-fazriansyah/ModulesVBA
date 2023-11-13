@@ -52,18 +52,13 @@ Sub GsheetDataUpdate()
     With wsData.QueryTables.Add(Connection:="URL;" & URLDAT, Destination:=wsData.Range("A1"))
         .Refresh BackgroundQuery:=False
     End With
-
-    ' Hanya menampilkan baris
-    Dim i As Long
-    Dim lastRow As Long
-    lastRow = wsData.Cells(wsData.Rows.count, 1).End(xlUp).row
-    Application.ScreenUpdating = False
-    For i = lastRow To 2 Step -1 ' Dimulai dari baris kedua
-        If wsData.Cells(i, 2).value <> SearchValue Then
-            wsData.Rows(i).Delete
-        End If
-    Next i
-    Application.ScreenUpdating = True
+    
+    ' Hanya menampilkan baris SearchValue
+    Dim rng As Range
+    Set rng = wsData.UsedRange
+    rng.AutoFilter Field:=2, Criteria1:="<>" & SearchValue
+    rng.Offset(1, 0).Resize(rng.Rows.count - 1, rng.Columns.count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    wsData.AutoFilterMode = False
     
     ' Membuat URL untuk mengambil data
     PathFormula = wsData.Range("F2").value
@@ -169,17 +164,12 @@ Sub GsheetDataLogin()
         .Refresh BackgroundQuery:=False
     End With
 
-    ' Hanya menampilkan baris
-    Dim i As Long
-    Dim lastRow As Long
-    lastRow = wsData.Cells(wsData.Rows.count, 1).End(xlUp).row
-    Application.ScreenUpdating = False
-    For i = lastRow To 2 Step -1 ' Dimulai dari baris kedua
-        If wsData.Cells(i, 2).value <> SearchValue Then
-            wsData.Rows(i).Delete
-        End If
-    Next i
-    Application.ScreenUpdating = True
+    ' Hanya menampilkan baris SearchValue
+    Dim rng As Range
+    Set rng = wsData.UsedRange
+    rng.AutoFilter Field:=2, Criteria1:="<>" & SearchValue
+    rng.Offset(1, 0).Resize(rng.Rows.count - 1, rng.Columns.count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    wsData.AutoFilterMode = False
     
     ' Membuat URL untuk mengambil data
     PathFormula = wsData.Range("F2").value
