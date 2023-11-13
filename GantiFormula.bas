@@ -1,4 +1,4 @@
-Sub CopyFormulasToDestinationSheet()
+Sub CopyFormulas()
     Dim sourceSheetName As String
     Dim sourceColumnFormula As String
     Dim destinationColumnSheet As String
@@ -17,13 +17,13 @@ Sub CopyFormulasToDestinationSheet()
     separator = Application.International(xlListSeparator)
     
     Dim lastRow As Long
-    lastRow = sourceSheet.Cells(sourceSheet.Rows.Count, sourceColumnFormula).End(xlUp).Row
+    lastRow = sourceSheet.Cells(sourceSheet.Rows.count, sourceColumnFormula).End(xlUp).row
     
     Dim i As Long
     For i = 1 To lastRow
         ' Get the formula from column H
         Dim formulaValue As String
-        formulaValue = sourceSheet.Cells(i, sourceColumnFormula).Formula
+        formulaValue = sourceSheet.Cells(i, sourceColumnFormula).formula
         
         ' Replace the formula separator with the regional separator
         formulaValue = Replace(formulaValue, ";", separator)
@@ -31,11 +31,11 @@ Sub CopyFormulasToDestinationSheet()
         
         ' Get the destination sheet name from column I
         Dim destSheetName As String
-        destSheetName = sourceSheet.Cells(i, destinationColumnSheet).Value
+        destSheetName = sourceSheet.Cells(i, destinationColumnSheet).value
         
         ' Get the destination cell from column J
         Dim destCell As String
-        destCell = sourceSheet.Cells(i, destinationColumnCell).Value
+        destCell = sourceSheet.Cells(i, destinationColumnCell).value
         
         ' Check if the destination sheet name and cell are not empty
         If destSheetName <> "" And destCell <> "" Then
@@ -47,7 +47,7 @@ Sub CopyFormulasToDestinationSheet()
             If Not destSheet Is Nothing Then
                 ' Paste the value as text into the destination cell on the destination sheet
                 Application.DisplayAlerts = False
-                destSheet.Range(destCell).Value = formulaValue
+                destSheet.Range(destCell).value = formulaValue
                 Application.DisplayAlerts = True
             End If
         End If
