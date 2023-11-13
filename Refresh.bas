@@ -16,13 +16,13 @@ Sub GsheetDataUpdate()
         Exit Sub
     End If
     
-    On Error GoTo RefreshError
+    On Error Resume Next
 
     ' Konfigurasi data
     Author = Env.Author
     SheetNameData = Env.DataBase
     PathData = Env.Token
-    SearchValue = "20208081" ' ThisWorkbook.Sheets(SheetNameData).Range("B2").Value
+    SearchValue = ThisWorkbook.Sheets(SheetNameData).Range("B2").value
     
     If SearchValue = "" Then
         MsgBox "Logout Aplikasi, kemudian Update pada halaman Login!", vbExclamation
@@ -39,7 +39,7 @@ Sub GsheetDataUpdate()
     ' Membuat lembar kerja baru
     Set wsData = ThisWorkbook.Sheets.Add
     wsData.Name = SheetNameData
-    ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetVeryHidden
+    'ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetVeryHidden
     
     ' Membuat URL untuk mengambil data
     Dim URLDAT As String, URLFOR As String
@@ -65,7 +65,7 @@ Sub GsheetDataUpdate()
     ' Menyiapkan QueryTable dan mengambil data
     If PathFormula <> "" Then
         On Error Resume Next
-        With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("H1"))
+        With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("AA1"))
             .Refresh BackgroundQuery:=False
         End With
     End If
@@ -80,7 +80,7 @@ Sub GsheetDataUpdate()
     ' Disini
     
     ' Melindungi worksheet jika password diberikan
-    Password = wsData.Range("F2").value
+    Password = wsData.Range("G2").value
     If Password <> "" Then
         wsData.Protect Password
     End If
@@ -128,7 +128,7 @@ Sub GsheetDataLogin()
         Exit Sub
     End If
     
-    On Error GoTo RefreshError
+    On Error Resume Next
 
     ' Konfigurasi data
     Author = Env.Author
@@ -177,7 +177,7 @@ Sub GsheetDataLogin()
     ' Menyiapkan QueryTable dan mengambil data
     If PathFormula <> "" Then
         On Error Resume Next
-        With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("H1"))
+        With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("AA1"))
             .Refresh BackgroundQuery:=False
         End With
     End If
@@ -192,7 +192,7 @@ Sub GsheetDataLogin()
     ' Disini
     
     ' Melindungi worksheet jika password diberikan
-    Password = wsData.Range("F2").value
+    Password = wsData.Range("G2").value
     If Password <> "" Then
         wsData.Protect Password
     End If
