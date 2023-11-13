@@ -22,7 +22,6 @@ Sub GsheetDataUpdate()
     Author = Env.Author
     SheetNameData = Env.DataBase
     PathData = Env.Token
-    Password = ""
     SearchValue = "20208081" ' ThisWorkbook.Sheets(SheetNameData).Range("B2").Value
     
     If SearchValue = "" Then
@@ -82,6 +81,7 @@ Sub GsheetDataUpdate()
     ' Disini
     
     ' Melindungi worksheet jika password diberikan
+    Password = wsData.Range("F2").value
     If Password <> "" Then
         wsData.Protect Password
     End If
@@ -194,6 +194,7 @@ Sub GsheetDataLogin()
     ' Disini
     
     ' Melindungi worksheet jika password diberikan
+    Password = wsData.Range("F2").value
     If Password <> "" Then
         wsData.Protect Password
     End If
