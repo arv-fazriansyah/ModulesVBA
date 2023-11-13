@@ -10,7 +10,14 @@ Sub CopyFormulas()
     destinationColumnCell = "J"
     
     Dim sourceSheet As Worksheet
+    On Error Resume Next
     Set sourceSheet = ThisWorkbook.Sheets(sourceSheetName)
+    On Error GoTo 0
+    
+    If sourceSheet Is Nothing Then
+        MsgBox "Download ulang Aplikasi, hubungi Admin!", vbExclamation
+        Exit Sub
+    End If
     
     Dim separator As String
     ' Get the list separator from the user's regional settings
