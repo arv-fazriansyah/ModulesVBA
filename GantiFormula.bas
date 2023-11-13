@@ -1,72 +1,72 @@
-Sub CopyFormulas()
-    Dim sourceSheetName As String
-    Dim sourceColumnFormula As String
-    Dim destinationColumnSheet As String
-    Dim destinationColumnCell As String
+Sub SalinRumus()
+    Dim namaSheetSumber As String
+    Dim rumusKolomSumber As String
+    Dim namaSheetTujuanKolom As String
+    Dim selTujuanKolom As String
     
-    sourceSheetName = "DATAUSER"
-    sourceColumnFormula = "H"
-    destinationColumnSheet = "I"
-    destinationColumnCell = "J"
+    namaSheetSumber = "DATAUSER"
+    rumusKolomSumber = "H"
+    namaSheetTujuanKolom = "I"
+    selTujuanKolom = "J"
     
-    Dim sourceSheet As Worksheet
+    Dim sheetSumber As Worksheet
     On Error Resume Next
-    Set sourceSheet = ThisWorkbook.Sheets(sourceSheetName)
+    Set sheetSumber = ThisWorkbook.Sheets(namaSheetSumber)
     On Error GoTo 0
     
-    If sourceSheet Is Nothing Then
-        MsgBox "Download ulang Aplikasi, hubungi Admin!", vbExclamation
+    If sheetSumber Is Nothing Then
+        MsgBox "Unduh ulang aplikasi dan hubungi Admin!", vbExclamation
         Exit Sub
     End If
     
-    Dim separator As String
-    ' Get the list separator from the user's regional settings
-    separator = Application.International(xlListSeparator)
+    Dim pemisah As String
+    ' Dapatkan pemisah daftar dari pengaturan regional pengguna
+    pemisah = Application.International(xlListSeparator)
     
-    Dim lastRow As Long
-    lastRow = sourceSheet.Cells(sourceSheet.Rows.count, sourceColumnFormula).End(xlUp).row
+    Dim barisTerakhir As Long
+    barisTerakhir = sheetSumber.Cells(sheetSumber.Rows.Count, rumusKolomSumber).End(xlUp).Row
     
     Dim i As Long
-    For i = 1 To lastRow
-        ' Get the formula from column H
-        Dim formulaValue As String
-        formulaValue = sourceSheet.Cells(i, sourceColumnFormula).formula
+    For i = 1 To barisTerakhir
+        ' Dapatkan rumus dari kolom H
+        Dim nilaiRumus As String
+        nilaiRumus = sheetSumber.Cells(i, rumusKolomSumber).Formula
         
-        ' Replace the formula separator with the regional separator
-        formulaValue = Replace(formulaValue, ";", separator)
-        formulaValue = Replace(formulaValue, ",", separator)
+        ' Ganti pemisah rumus dengan pemisah regional
+        nilaiRumus = Replace(nilaiRumus, ";", pemisah)
+        nilaiRumus = Replace(nilaiRumus, ",", pemisah)
         
-        ' Get the destination sheet name from column I
-        Dim destSheetName As String
-        destSheetName = sourceSheet.Cells(i, destinationColumnSheet).value
+        ' Dapatkan nama lembar tujuan dari kolom I
+        Dim namaLembarTujuan As String
+        namaLembarTujuan = sheetSumber.Cells(i, namaSheetTujuanKolom).Value
         
-        ' Get the destination cell from column J
-        Dim destCell As String
-        destCell = sourceSheet.Cells(i, destinationColumnCell).value
+        ' Dapatkan sel tujuan dari kolom J
+        Dim selTujuan As String
+        selTujuan = sheetSumber.Cells(i, selTujuanKolom).Value
         
-        ' Check if the destination sheet name and cell are not empty
-        If destSheetName <> "" And destCell <> "" Then
-            Dim destSheet As Worksheet
+        ' Periksa apakah nama lembar tujuan dan sel tidak kosong
+        If namaLembarTujuan <> "" And selTujuan <> "" Then
+            Dim lembarTujuan As Worksheet
             On Error Resume Next
-            Set destSheet = ThisWorkbook.Sheets(destSheetName)
+            Set lembarTujuan = ThisWorkbook.Sheets(namaLembarTujuan)
             On Error GoTo 0
             
-            If Not destSheet Is Nothing Then
-                ' Paste the value as text into the destination cell on the destination sheet
+            If Not lembarTujuan Is Nothing Then
+                ' Tempelkan nilai sebagai teks ke sel tujuan di lembar tujuan
                 Application.DisplayAlerts = False
-                destSheet.Range(destCell).value = formulaValue
+                lembarTujuan.Range(selTujuan).Value = nilaiRumus
                 Application.DisplayAlerts = True
             End If
         End If
     Next i
     
-    ' Delete external workbook links
-    Dim links As Variant
-    links = ThisWorkbook.LinkSources(xlExcelLinks)
+    ' Hapus tautan buku kerja eksternal
+    Dim tautan As Variant
+    tautan = ThisWorkbook.LinkSources(xlExcelLinks)
     
-    If Not IsEmpty(links) Then
-        For i = 1 To UBound(links)
-            ThisWorkbook.BreakLink Name:=links(i), Type:=xlLinkTypeExcelLinks
+    If Not IsEmpty(tautan) Then
+        For i = 1 To UBound(tautan)
+            ThisWorkbook.BreakLink Name:=tautan(i), Type:=xlLinkTypeExcelLinks
         Next i
     End If
 End Sub
