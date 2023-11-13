@@ -46,7 +46,7 @@ Sub CopyFormulas()
             
             If Not lembarTujuan Is Nothing Then
                 Dim password As String
-                password = "123" ' Ganti dengan kata sandi yang benar
+                password = "" ' Ganti dengan kata sandi yang benar
                 
                 If password <> "" Then
                     On Error Resume Next
