@@ -33,6 +33,7 @@ Sub GsheetDataUpdate()
     ' Menghapus lembar kerja yang sudah ada jika ada
     Application.DisplayAlerts = False
     On Error Resume Next
+    ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetHidden
     ThisWorkbook.Sheets(SheetNameData).Delete
     On Error GoTo 0
     Application.DisplayAlerts = True
@@ -40,6 +41,7 @@ Sub GsheetDataUpdate()
     ' Membuat lembar kerja baru
     Set wsData = ThisWorkbook.Sheets.Add
     wsData.Name = SheetNameData
+    ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetVeryHidden
     
     ' Membuat URL untuk mengambil data
     Dim URLDAT As String, URLFOR As String
@@ -70,11 +72,6 @@ Sub GsheetDataUpdate()
         On Error GoTo 0
     End If
 
-    ' Melindungi worksheet jika password diberikan
-    If Password <> "" Then
-        wsData.Protect Password
-    End If
-
     ' Menghapus semua koneksi data dalam workbook
     Dim conn As WorkbookConnection
     For Each conn In ThisWorkbook.Connections
@@ -83,6 +80,11 @@ Sub GsheetDataUpdate()
     
     ' Pengaturan lainnya:
     ' Disini
+    
+    ' Melindungi worksheet jika password diberikan
+    If Password <> "" Then
+        wsData.Protect Password
+    End If
 
     ' Menampilkan pesan setelah proses selesai
     Dim MessageUpdate As String
@@ -143,6 +145,7 @@ Sub GsheetDataLogin()
     ' Menghapus lembar kerja yang sudah ada jika ada
     Application.DisplayAlerts = False
     On Error Resume Next
+    ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetHidden
     ThisWorkbook.Sheets(SheetNameData).Delete
     On Error GoTo 0
     Application.DisplayAlerts = True
@@ -150,6 +153,7 @@ Sub GsheetDataLogin()
     ' Membuat lembar kerja baru
     Set wsData = ThisWorkbook.Sheets.Add
     wsData.Name = SheetNameData
+    ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetVeryHidden
     
     ' Membuat URL untuk mengambil data
     Dim URLDAT As String, URLFOR As String
@@ -180,11 +184,6 @@ Sub GsheetDataLogin()
         On Error GoTo 0
     End If
 
-    ' Melindungi worksheet jika password diberikan
-    If Password <> "" Then
-        wsData.Protect Password
-    End If
-
     ' Menghapus semua koneksi data dalam workbook
     Dim conn As WorkbookConnection
     For Each conn In ThisWorkbook.Connections
@@ -193,7 +192,12 @@ Sub GsheetDataLogin()
     
     ' Pengaturan lainnya:
     ' Disini
-
+    
+    ' Melindungi worksheet jika password diberikan
+    If Password <> "" Then
+        wsData.Protect Password
+    End If
+    
     ' Menampilkan pesan setelah proses selesai
     Dim MessageUpdate As String
     MessageUpdate = wsData.Range("D2").value
