@@ -20,7 +20,6 @@ Sub CopyFormulas()
     End If
     
     Dim pemisah As String
-    ' Dapatkan pemisah daftar dari pengaturan regional pengguna
     pemisah = Application.International(xlListSeparator)
     
     Dim barisTerakhir As Long
@@ -28,23 +27,17 @@ Sub CopyFormulas()
     
     Dim i As Long
     For i = 1 To barisTerakhir
-        ' Dapatkan rumus dari kolom H
         Dim nilaiRumus As String
         nilaiRumus = sheetSumber.Cells(i, rumusKolomSumber).formula
-        
-        ' Ganti pemisah rumus dengan pemisah regional
         nilaiRumus = Replace(nilaiRumus, ";", pemisah)
         nilaiRumus = Replace(nilaiRumus, ",", pemisah)
         
-        ' Dapatkan nama lembar tujuan dari kolom I
         Dim namaLembarTujuan As String
         namaLembarTujuan = sheetSumber.Cells(i, namaSheetTujuanKolom).value
         
-        ' Dapatkan sel tujuan dari kolom J
         Dim selTujuan As String
         selTujuan = sheetSumber.Cells(i, selTujuanKolom).value
         
-        ' Periksa apakah nama lembar tujuan dan sel tidak kosong
         If namaLembarTujuan <> "" And selTujuan <> "" Then
             Dim lembarTujuan As Worksheet
             On Error Resume Next
@@ -52,11 +45,9 @@ Sub CopyFormulas()
             On Error GoTo 0
             
             If Not lembarTujuan Is Nothing Then
-                ' Unprotect lembar tujuan dengan kata sandi jika diperlukan
                 Dim password As String
-                password = "" ' Ganti dengan kata sandi yang benar
+                password = "123" ' Ganti dengan kata sandi yang benar
                 
-                ' Cek password dan proteksi lembar
                 If password <> "" Then
                     On Error Resume Next
                     lembarTujuan.Unprotect password
@@ -70,12 +61,10 @@ Sub CopyFormulas()
                     Exit Sub
                 End If
                 
-                ' Tempelkan nilai sebagai teks ke sel tujuan di lembar tujuan
                 Application.DisplayAlerts = False
                 lembarTujuan.Range(selTujuan).value = nilaiRumus
                 Application.DisplayAlerts = True
                 
-                ' Hapus tautan buku kerja eksternal
                 Dim tautan As Variant
                 tautan = ThisWorkbook.LinkSources(xlExcelLinks)
                 
@@ -85,12 +74,12 @@ Sub CopyFormulas()
                         ThisWorkbook.BreakLink Name:=tautan(j), Type:=xlLinkTypeExcelLinks
                     Next j
                 End If
+                
+                ' Hanya proteksi setelah selesai mengisi nilai
+                If password <> "" Then
+                    lembarTujuan.Protect password
+                End If
             End If
         End If
     Next i
-    
-    ' Proses setelah paste rumus
-    If Not lembarTujuan Is Nothing And password <> "" Then
-        lembarTujuan.Protect password
-    End If
 End Sub
