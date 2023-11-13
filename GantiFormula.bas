@@ -1,54 +1,56 @@
-Sub CopyFormula()
+Sub CopyFormulasToDestinationSheet()
     Dim sourceSheetName As String
     Dim sourceColumnFormula As String
     Dim destinationColumnSheet As String
     Dim destinationColumnCell As String
-    Dim delimiter As String
-
-    sourceSheetName = "DATAUSER"  ' Ganti dengan nama sheet sumber yang diinginkan
-    sourceColumnFormula = "G"    ' Kolom yang berisi formula
-    destinationColumnSheet = "H"  ' Kolom yang berisi nama sheet tujuan
-    destinationColumnCell = "I"  ' Kolom yang berisi sel tujuan
-
-    delimiter = Application.International(xlListSeparator)
-
-    Dim wsSource As Worksheet
-    Dim wsDestination As Worksheet
+    
+    sourceSheetName = "DATAUSER"
+    sourceColumnFormula = "H"
+    destinationColumnSheet = "I"
+    destinationColumnCell = "J"
+    
+    Dim sourceSheet As Worksheet
+    Set sourceSheet = ThisWorkbook.Sheets(sourceSheetName)
+    
+    Dim separator As String
+    ' Dapatkan tanda pemisah dari pengaturan regional pengguna
+    separator = Application.International(xlListSeparator)
+    
     Dim lastRow As Long
+    lastRow = sourceSheet.Cells(sourceSheet.Rows.count, sourceColumnFormula).End(xlUp).row
+    
     Dim i As Long
-
-    On Error Resume Next
-    Set wsSource = ThisWorkbook.Sheets(sourceSheetName)
-    On Error GoTo 0
-
-    If wsSource Is Nothing Then
-        MsgBox "Sheet sumber '" & sourceSheetName & "' tidak ditemukan.", vbExclamation
-        Exit Sub
-    End If
-
-    lastRow = wsSource.Cells(wsSource.Rows.count, sourceColumnFormula).End(xlUp).Row
-
-    For i = 2 To lastRow
-        Set wsDestination = Nothing
-        On Error Resume Next
-        Set wsDestination = ThisWorkbook.Sheets(wsSource.Cells(i, destinationColumnSheet).Value)
-        On Error GoTo 0
-
-        If Not wsDestination Is Nothing Then
-            ' Unprotect sheet tujuan sebelum menyalin formula
-            wsDestination.Unprotect password:="boskbb24" ' Ganti "yourpassword" dengan sandi Anda
-
-            ' Salin formula
-            Dim formulaText As String
-            formulaText = wsSource.Cells(i, sourceColumnFormula).Formula
-            formulaText = Replace(formulaText, ";", delimiter)  ' Mengganti tanda ; dengan delimiter yang sesuai
-
-            wsDestination.Range(wsSource.Cells(i, destinationColumnCell).Value).Formula = formulaText
-
-            ' Lindungi kembali sheet setelah menyalin formula
-            wsDestination.Protect password:="boskbb24" ' Ganti "yourpassword" dengan sandi Anda
-        Else
-            MsgBox "Sheet tujuan '" & wsSource.Cells(i, destinationColumnSheet).Value & "' tidak ditemukan.", vbExclamation
+    For i = 1 To lastRow
+        ' Ambil formula dari kolom H
+        Dim formulaValue As String
+        formulaValue = sourceSheet.Cells(i, sourceColumnFormula).formula
+        
+        ' Sesuaikan tanda pemisah formula dengan tanda pemisah regional
+        formulaValue = Replace(formulaValue, ";", separator)
+        formulaValue = Replace(formulaValue, ",", separator)
+        
+        ' Ambil nama sheet tujuan dari kolom I
+        Dim destSheetName As String
+        destSheetName = sourceSheet.Cells(i, destinationColumnSheet).value
+        
+        ' Ambil sel tujuan dari kolom J
+        Dim destCell As String
+        destCell = sourceSheet.Cells(i, destinationColumnCell).value
+        
+        ' Cek jika nama sheet tujuan tidak kosong dan sel tujuan tidak kosong
+        If destSheetName <> "" And destCell <> "" Then
+            Dim destSheet As Worksheet
+            On Error Resume Next
+            Set destSheet = ThisWorkbook.Sheets(destSheetName)
+            On Error GoTo 0
+            
+            If Not destSheet Is Nothing Then
+                ' Tempelkan nilai sebagai teks ke sel tujuan pada sheet tujuan
+                Application.DisplayAlerts = False
+                destSheet.Range(destCell).value = formulaValue
+                Application.DisplayAlerts = True
+            End If
         End If
     Next i
+    
 End Sub
