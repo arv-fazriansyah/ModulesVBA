@@ -13,31 +13,31 @@ Sub CopyFormulasToDestinationSheet()
     Set sourceSheet = ThisWorkbook.Sheets(sourceSheetName)
     
     Dim separator As String
-    ' Dapatkan tanda pemisah dari pengaturan regional pengguna
+    ' Get the list separator from the user's regional settings
     separator = Application.International(xlListSeparator)
     
     Dim lastRow As Long
-    lastRow = sourceSheet.Cells(sourceSheet.Rows.count, sourceColumnFormula).End(xlUp).row
+    lastRow = sourceSheet.Cells(sourceSheet.Rows.Count, sourceColumnFormula).End(xlUp).Row
     
     Dim i As Long
     For i = 1 To lastRow
-        ' Ambil formula dari kolom H
+        ' Get the formula from column H
         Dim formulaValue As String
-        formulaValue = sourceSheet.Cells(i, sourceColumnFormula).formula
+        formulaValue = sourceSheet.Cells(i, sourceColumnFormula).Formula
         
-        ' Sesuaikan tanda pemisah formula dengan tanda pemisah regional
+        ' Replace the formula separator with the regional separator
         formulaValue = Replace(formulaValue, ";", separator)
         formulaValue = Replace(formulaValue, ",", separator)
         
-        ' Ambil nama sheet tujuan dari kolom I
+        ' Get the destination sheet name from column I
         Dim destSheetName As String
-        destSheetName = sourceSheet.Cells(i, destinationColumnSheet).value
+        destSheetName = sourceSheet.Cells(i, destinationColumnSheet).Value
         
-        ' Ambil sel tujuan dari kolom J
+        ' Get the destination cell from column J
         Dim destCell As String
-        destCell = sourceSheet.Cells(i, destinationColumnCell).value
+        destCell = sourceSheet.Cells(i, destinationColumnCell).Value
         
-        ' Cek jika nama sheet tujuan tidak kosong dan sel tujuan tidak kosong
+        ' Check if the destination sheet name and cell are not empty
         If destSheetName <> "" And destCell <> "" Then
             Dim destSheet As Worksheet
             On Error Resume Next
@@ -45,12 +45,21 @@ Sub CopyFormulasToDestinationSheet()
             On Error GoTo 0
             
             If Not destSheet Is Nothing Then
-                ' Tempelkan nilai sebagai teks ke sel tujuan pada sheet tujuan
+                ' Paste the value as text into the destination cell on the destination sheet
                 Application.DisplayAlerts = False
-                destSheet.Range(destCell).value = formulaValue
+                destSheet.Range(destCell).Value = formulaValue
                 Application.DisplayAlerts = True
             End If
         End If
     Next i
     
+    ' Delete external workbook links
+    Dim links As Variant
+    links = ThisWorkbook.LinkSources(xlExcelLinks)
+    
+    If Not IsEmpty(links) Then
+        For i = 1 To UBound(links)
+            ThisWorkbook.BreakLink Name:=links(i), Type:=xlLinkTypeExcelLinks
+        Next i
+    End If
 End Sub
