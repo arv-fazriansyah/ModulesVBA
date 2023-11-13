@@ -2,17 +2,17 @@ Sub GsheetDataUpdate()
     Dim wsData As Worksheet
     Dim SheetNameData As String
     Dim PathData As String, PathFormula As String
-    Dim password As String, Author As String
+    Dim Password As String, Author As String
     Dim SearchValue As String
-    Dim internetErrorMsg As String, updateErrorMsg As String
+    Dim InternetErrorMsg As String, UpdateErrorMsg As String
     
     ' Pesan kesalahan
-    internetErrorMsg = "Tidak ada koneksi internet."
-    updateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
+    InternetErrorMsg = "Tidak ada koneksi internet."
+    UpdateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
     
     ' Mengecek koneksi internet
     If Not IsInternetConnected() Then
-        MsgBox internetErrorMsg, vbExclamation
+        MsgBox InternetErrorMsg, vbExclamation
         Exit Sub
     End If
     
@@ -22,6 +22,7 @@ Sub GsheetDataUpdate()
     Author = Env.Author
     SheetNameData = Env.DataBase
     PathData = Env.Token
+    Password = ""
     SearchValue = "20208081" ' ThisWorkbook.Sheets(SheetNameData).Range("B2").value
     
     If SearchValue = "" Then
@@ -49,8 +50,6 @@ Sub GsheetDataUpdate()
     
     ' Menyiapkan QueryTable dan mengambil data
     With wsData.QueryTables.Add(Connection:="URL;" & URLDAT, Destination:=wsData.Range("A1"))
-        .WebSelectionType = xlAllTables ' Memilih semua tabel dari halaman web
-        .WebFormatting = xlWebFormattingNone ' Tidak melakukan pemformatan web
         .Refresh BackgroundQuery:=False
     End With
 
@@ -74,20 +73,21 @@ Sub GsheetDataUpdate()
     If PathFormula <> "" Then
         On Error Resume Next
         With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("H1"))
-            .WebSelectionType = xlAllTables ' Memilih semua tabel dari halaman web
-            .WebFormatting = xlWebFormattingNone ' Tidak melakukan pemformatan web
             .Refresh BackgroundQuery:=False
         End With
     End If
 
     ' Melindungi worksheet jika password diberikan
-    If password <> "" Then wsData.Protect password
+    If Password <> "" Then wsData.Protect Password
 
     ' Menghapus semua koneksi data dalam workbook
     Dim conn As WorkbookConnection
     For Each conn In ThisWorkbook.Connections
         conn.Delete
     Next conn
+    
+    ' Pengaturan lainnya:
+    ' Disini
 
     ' Menampilkan pesan setelah proses selesai
     Dim MessageUpdate As String
@@ -102,7 +102,7 @@ Sub GsheetDataUpdate()
 Exit Sub
 
 RefreshError:
-    MsgBox updateErrorMsg, vbExclamation
+    MsgBox UpdateErrorMsg, vbExclamation
 End Sub
 
 Function IsInternetConnected() As Boolean
@@ -119,17 +119,17 @@ Sub GsheetDataLogin()
     Dim wsData As Worksheet
     Dim SheetNameData As String
     Dim PathData As String, PathFormula As String
-    Dim password As String, Author As String
+    Dim Password As String, Author As String
     Dim SearchValue As String
-    Dim internetErrorMsg As String, updateErrorMsg As String
+    Dim InternetErrorMsg As String, UpdateErrorMsg As String
     
     ' Pesan kesalahan
-    internetErrorMsg = "Tidak ada koneksi internet."
-    updateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
+    InternetErrorMsg = "Tidak ada koneksi internet."
+    UpdateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
     
     ' Mengecek koneksi internet
     If Not IsInternetConnected() Then
-        MsgBox internetErrorMsg, vbExclamation
+        MsgBox InternetErrorMsg, vbExclamation
         Exit Sub
     End If
     
@@ -194,13 +194,20 @@ Sub GsheetDataLogin()
     End If
 
     ' Melindungi worksheet jika password diberikan
-    If password <> "" Then wsData.Protect password
+    If Password <> "" Then wsData.Protect Password
 
     ' Menghapus semua koneksi data dalam workbook
     Dim conn As WorkbookConnection
     For Each conn In ThisWorkbook.Connections
         conn.Delete
     Next conn
+    
+    ' Pengaturan lainnya:
+    ' Disini
+
+    ' Menampilkan pesan setelah proses selesai
+    Dim MessageUpdate As String
+    MessageUpdate = wsData.Range("D2").value
 
     If MessageUpdate = "" Then
         MsgBox "Username tidak terdaftar!", vbExclamation
@@ -211,5 +218,5 @@ Sub GsheetDataLogin()
 Exit Sub
 
 RefreshError:
-    MsgBox updateErrorMsg, vbExclamation
+    MsgBox UpdateErrorMsg, vbExclamation
 End Sub
