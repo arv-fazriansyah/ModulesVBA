@@ -23,21 +23,18 @@ Sub GsheetDataUpdate()
     SheetNameData = Env.DataBase
     PathData = Env.Token
     Password = ""
-    SearchValue = "20208081" ' ThisWorkbook.Sheets(SheetNameData).Range("B2").value
+    SearchValue = "20208081" ' ThisWorkbook.Sheets(SheetNameData).Range("B2").Value
     
     If SearchValue = "" Then
         MsgBox "Logout Aplikasi, kemudian Update pada halaman Login!", vbExclamation
         Exit Sub
     End If
     
-    '"20208081"
-    'HalamanLogin.TextBoxUsername.Value
-    'ThisWorkbook.Sheets(SheetNameData).Range("B2").value
-
     ' Menghapus lembar kerja yang sudah ada jika ada
-    On Error Resume Next
     Application.DisplayAlerts = False
+    On Error Resume Next
     ThisWorkbook.Sheets(SheetNameData).Delete
+    On Error GoTo 0
     Application.DisplayAlerts = True
 
     ' Membuat lembar kerja baru
@@ -70,10 +67,13 @@ Sub GsheetDataUpdate()
         With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("H1"))
             .Refresh BackgroundQuery:=False
         End With
+        On Error GoTo 0
     End If
 
     ' Melindungi worksheet jika password diberikan
-    If Password <> "" Then wsData.Protect Password
+    If Password <> "" Then
+        wsData.Protect Password
+    End If
 
     ' Menghapus semua koneksi data dalam workbook
     Dim conn As WorkbookConnection
@@ -90,11 +90,10 @@ Sub GsheetDataUpdate()
 
     If MessageUpdate = "" Then
         MsgBox "Username tidak terdaftar!", vbExclamation
-        Exit Sub
     Else
         MsgBox MessageUpdate, vbInformation, "Informasi"
     End If
-Exit Sub
+    Exit Sub
 
 RefreshError:
     MsgBox UpdateErrorMsg, vbExclamation
@@ -141,14 +140,11 @@ Sub GsheetDataLogin()
         Exit Sub
     End If
     
-    '"20206687"
-    'HalamanLogin.TextBoxUsername.Value
-    'ThisWorkbook.Sheets(SheetNameData).Range("B2").value
-
     ' Menghapus lembar kerja yang sudah ada jika ada
-    On Error Resume Next
     Application.DisplayAlerts = False
+    On Error Resume Next
     ThisWorkbook.Sheets(SheetNameData).Delete
+    On Error GoTo 0
     Application.DisplayAlerts = True
 
     ' Membuat lembar kerja baru
@@ -181,10 +177,13 @@ Sub GsheetDataLogin()
         With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("H1"))
             .Refresh BackgroundQuery:=False
         End With
+        On Error GoTo 0
     End If
 
     ' Melindungi worksheet jika password diberikan
-    If Password <> "" Then wsData.Protect Password
+    If Password <> "" Then
+        wsData.Protect Password
+    End If
 
     ' Menghapus semua koneksi data dalam workbook
     Dim conn As WorkbookConnection
@@ -201,11 +200,10 @@ Sub GsheetDataLogin()
 
     If MessageUpdate = "" Then
         MsgBox "Username tidak terdaftar!", vbExclamation
-        Exit Sub
     Else
         MsgBox MessageUpdate, vbInformation, "Informasi"
     End If
-Exit Sub
+    Exit Sub
 
 RefreshError:
     MsgBox UpdateErrorMsg, vbExclamation
