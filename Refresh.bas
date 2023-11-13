@@ -30,11 +30,10 @@ Sub GsheetDataUpdate()
     End If
     
     ' Menghapus lembar kerja yang sudah ada jika ada
-    Application.DisplayAlerts = False
     On Error Resume Next
+    Application.DisplayAlerts = False
     ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetHidden
     ThisWorkbook.Sheets(SheetNameData).Delete
-    On Error GoTo 0
     Application.DisplayAlerts = True
 
     ' Membuat lembar kerja baru
@@ -47,6 +46,7 @@ Sub GsheetDataUpdate()
     URLDAT = "https://data." & Author & ".eu.org/" & PathData
     
     ' Menyiapkan QueryTable dan mengambil data
+    On Error GoTo RefreshError
     With wsData.QueryTables.Add(Connection:="URL;" & URLDAT, Destination:=wsData.Range("A1"))
         .Refresh BackgroundQuery:=False
     End With
@@ -68,7 +68,6 @@ Sub GsheetDataUpdate()
         With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("H1"))
             .Refresh BackgroundQuery:=False
         End With
-        On Error GoTo 0
     End If
 
     ' Menghapus semua koneksi data dalam workbook
@@ -143,11 +142,10 @@ Sub GsheetDataLogin()
     End If
     
     ' Menghapus lembar kerja yang sudah ada jika ada
-    Application.DisplayAlerts = False
     On Error Resume Next
+    Application.DisplayAlerts = False
     ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetHidden
     ThisWorkbook.Sheets(SheetNameData).Delete
-    On Error GoTo 0
     Application.DisplayAlerts = True
 
     ' Membuat lembar kerja baru
@@ -160,6 +158,7 @@ Sub GsheetDataLogin()
     URLDAT = "https://data." & Author & ".eu.org/" & PathData
     
     ' Menyiapkan QueryTable dan mengambil data
+    On Error GoTo RefreshError
     With wsData.QueryTables.Add(Connection:="URL;" & URLDAT, Destination:=wsData.Range("A1"))
         .Refresh BackgroundQuery:=False
     End With
@@ -181,7 +180,6 @@ Sub GsheetDataLogin()
         With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("H1"))
             .Refresh BackgroundQuery:=False
         End With
-        On Error GoTo 0
     End If
 
     ' Menghapus semua koneksi data dalam workbook
