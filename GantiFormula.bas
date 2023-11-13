@@ -15,7 +15,7 @@ Sub CopyFormulas()
     On Error GoTo 0
     
     If sheetSumber Is Nothing Then
-        MsgBox "Unduh ulang aplikasi dan hubungi Admin!", vbExclamation
+        MsgBox "Sheet sumber tidak ditemukan. Hubungi Admin!", vbExclamation
         Exit Sub
     End If
     
@@ -24,13 +24,13 @@ Sub CopyFormulas()
     pemisah = Application.International(xlListSeparator)
     
     Dim barisTerakhir As Long
-    barisTerakhir = sheetSumber.Cells(sheetSumber.Rows.count, rumusKolomSumber).End(xlUp).row
+    barisTerakhir = sheetSumber.Cells(sheetSumber.Rows.Count, rumusKolomSumber).End(xlUp).Row
     
     Dim i As Long
     For i = 1 To barisTerakhir
         ' Dapatkan rumus dari kolom H
         Dim nilaiRumus As String
-        nilaiRumus = sheetSumber.Cells(i, rumusKolomSumber).formula
+        nilaiRumus = sheetSumber.Cells(i, rumusKolomSumber).Formula
         
         ' Ganti pemisah rumus dengan pemisah regional
         nilaiRumus = Replace(nilaiRumus, ";", pemisah)
@@ -38,11 +38,11 @@ Sub CopyFormulas()
         
         ' Dapatkan nama lembar tujuan dari kolom I
         Dim namaLembarTujuan As String
-        namaLembarTujuan = sheetSumber.Cells(i, namaSheetTujuanKolom).value
+        namaLembarTujuan = sheetSumber.Cells(i, namaSheetTujuanKolom).Value
         
         ' Dapatkan sel tujuan dari kolom J
         Dim selTujuan As String
-        selTujuan = sheetSumber.Cells(i, selTujuanKolom).value
+        selTujuan = sheetSumber.Cells(i, selTujuanKolom).Value
         
         ' Periksa apakah nama lembar tujuan dan sel tidak kosong
         If namaLembarTujuan <> "" And selTujuan <> "" Then
@@ -52,11 +52,11 @@ Sub CopyFormulas()
             On Error GoTo 0
             
             If Not lembarTujuan Is Nothing Then
-                ' Unprotect worksheet dengan kata sandi jika diperlukan
+                ' Unprotect lembar tujuan dengan kata sandi jika diperlukan
                 Dim password As String
                 password = "" ' Ganti dengan kata sandi yang benar
                 
-                ' Pengecekan password dan lembar terlindungi
+                ' Cek password dan proteksi lembar
                 If password <> "" Then
                     On Error Resume Next
                     lembarTujuan.Unprotect password
@@ -66,30 +66,31 @@ Sub CopyFormulas()
                         Exit Sub
                     End If
                 ElseIf lembarTujuan.ProtectContents Then
-                    MsgBox "Sheet terlindungi, masukan kata sandi!", vbExclamation
+                    MsgBox "Lembar terlindungi, masukkan kata sandi!", vbExclamation
                     Exit Sub
                 End If
                 
                 ' Tempelkan nilai sebagai teks ke sel tujuan di lembar tujuan
                 Application.DisplayAlerts = False
-                lembarTujuan.Range(selTujuan).value = nilaiRumus
+                lembarTujuan.Range(selTujuan).Value = nilaiRumus
                 Application.DisplayAlerts = True
-
-                ' Proses setelah paste formula
+                
+                ' Hapus tautan buku kerja eksternal
+                Dim tautan As Variant
+                tautan = ThisWorkbook.LinkSources(xlExcelLinks)
+                
+                If Not IsEmpty(tautan) Then
+                    Dim j As Long
+                    For j = 1 To UBound(tautan)
+                        ThisWorkbook.BreakLink Name:=tautan(j), Type:=xlLinkTypeExcelLinks
+                    Next j
+                End If
+                
+                ' Proses setelah paste rumus
                 If password <> "" Then
                     lembarTujuan.Protect password
                 End If
             End If
         End If
     Next i
-
-    ' Hapus tautan buku kerja eksternal
-    Dim tautan As Variant
-    tautan = ThisWorkbook.LinkSources(xlExcelLinks)
-    
-    If Not IsEmpty(tautan) Then
-        For i = 1 To UBound(tautan)
-            ThisWorkbook.BreakLink Name:=tautan(i), Type:=xlLinkTypeExcelLinks
-        Next i
-    End If
 End Sub
