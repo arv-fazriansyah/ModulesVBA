@@ -1,90 +1,73 @@
 Sub CopyFormulas()
-    ' Deklarasi variabel
     Dim namaSheetSumber As String
     Dim rumusKolomSumber As String
     Dim namaSheetTujuanKolom As String
     Dim selTujuanKolom As String
+    Dim PasswordSheetTujuanKolom As String ' Variabel yang ditambahkan
     
-    ' Inisialisasi nilai variabel
     namaSheetSumber = "DATAUSER"
     rumusKolomSumber = "AA"
     namaSheetTujuanKolom = "AB"
     selTujuanKolom = "AC"
+    PasswordSheetTujuanKolom = "AD" ' Kolom kata sandi
     
-    ' Pesan kesalahan
-    UpdateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
-    
-    On Error GoTo RefreshError
-    
-    ' Mengatur sumber data
     Dim sheetSumber As Worksheet
+    ' Penanganan kesalahan untuk lembar sumber
     On Error Resume Next
     Set sheetSumber = ThisWorkbook.Sheets(namaSheetSumber)
+    On Error GoTo 0
     
-    ' Memeriksa keberadaan lembar kerja
     If sheetSumber Is Nothing Then
-        MsgBox "Logout Aplikasi, kemudian Update pada halaman Login!", vbExclamation
+        MsgBox "Lembar sumber tidak ditemukan. Hubungi Admin!", vbExclamation
         Exit Sub
     End If
     
-    ' Mendapatkan pemisah yang sesuai dengan pengaturan lokal
     Dim pemisah As String
     pemisah = Application.International(xlListSeparator)
     
-    ' Menentukan baris terakhir
     Dim barisTerakhir As Long
     barisTerakhir = sheetSumber.Cells(sheetSumber.Rows.Count, rumusKolomSumber).End(xlUp).Row
     
-    ' Iterasi baris
     Dim i As Long
     For i = 1 To barisTerakhir
-        ' Mendapatkan rumus
         Dim nilaiRumus As String
         nilaiRumus = sheetSumber.Cells(i, rumusKolomSumber).Formula
         nilaiRumus = Replace(nilaiRumus, ";", pemisah)
         nilaiRumus = Replace(nilaiRumus, ",", pemisah)
         
-        ' Mendapatkan nama lembar tujuan dan sel tujuan
         Dim namaLembarTujuan As String
         namaLembarTujuan = sheetSumber.Cells(i, namaSheetTujuanKolom).Value
         
         Dim selTujuan As String
         selTujuan = sheetSumber.Cells(i, selTujuanKolom).Value
         
-        ' Memeriksa apakah data ada
+        Dim passwordLembarTujuan As String
+        passwordLembarTujuan = sheetSumber.Cells(i, PasswordSheetTujuanKolom).Value ' Ambil kata sandi
+        
         If namaLembarTujuan <> "" And selTujuan <> "" Then
-            ' Mengatur lembar tujuan
             Dim lembarTujuan As Worksheet
             On Error Resume Next
             Set lembarTujuan = ThisWorkbook.Sheets(namaLembarTujuan)
             On Error GoTo 0
             
-            ' Memeriksa keberadaan lembar tujuan
             If Not lembarTujuan Is Nothing Then
-                ' Mendapatkan password lembar tujuan
-                Dim PasswordSheetTujuan As String
-                PasswordSheetTujuan = sheetSumber.Cells(i, "AD").Value
-                
-                ' Mengecek dan memproteksi lembar tujuan
-                If PasswordSheetTujuan <> "" Then
+                If passwordLembarTujuan <> "" Then
                     On Error Resume Next
-                    lembarTujuan.Unprotect PasswordSheetTujuan
+                    lembarTujuan.Unprotect passwordLembarTujuan
                     On Error GoTo 0
                     If lembarTujuan.ProtectContents Then
-                        MsgBox "Password lembar tujuan salah!", vbExclamation
+                        MsgBox "Kata sandi lembar tujuan salah!", vbExclamation
                         Exit Sub
                     End If
                 ElseIf lembarTujuan.ProtectContents Then
-                    MsgBox "Lembar terlindungi. Masukkan password!", vbExclamation
+                    MsgBox "Lembar terlindungi. Masukkan kata sandi!", vbExclamation
                     Exit Sub
                 End If
                 
-                ' Memasukkan nilai rumus ke lembar tujuan
                 Application.DisplayAlerts = False
                 lembarTujuan.Range(selTujuan).Value = nilaiRumus
                 Application.DisplayAlerts = True
                 
-                ' Menghapus tautan Excel
                 Dim tautan As Variant
                 tautan = ThisWorkbook.LinkSources(xlExcelLinks)
                 
@@ -95,15 +78,11 @@ Sub CopyFormulas()
                     Next j
                 End If
                 
-                ' Melindungi lembar setelah selesai memasukkan nilai
-                If PasswordSheetTujuan <> "" Then
-                    lembarTujuan.Protect PasswordSheetTujuan
+                ' Lindungi lembar tujuan setelah mengisi nilai
+                If passwordLembarTujuan <> "" Then
+                    lembarTujuan.Protect passwordLembarTujuan
                 End If
             End If
         End If
     Next i
-    Exit Sub
-    
-RefreshError:
-    MsgBox UpdateErrorMsg, vbExclamation
 End Sub
