@@ -5,7 +5,7 @@ Sub CopyFormulas()
     Dim selTujuanKolom As String
     Dim PasswordSheetTujuanKolom As String
     
-    namaSheetSumber = "DATAUSER"
+    namaSheetSumber = Env.DataBase
     rumusKolomSumber = "AA"
     namaSheetTujuanKolom = "AB"
     selTujuanKolom = "AC"
