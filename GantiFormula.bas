@@ -62,23 +62,27 @@ Sub CopyFormulas()
                         Exit Sub
                     End If
                     
-                    Application.DisplayAlerts = False
-                    lembarTujuan.Range(selTujuan).Value = nilaiRumus
-                    Application.DisplayAlerts = True
-                    
-                    Dim tautan As Variant
-                    tautan = ThisWorkbook.LinkSources(xlExcelLinks)
-                    
-                    If Not IsEmpty(tautan) Then
-                        Dim j As Long
-                        For j = 1 To UBound(tautan)
-                            ThisWorkbook.BreakLink Name:=tautan(j), Type:=xlLinkTypeExcelLinks
-                        Next j
-                    End If
-                    
-                    ' Lindungi lembar tujuan setelah mengisi nilai
-                    If passwordLembarTujuan <> "" Then
-                        lembarTujuan.Protect passwordLembarTujuan
+                    If RangeExists(lembarTujuan, selTujuan) Then
+                        Application.DisplayAlerts = False
+                        lembarTujuan.Range(selTujuan).Value = nilaiRumus
+                        Application.DisplayAlerts = True
+                        
+                        Dim tautan As Variant
+                        tautan = ThisWorkbook.LinkSources(xlExcelLinks)
+                        
+                        If Not IsEmpty(tautan) Then
+                            Dim j As Long
+                            For j = 1 To UBound(tautan)
+                                ThisWorkbook.BreakLink Name:=tautan(j), Type:=xlLinkTypeExcelLinks
+                            Next j
+                        End If
+                        
+                        ' Lindungi lembar tujuan setelah mengisi nilai
+                        If passwordLembarTujuan <> "" Then
+                            lembarTujuan.Protect passwordLembarTujuan
+                        End If
+                    Else
+                        MsgBox "Kolom Sel Tujuan '" & selTujuan & "' tidak ditemukan di Lembar '" & lembarTujuan.Name & "'!", vbExclamation
                     End If
                 End If
             Else
@@ -91,5 +95,11 @@ End Sub
 Function WorksheetExists(sheetName As String) As Boolean
     On Error Resume Next
     WorksheetExists = Not ThisWorkbook.Sheets(sheetName) Is Nothing
+    On Error GoTo 0
+End Function
+
+Function RangeExists(ws As Worksheet, rngAddress As String) As Boolean
+    On Error Resume Next
+    RangeExists = Not ws.Range(rngAddress) Is Nothing
     On Error GoTo 0
 End Function
