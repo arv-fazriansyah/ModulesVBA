@@ -14,7 +14,7 @@ Sub CopyFormulas()
     Dim sheetSumber As Worksheet
     On Error Resume Next
     Set sheetSumber = ThisWorkbook.Sheets(namaSheetSumber)
-    On Error GoTo 0
+    ' On Error GoTo 0 ' Hapus baris ini
     
     If sheetSumber Is Nothing Then
         MsgBox "Logout Aplikasi, kemudian Update pada halaman Login!", vbExclamation
@@ -50,9 +50,9 @@ Sub CopyFormulas()
                 
                 If Not lembarTujuan Is Nothing Then
                     If passwordLembarTujuan <> "" Then
-                        On Error Resume Next
+                        ' On Error Resume Next ' Hapus baris ini
                         lembarTujuan.Unprotect passwordLembarTujuan
-                        On Error GoTo 0
+                        ' On Error GoTo 0 ' Hapus baris ini
                         If lembarTujuan.ProtectContents Then
                             MsgBox "Kata sandi untuk " & lembarTujuan.Name & " salah!", vbExclamation
                             Exit Sub
@@ -95,11 +95,11 @@ End Sub
 Function WorksheetExists(sheetName As String) As Boolean
     On Error Resume Next
     WorksheetExists = Not ThisWorkbook.Sheets(sheetName) Is Nothing
-    On Error GoTo 0
+    ' On Error GoTo 0 ' Hapus baris ini
 End Function
 
 Function RangeExists(ws As Worksheet, rngAddress As String) As Boolean
     On Error Resume Next
     RangeExists = Not ws.Range(rngAddress) Is Nothing
-    On Error GoTo 0
+    ' On Error GoTo 0 ' Hapus baris ini
 End Function
