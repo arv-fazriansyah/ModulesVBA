@@ -25,63 +25,71 @@ Sub CopyFormulas()
     pemisah = Application.International(xlListSeparator)
     
     Dim barisTerakhir As Long
-    barisTerakhir = sheetSumber.Cells(sheetSumber.Rows.count, rumusKolomSumber).End(xlUp).row
+    barisTerakhir = sheetSumber.Cells(sheetSumber.Rows.Count, rumusKolomSumber).End(xlUp).Row
     
     Dim i As Long
-    For i = 1 To barisTerakhir
+    For i = 2 To barisTerakhir
         Dim nilaiRumus As String
-        nilaiRumus = sheetSumber.Cells(i, rumusKolomSumber).formula
+        nilaiRumus = sheetSumber.Cells(i, rumusKolomSumber).Formula
         nilaiRumus = Replace(nilaiRumus, ";", pemisah)
         nilaiRumus = Replace(nilaiRumus, ",", pemisah)
         
         Dim namaLembarTujuan As String
-        namaLembarTujuan = sheetSumber.Cells(i, namaSheetTujuanKolom).value
+        namaLembarTujuan = sheetSumber.Cells(i, namaSheetTujuanKolom).Value
         
         Dim selTujuan As String
-        selTujuan = sheetSumber.Cells(i, selTujuanKolom).value
+        selTujuan = sheetSumber.Cells(i, selTujuanKolom).Value
         
         Dim passwordLembarTujuan As String
-        passwordLembarTujuan = sheetSumber.Cells(i, PasswordSheetTujuanKolom).value ' Ambil kata sandi
+        passwordLembarTujuan = sheetSumber.Cells(i, PasswordSheetTujuanKolom).Value ' Ambil kata sandi
         
         If namaLembarTujuan <> "" And selTujuan <> "" Then
-            Dim lembarTujuan As Worksheet
-            On Error Resume Next
-            Set lembarTujuan = ThisWorkbook.Sheets(namaLembarTujuan)
-            On Error GoTo 0
-            
-            If Not lembarTujuan Is Nothing Then
-                If passwordLembarTujuan <> "" Then
-                    On Error Resume Next
-                    lembarTujuan.Unprotect passwordLembarTujuan
-                    On Error GoTo 0
-                    If lembarTujuan.ProtectContents Then
-                        MsgBox "Kata sandi untuk " & lembarTujuan.Name & " salah!", vbExclamation
+            If WorksheetExists(namaLembarTujuan) Then
+                Dim lembarTujuan As Worksheet
+                Set lembarTujuan = ThisWorkbook.Sheets(namaLembarTujuan)
+                
+                If Not lembarTujuan Is Nothing Then
+                    If passwordLembarTujuan <> "" Then
+                        On Error Resume Next
+                        lembarTujuan.Unprotect passwordLembarTujuan
+                        On Error GoTo 0
+                        If lembarTujuan.ProtectContents Then
+                            MsgBox "Kata sandi untuk " & lembarTujuan.Name & " salah!", vbExclamation
+                            Exit Sub
+                        End If
+                    ElseIf lembarTujuan.ProtectContents Then
+                        MsgBox "Lembar " & lembarTujuan.Name & " terlindungi. Masukkan kata sandi!", vbExclamation
                         Exit Sub
                     End If
-                ElseIf lembarTujuan.ProtectContents Then
-                    MsgBox "Lembar " & lembarTujuan.Name & " terlindungi. Masukkan kata sandi!", vbExclamation
-                    Exit Sub
+                    
+                    Application.DisplayAlerts = False
+                    lembarTujuan.Range(selTujuan).Value = nilaiRumus
+                    Application.DisplayAlerts = True
+                    
+                    Dim tautan As Variant
+                    tautan = ThisWorkbook.LinkSources(xlExcelLinks)
+                    
+                    If Not IsEmpty(tautan) Then
+                        Dim j As Long
+                        For j = 1 To UBound(tautan)
+                            ThisWorkbook.BreakLink Name:=tautan(j), Type:=xlLinkTypeExcelLinks
+                        Next j
+                    End If
+                    
+                    ' Lindungi lembar tujuan setelah mengisi nilai
+                    If passwordLembarTujuan <> "" Then
+                        lembarTujuan.Protect passwordLembarTujuan
+                    End If
                 End If
-                
-                Application.DisplayAlerts = False
-                lembarTujuan.Range(selTujuan).value = nilaiRumus
-                Application.DisplayAlerts = True
-                
-                Dim tautan As Variant
-                tautan = ThisWorkbook.LinkSources(xlExcelLinks)
-                
-                If Not IsEmpty(tautan) Then
-                    Dim j As Long
-                    For j = 1 To UBound(tautan)
-                        ThisWorkbook.BreakLink Name:=tautan(j), Type:=xlLinkTypeExcelLinks
-                    Next j
-                End If
-                
-                ' Lindungi lembar tujuan setelah mengisi nilai
-                If passwordLembarTujuan <> "" Then
-                    lembarTujuan.Protect passwordLembarTujuan
-                End If
+            Else
+                MsgBox "Lembar Tujuan '" & namaLembarTujuan & "' tidak ditemukan!", vbExclamation
             End If
         End If
     Next i
 End Sub
+
+Function WorksheetExists(sheetName As String) As Boolean
+    On Error Resume Next
+    WorksheetExists = Not ThisWorkbook.Sheets(sheetName) Is Nothing
+    On Error GoTo 0
+End Function
