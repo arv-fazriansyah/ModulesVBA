@@ -1,22 +1,22 @@
 Sub CopyFormulas()
-    Dim namaSheetSumber As String
-    Dim rumusKolomSumber As String
-    Dim namaSheetTujuanKolom As String
-    Dim selTujuanKolom As String
+    Dim NamaSheetSumber As String
+    Dim RumusKolomSumber As String
+    Dim NamaSheetTujuanKolom As String
+    Dim SelTujuanKolom As String
     Dim PasswordSheetTujuanKolom As String
     
-    namaSheetSumber = Env.DataBase
-    rumusKolomSumber = "AA"
-    namaSheetTujuanKolom = "AB"
-    selTujuanKolom = "AC"
+    NamaSheetSumber = Env.DataBase
+    RumusKolomSumber = "AA"
+    NamaSheetTujuanKolom = "AB"
+    SelTujuanKolom = "AC"
     PasswordSheetTujuanKolom = "AD"
     
-    Dim sheetSumber As Worksheet
+    Dim SheetSumber As Worksheet
     On Error Resume Next
-    Set sheetSumber = ThisWorkbook.Sheets(namaSheetSumber)
+    Set SheetSumber = ThisWorkbook.Sheets(NamaSheetSumber)
     ' On Error GoTo 0 ' Hapus baris ini
     
-    If sheetSumber Is Nothing Then
+    If SheetSumber Is Nothing Then
         MsgBox "Logout Aplikasi, kemudian Update pada halaman Login!", vbExclamation
         Exit Sub
     End If
@@ -25,23 +25,23 @@ Sub CopyFormulas()
     pemisah = Application.International(xlListSeparator)
     
     Dim barisTerakhir As Long
-    barisTerakhir = sheetSumber.Cells(sheetSumber.Rows.Count, rumusKolomSumber).End(xlUp).Row
+    barisTerakhir = SheetSumber.Cells(SheetSumber.Rows.count, RumusKolomSumber).End(xlUp).row
     
     Dim i As Long
     For i = 2 To barisTerakhir
         Dim nilaiRumus As String
-        nilaiRumus = sheetSumber.Cells(i, rumusKolomSumber).Formula
+        nilaiRumus = SheetSumber.Cells(i, RumusKolomSumber).formula
         nilaiRumus = Replace(nilaiRumus, ";", pemisah)
         nilaiRumus = Replace(nilaiRumus, ",", pemisah)
         
         Dim namaLembarTujuan As String
-        namaLembarTujuan = sheetSumber.Cells(i, namaSheetTujuanKolom).Value
+        namaLembarTujuan = SheetSumber.Cells(i, NamaSheetTujuanKolom).value
         
         Dim selTujuan As String
-        selTujuan = sheetSumber.Cells(i, selTujuanKolom).Value
+        selTujuan = SheetSumber.Cells(i, SelTujuanKolom).value
         
         Dim passwordLembarTujuan As String
-        passwordLembarTujuan = sheetSumber.Cells(i, PasswordSheetTujuanKolom).Value ' Ambil kata sandi
+        passwordLembarTujuan = SheetSumber.Cells(i, PasswordSheetTujuanKolom).value ' Ambil kata sandi
         
         If namaLembarTujuan <> "" And selTujuan <> "" Then
             If WorksheetExists(namaLembarTujuan) Then
@@ -64,11 +64,11 @@ Sub CopyFormulas()
                     
                     If RangeExists(lembarTujuan, selTujuan) Then
                         Application.DisplayAlerts = False
-                        lembarTujuan.Range(selTujuan).Value = nilaiRumus
+                        lembarTujuan.Range(selTujuan).value = nilaiRumus
                         Application.DisplayAlerts = True
                         
                         Dim tautan As Variant
-                        tautan = ThisWorkbook.LinkSources(xlExcelLinks)
+                        tautan = ThisWorkbook.linkSources(xlExcelLinks)
                         
                         If Not IsEmpty(tautan) Then
                             Dim j As Long
@@ -79,7 +79,7 @@ Sub CopyFormulas()
                         
                         ' Lindungi lembar tujuan setelah mengisi nilai
                         If passwordLembarTujuan <> "" Then
-                            lembarTujuan.Protect passwordLembarTujuan
+                            'lembarTujuan.Protect passwordLembarTujuan
                         End If
                     Else
                         MsgBox "Kolom Sel Tujuan '" & selTujuan & "' tidak ditemukan di Lembar '" & lembarTujuan.Name & "'!", vbExclamation
