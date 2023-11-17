@@ -79,7 +79,7 @@ Sub CopyFormulas()
                         
                         ' Lindungi lembar tujuan setelah mengisi nilai
                         If passwordLembarTujuan <> "" Then
-                            'lembarTujuan.Protect passwordLembarTujuan
+                            lembarTujuan.Protect passwordLembarTujuan, UserInterfaceOnly:=True
                         End If
                     Else
                         MsgBox "Kolom Sel Tujuan '" & selTujuan & "' tidak ditemukan di Lembar '" & lembarTujuan.Name & "'!", vbExclamation
