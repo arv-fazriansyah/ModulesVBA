@@ -1,0 +1,18 @@
+<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui">
+  <commands>
+    <command idMso="ApplicationOptionsDialog" enabled="false" />
+    <command idMso="TabInfo" enabled="false" />
+    <command idMso="TabOfficeStart" enabled="false" />
+    <command idMso="TabRecent" enabled="false" />
+    <command idMso="TabSave" enabled="false" />
+    <command idMso="TabPrint" enabled="true" />
+    <command idMso="TabShare" enabled="false" />
+    <command idMso="Publish2Tab" enabled="false"/>
+    <command idMso="TabPublish" enabled="false"/>
+    <command idMso="TabHelp" enabled="false"/>
+    <command idMso="TabOfficeFeedback" enabled="false"/>
+    <command idMso="FileSave" enabled="true"/>
+    <command idMso="HistoryTab" enabled="false"/>
+    <command idMso="FileClose" enabled="false"/>
+  </commands>
+</customUI>
