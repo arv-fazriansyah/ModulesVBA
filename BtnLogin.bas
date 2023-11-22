@@ -1,45 +1,52 @@
 Sub LoginUser(UserForm As Object)
     Dim username As String
-    Dim Password As String
+    Dim password As String
     Dim dbSheet As Worksheet
     Dim dbRange As Range
     Dim dbRow As Range
-    Dim PasswordX As String
+    Dim Pass As String
+    Dim ErrorMsg As String
+    
+    ErrorMsg = "Masukan Username, kemudian Update!!"
+    On Error GoTo Error
     
     ' Konfigurasi
-    PasswordX = "ADMIN"
+    Pass = ThisWorkbook.Sheets(Env.DataBase).Range("G2")
     
     ' Dapatkan nilai dari TextBox "username" dan "password" pada UserForm
     username = UserForm.Controls("TextBoxUsername").value
-    Password = UserForm.Controls("TextBoxPassword").value
+    password = UserForm.Controls("TextBoxPassword").value
 
     ' Validasi jika username atau password kosong
-    If username = "" Or Password = "" Or username = "Username" Or Password = "Password" Then
-        MsgBox "Mohon lengkapi data username dan password.", vbInformation, "Informasi"
+    If username = "" Or password = "" Or username = "Username" Or password = "Password" Then
+        MsgBox "Mohon lengkapi kolom username dan password.", vbInformation, "Informasi"
         Exit Sub
     End If
 
     ' Validasi ADMIN
-    If username = PasswordX And Password = PasswordX Then
+    If username = Pass And password = Pass Then
         ' Login sukses untuk ADMIN
-        HalamanLogin.Hide
+        Dev.HideForm
+        Dev.HapusData
+        
     Else
-        ' Update
-        BtnUpdate.GsheetData
-
+        
         ' Validasi pengguna reguler
-        Set dbSheet = ThisWorkbook.Sheets("DATAUSER")
-        Set dbRange = dbSheet.UsedRange
+        Set dbSheet = ThisWorkbook.Sheets(Env.DataBase)
+        Set dbRange = dbSheet.Range("B2:C2")
 
         ' Iterasi melalui setiap baris
         Dim isValidUser As Boolean
         isValidUser = False
-
+        
+        On Error Resume Next
         For Each dbRow In dbRange.Rows
-            If username = dbRow.Cells(1, 1).value And Password = dbRow.Cells(1, 2).value Then
+            If username = dbRow.Cells(1, 1).value And password = dbRow.Cells(1, 2).value Then
                 ' Login sukses
-                HalamanLogin.Hide
                 isValidUser = True
+                Dev.HideForm
+                Dev.HapusData
+                
                 Exit For
             End If
         Next dbRow
@@ -49,4 +56,8 @@ Sub LoginUser(UserForm As Object)
             MsgBox "Login Gagal. Cek kembali username dan password Anda.", vbInformation, "Informasi"
         End If
     End If
+    Exit Sub
+    
+Error:
+    MsgBox ErrorMsg, vbExclamation
 End Sub
