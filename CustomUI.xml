@@ -15,4 +15,17 @@
     <command idMso="HistoryTab" enabled="false"/>
     <command idMso="FileClose" enabled="false"/>
   </commands>
+  <ribbon startFromScratch="false">
+    <tabs>
+      <tab idMso="TabHome" visible="true" />
+      <tab idMso="TabView" visible="false" />
+      <tab idMso="TabReview" visible="false" />
+      <tab idMso="TabData" visible="false" />
+      <tab idMso="TabAutomate" visible="false" />
+      <tab idMso="TabInsert" visible="false" />
+      <tab idMso="TabPageLayoutExcel" visible="false" />
+      <tab idMso="TabFormulas" visible="false" />
+      <tab idMso="TabDeveloper" visible="false" />
+    </tabs>
+  </ribbon>
 </customUI>
