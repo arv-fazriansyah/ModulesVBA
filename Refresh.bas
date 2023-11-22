@@ -1,8 +1,8 @@
 Sub GsheetDataUpdate()
     Dim wsData As Worksheet
     Dim SheetNameData As String
-    Dim PathData As String, PathFormula As String
-    Dim Password As String, Author As String
+    Dim PathData As String, PathFormula As String, SubPath As String
+    Dim password As String, Author As String
     Dim SearchValue As String
     Dim InternetErrorMsg As String, UpdateErrorMsg As String
     
@@ -20,8 +20,9 @@ Sub GsheetDataUpdate()
 
     ' Konfigurasi data
     Author = Env.Author
-    SheetNameData = Env.DataBase
+    SubPath = Env.SubPath
     PathData = Env.Token
+    SheetNameData = Env.DataBase
     SearchValue = ThisWorkbook.Sheets(SheetNameData).Range("B2").value
     
     If SearchValue = "" Then
@@ -43,7 +44,7 @@ Sub GsheetDataUpdate()
     
     ' Membuat URL untuk mengambil data
     Dim URLDAT As String, URLFOR As String
-    URLDAT = "https://data." & Author & ".eu.org/" & PathData
+    URLDAT = "https://" & SubPath & "." & Author & ".eu.org/" & PathData
     
     ' Menyiapkan QueryTable dan mengambil data
     On Error GoTo RefreshError
@@ -60,7 +61,7 @@ Sub GsheetDataUpdate()
     
     ' Membuat URL untuk mengambil data
     PathFormula = wsData.Range("F2").value
-    URLFOR = "https://data." & Author & ".eu.org/" & PathFormula
+    URLFOR = "https://" & SubPath & "." & Author & ".eu.org/" & PathFormula
     
     ' Menyiapkan QueryTable dan mengambil data
     If PathFormula <> "" Then
@@ -80,9 +81,9 @@ Sub GsheetDataUpdate()
     ' Disini
     
     ' Melindungi worksheet jika password diberikan
-    Password = wsData.Range("G2").value
-    If Password <> "" Then
-        wsData.Protect Password
+    password = wsData.Range("G2").value
+    If password <> "" Then
+        wsData.Protect password
     End If
 
     ' Menampilkan pesan setelah proses selesai
@@ -113,8 +114,8 @@ End Function
 Sub GsheetDataLogin()
     Dim wsData As Worksheet
     Dim SheetNameData As String
-    Dim PathData As String, PathFormula As String
-    Dim Password As String, Author As String
+    Dim PathData As String, PathFormula As String, SubPath As String
+    Dim password As String, Author As String
     Dim SearchValue As String
     Dim InternetErrorMsg As String, UpdateErrorMsg As String
     
@@ -132,9 +133,10 @@ Sub GsheetDataLogin()
 
     ' Konfigurasi data
     Author = Env.Author
-    SheetNameData = Env.DataBase
+    SubPath = Env.SubPath
     PathData = Env.Token
-    SearchValue = HalamanLogin.TextBoxUsername.value
+    SheetNameData = Env.DataBase
+    SearchValue = ThisWorkbook.Sheets(SheetNameData).Range("B2").value
     
     If SearchValue = "" Or SearchValue = "Username" Then
         MsgBox "Masukkan Username terlebih dahulu!", vbExclamation
@@ -155,7 +157,7 @@ Sub GsheetDataLogin()
     
     ' Membuat URL untuk mengambil data
     Dim URLDAT As String, URLFOR As String
-    URLDAT = "https://data." & Author & ".eu.org/" & PathData
+    URLDAT = "https://" & SubPath & "." & Author & ".eu.org/" & PathData
     
     ' Menyiapkan QueryTable dan mengambil data
     On Error GoTo RefreshError
@@ -172,7 +174,7 @@ Sub GsheetDataLogin()
     
     ' Membuat URL untuk mengambil data
     PathFormula = wsData.Range("F2").value
-    URLFOR = "https://data." & Author & ".eu.org/" & PathFormula
+    URLFOR = "https://" & SubPath & "." & Author & ".eu.org/" & PathFormula
     
     ' Menyiapkan QueryTable dan mengambil data
     If PathFormula <> "" Then
@@ -192,9 +194,9 @@ Sub GsheetDataLogin()
     ' Disini
     
     ' Melindungi worksheet jika password diberikan
-    Password = wsData.Range("G2").value
-    If Password <> "" Then
-        wsData.Protect Password
+    password = wsData.Range("G2").value
+    If password <> "" Then
+        wsData.Protect password
     End If
     
     ' Menampilkan pesan setelah proses selesai
