@@ -1,23 +1,23 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui">
   <commands>
-    <command idMso="ApplicationOptionsDialog" enabled="false" />
+    <command idMso="ApplicationOptionsDialog" enabled="true" />
     <command idMso="TabInfo" enabled="false" />
     <command idMso="TabOfficeStart" enabled="false" />
     <command idMso="TabRecent" enabled="false" />
     <command idMso="TabSave" enabled="false" />
-    <command idMso="TabPrint" enabled="true" />
-    <command idMso="TabShare" enabled="false" />
+    <command idMso="TabPrint" enabled="false" />
+    <command idMso="ShareDocument" enabled="false" />
     <command idMso="Publish2Tab" enabled="false"/>
     <command idMso="TabPublish" enabled="false"/>
     <command idMso="TabHelp" enabled="false"/>
     <command idMso="TabOfficeFeedback" enabled="false"/>
-    <command idMso="FileSave" enabled="true"/>
+    <command idMso="FileSave" enabled="false"/>
     <command idMso="HistoryTab" enabled="false"/>
     <command idMso="FileClose" enabled="false"/>
   </commands>
   <ribbon startFromScratch="false">
     <tabs>
-      <tab idMso="TabHome" visible="true" />
+      <tab idMso="TabHome" visible="false" />
       <tab idMso="TabView" visible="false" />
       <tab idMso="TabReview" visible="false" />
       <tab idMso="TabData" visible="false" />
@@ -25,7 +25,7 @@
       <tab idMso="TabInsert" visible="false" />
       <tab idMso="TabPageLayoutExcel" visible="false" />
       <tab idMso="TabFormulas" visible="false" />
-      <tab idMso="TabDeveloper" visible="false" />
+      <tab idMso="TabDeveloper" visible="true" />
     </tabs>
   </ribbon>
 </customUI>
