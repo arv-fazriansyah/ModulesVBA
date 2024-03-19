@@ -5,12 +5,22 @@ Sub SendDataToGoogleSheet()
     Dim RangeData As Range
     Dim DataArray As Variant
     Dim i As Long
+    Dim SheetName As String
+    Dim StartColumn As String
+    Dim EndColumn As String
 
     ' URL for Google Sheets REST API
-    URL = "https://script.google.com/macros/s/AKfycby9dV6iBiXT8r5wLFiUQYSrFVG5Q3V0AcEAL9E61vEA9YZzysdQRtUfpXRlh8Z5g6K-/exec?sheet=Sheet2&range=A:H"
+    URL = "https://" & SubPath & "." & Author & ".eu.org/" & "send"
+
+    ' Set the sheet name and data range
+    SheetName = "DEV"
+    StartColumn = "AA"
+    EndColumn = "AH"
 
     ' Set the data range from Excel
-    Set RangeData = ThisWorkbook.Sheets("DEV").Range("AA2:AH" & ThisWorkbook.Sheets("DEV").Cells(ThisWorkbook.Sheets("DEV").Rows.Count, "AA").End(xlUp).Row)
+    With ThisWorkbook.Sheets(SheetName)
+        Set RangeData = .Range(StartColumn & "2:" & EndColumn & .Cells(.Rows.Count, StartColumn).End(xlUp).Row)
+    End With
 
     ' Convert the data range to an array
     DataArray = RangeData.Value
@@ -38,8 +48,9 @@ Sub SendDataToGoogleSheet()
     ' Send the POST request
     HTTPReq.Open "POST", URL, False
     HTTPReq.setRequestHeader "Content-Type", "application/json"
-    HTTPReq.send JSONString
+    HTTPReq.Send JSONString
 
     ' Show the result message
     MsgBox "Data has been successfully sent to Google Sheets.", vbInformation
 End Sub
+
