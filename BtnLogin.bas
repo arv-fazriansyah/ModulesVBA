@@ -8,23 +8,38 @@ Sub LoginUser(UserForm As Object)
     Dim ErrorMsg As String
     
     ErrorMsg = "Masukan Username, kemudian Update!!"
+    ErrorMsgDev = "Download ulang Aplikasi, hubungi Admin"
     On Error GoTo Error
     
     ' Konfigurasi
     Pass = ThisWorkbook.Sheets(Env.DataBase).Range("G2")
     
     ' Dapatkan nilai dari TextBox "username" dan "password" pada UserForm
-    username = UserForm.Controls("TextBoxUsername").value
-    password = UserForm.Controls("TextBoxPassword").value
+    username = UserForm.Controls("TextBoxUsername").Value
+    password = UserForm.Controls("TextBoxPassword").Value
 
-    ' Validasi jika username atau password kosong
-    If username = "" Or password = "" Or username = "Username" Or password = "Password" Then
-        MsgBox "Mohon lengkapi kolom username dan password.", vbInformation, "Informasi"
+    ' Validasi jika username kosong
+    If username = "" Or username = "Username" Then
+        MsgBox "Mohon isi kolom username.", vbInformation, "Informasi"
+        Exit Sub
+    End If
+    
+    ' Validasi jika password kosong
+    If password = "" Or password = "Password" Then
+        MsgBox "Mohon isi kolom password.", vbInformation, "Informasi"
         Exit Sub
     End If
 
     ' Validasi ADMIN
     If username = Pass And password = Pass Then
+        ' Menambakan informasi lain
+        On Error GoTo ErrorDev
+        ThisWorkbook.Sheets("DEV").Range("F2").Value = username
+        Dev.CekIDPerangkat
+        Dev.CekIPPublik
+        Dev.CekNamaKomputer
+        Dev.CekVersiOffice
+        Dev.CekWaktu
         ' Login sukses untuk ADMIN
         Dev.HideForm
         Dev.HapusData
@@ -32,6 +47,7 @@ Sub LoginUser(UserForm As Object)
     Else
         
         ' Validasi pengguna reguler
+        BtnUpdate.GsheetDataLogin
         Set dbSheet = ThisWorkbook.Sheets(Env.DataBase)
         Set dbRange = dbSheet.Range("B2:C2")
 
@@ -41,8 +57,16 @@ Sub LoginUser(UserForm As Object)
         
         On Error Resume Next
         For Each dbRow In dbRange.Rows
-            If username = dbRow.Cells(1, 1).value And password = dbRow.Cells(1, 2).value Then
-                ' Login sukses
+            If username = dbRow.Cells(1, 1).Value And password = dbRow.Cells(1, 2).Value Then
+                ' Menambakan informasi lain
+                On Error GoTo ErrorDev
+                ThisWorkbook.Sheets("DEV").Range("F2").Value = username
+                Dev.CekIDPerangkat
+                Dev.CekIPPublik
+                Dev.CekNamaKomputer
+                Dev.CekVersiOffice
+                Dev.CekWaktu
+                ' Login User sukses
                 isValidUser = True
                 Dev.HideForm
                 Dev.HapusData
@@ -60,4 +84,6 @@ Sub LoginUser(UserForm As Object)
     
 Error:
     MsgBox ErrorMsg, vbExclamation
+ErrorDev:
+    MsgBox ErrorMsgDev, vbExclamation
 End Sub
