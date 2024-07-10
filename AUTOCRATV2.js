@@ -5,20 +5,10 @@ function autoMergeFiles() {
   // Check if SETTINGS sheet exists, if not, create it and set headers
   if (!settingsSheet) {
     settingsSheet = ss.insertSheet("SETTING");
-    // Define your headers here
-    const headers = [
-      "Job Name",
-      "Template ID",
-      "Data Sheet ID",
-      "File Name",
-      "File Type",
-      "Folders",
-      "Conditionals"
-    ];
+    const headers = ["Job Name", "Template ID", "Data Sheet ID", "File Name", "File Type", "Folders", "Conditionals"];
     settingsSheet.appendRow(headers);
   }
 
-  // Continue with the rest of your logic for processing settings
   const settings = settingsSheet.getDataRange().getValues();
   const headers = settings.shift();
 
@@ -35,51 +25,22 @@ function autoMergeFiles() {
     const outputData = outputSheet.getDataRange().getValues();
     let outputHeaders = outputData.length > 0 ? outputData.shift() : [];
 
-    // Create headers if they don't exist
     const idHeader = `Merged Doc ID - ${jobName}`;
     const urlHeader = `Merged Doc URL - ${jobName}`;
     const downloadLinkHeader = `Link Download - ${jobName}`;
     const timestampHeader = `Timestamp - ${jobName}`;
 
-    let idColumn = outputHeaders.indexOf(idHeader);
-    if (idColumn === -1) {
-      idColumn = outputHeaders.length;
-      outputHeaders.push(idHeader);
-    }
+    const headerIndices = {
+      id: ensureHeader(outputSheet, outputHeaders, idHeader, '#e06666'),
+      url: ensureHeader(outputSheet, outputHeaders, urlHeader, '#D3D3D3'),
+      downloadLink: ensureHeader(outputSheet, outputHeaders, downloadLinkHeader, '#D3D3D3'),
+      timestamp: ensureHeader(outputSheet, outputHeaders, timestampHeader, '#D3D3D3')
+    };
 
-    let urlColumn = outputHeaders.indexOf(urlHeader);
-    if (urlColumn === -1) {
-      urlColumn = outputHeaders.length;
-      outputHeaders.push(urlHeader);
-    }
-
-    let downloadLinkColumn = outputHeaders.indexOf(downloadLinkHeader);
-    if (downloadLinkColumn === -1) {
-      downloadLinkColumn = outputHeaders.length;
-      outputHeaders.push(downloadLinkHeader);
-    }
-
-    let timestampColumn = outputHeaders.indexOf(timestampHeader);
-    if (timestampColumn === -1) {
-      timestampColumn = outputHeaders.length;
-      outputHeaders.push(timestampHeader);
-    }
-
-    if (outputHeaders.length > 0) {
-      outputSheet.getRange(1, idColumn + 1, 1, 1).setValue(idHeader).setFontWeight('bold').setBackground('#e06666');
-      outputSheet.getRange(1, urlColumn + 1, 1, 1).setValue(urlHeader).setFontWeight('bold').setBackground('#D3D3D3');
-      outputSheet.getRange(1, downloadLinkColumn + 1, 1, 1).setValue(downloadLinkHeader).setFontWeight('bold').setBackground('#D3D3D3');
-      outputSheet.getRange(1, timestampColumn + 1, 1, 1).setValue(timestampHeader).setFontWeight('bold').setBackground('#D3D3D3');
-    }
-
-    // Update headers range after potential changes
     outputHeaders = outputSheet.getRange(1, 1, 1, outputHeaders.length).getValues()[0];
 
-    const lastColumn = outputHeaders.length;
-
-    // Process data rows
     outputData.forEach((row, rowIndex) => {
-      if (!row[idColumn] || !row[urlColumn] || !row[downloadLinkColumn] || !row[timestampColumn]) {
+      if (!row[headerIndices.id] || !row[headerIndices.url] || !row[headerIndices.downloadLink] || !row[headerIndices.timestamp]) {
         if (checkConditionals(row, outputHeaders, conditionals)) {
           const outputFileName = generateFileName(row, outputHeaders, outputFileNameTemplate);
           const mergedFile = createMergedFile(templateId, row, outputHeaders, outputFileType, outputFileName);
@@ -89,12 +50,11 @@ function autoMergeFiles() {
           const timestamp = new Date().toLocaleString('en-GB', { hour12: false }).replace(',', '');
 
           const nextRow = rowIndex + 2; // +2 because of headers and 0-based index
-          outputSheet.getRange(nextRow, idColumn + 1).setValue(fileId);
-          outputSheet.getRange(nextRow, urlColumn + 1).setValue(fileUrl);
-          outputSheet.getRange(nextRow, downloadLinkColumn + 1).setValue(downloadLink);
-          outputSheet.getRange(nextRow, timestampColumn + 1).setValue(timestamp);
+          outputSheet.getRange(nextRow, headerIndices.id + 1).setValue(fileId);
+          outputSheet.getRange(nextRow, headerIndices.url + 1).setValue(fileUrl);
+          outputSheet.getRange(nextRow, headerIndices.downloadLink + 1).setValue(downloadLink);
+          outputSheet.getRange(nextRow, headerIndices.timestamp + 1).setValue(timestamp);
 
-          // Flush to ensure the changes are saved before proceeding
           SpreadsheetApp.flush();
         }
       }
@@ -102,18 +62,25 @@ function autoMergeFiles() {
   });
 }
 
-function checkConditionals(row, headers, conditionals) {
-  for (const conditional of conditionals) {
-    const columnIndex = headers.indexOf(conditional.headerMap);
-    if (row[columnIndex] == null || row[columnIndex].toString().trim() === '') {
-      return false;
-    }
+function ensureHeader(sheet, headers, headerName, color) {
+  let index = headers.indexOf(headerName);
+  if (index === -1) {
+    index = headers.length;
+    headers.push(headerName);
+    sheet.getRange(1, index + 1).setValue(headerName).setFontWeight('bold').setBackground(color);
   }
-  return true;
+  return index;
+}
+
+function checkConditionals(row, headers, conditionals) {
+  return conditionals.every(conditional => {
+    const columnIndex = headers.indexOf(conditional.headerMap);
+    return row[columnIndex] != null && row[columnIndex].toString().trim() !== '';
+  });
 }
 
 function generateFileName(row, headers, template) {
-  return template.replace(/<<([^>>]+)>>/g, (match, p1) => {
+  return template.replace(/<<([^>>]+)>>/g, (_, p1) => {
     const columnIndex = headers.indexOf(p1);
     return row[columnIndex] ? row[columnIndex].toString().trim() : '';
   });
@@ -144,7 +111,7 @@ function createMergedFile(templateId, row, headers, fileType, fileName) {
 
 function saveFile(file, folderId) {
   const folder = DriveApp.getFolderById(folderId);
-  const newFile = file.moveTo(folder); // Use moveTo method to move the file to the specified folder
+  const newFile = file.moveTo(folder);
   return newFile.getId();
 }
 
@@ -158,7 +125,6 @@ function generateDownloadLink(fileId, fileType) {
 }
 
 function deleteFolderContents() {
-  const ui = SpreadsheetApp.getUi();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const settingsSheet = ss.getSheetByName("SETTING");
   const settings = settingsSheet.getDataRange().getValues();
@@ -175,16 +141,13 @@ function deleteFolderContents() {
         const file = files.next();
         file.setTrashed(true);
         count++;
-        // Limit batch size to 100 deletions per iteration
         if (count >= 100) {
-          Utilities.sleep(500); // Pause briefly to prevent rate limiting
-          count = 0; // Reset count for next batch
+          Utilities.sleep(500);
+          count = 0;
         }
       }
     }
   });
-
-  // ui.alert('Isi dari semua folder yang terdaftar telah dihapus.');
 }
 
 function onOpen() {
