@@ -1,6 +1,24 @@
 function autoMergeFiles() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const settingsSheet = ss.getSheetByName("SETTING");
+  let settingsSheet = ss.getSheetByName("SETTING");
+
+  // Check if SETTINGS sheet exists, if not, create it and set headers
+  if (!settingsSheet) {
+    settingsSheet = ss.insertSheet("SETTING");
+    // Define your headers here
+    const headers = [
+      "Job Name",
+      "Template ID",
+      "Data Sheet ID",
+      "File Name",
+      "File Type",
+      "Folders",
+      "Conditionals"
+    ];
+    settingsSheet.appendRow(headers);
+  }
+
+  // Continue with the rest of your logic for processing settings
   const settings = settingsSheet.getDataRange().getValues();
   const headers = settings.shift();
 
@@ -145,7 +163,7 @@ function deleteFolderContents() {
   const settingsSheet = ss.getSheetByName("SETTING");
   const settings = settingsSheet.getDataRange().getValues();
   const headers = settings.shift();
-  const folderIdColumn = headers.indexOf("Folders");
+  const folderIdColumn = headers.indexOf("Folders ID");
 
   settings.forEach(setting => {
     const folderId = setting[folderIdColumn];
@@ -171,7 +189,7 @@ function deleteFolderContents() {
 
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
-  ui.createMenu('CustomMenu')
+  ui.createMenu('Custom-Menu')
     .addItem('Run AutoMerge', 'autoMergeFiles')
     .addItem('Delete isi Folder', 'deleteFolderContents')
     .addToUi();
