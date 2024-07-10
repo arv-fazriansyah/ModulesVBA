@@ -59,10 +59,6 @@ function autoMergeFiles() {
 
     const lastColumn = outputHeaders.length;
 
-    // Print headers before processing data rows
-    // Logger.log(`Headers for ${jobName}:`);
-    // Logger.log(outputHeaders);
-
     // Process data rows
     outputData.forEach((row, rowIndex) => {
       if (!row[idColumn] || !row[urlColumn] || !row[downloadLinkColumn] || !row[timestampColumn]) {
