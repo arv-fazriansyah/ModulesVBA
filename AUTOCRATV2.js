@@ -7,10 +7,10 @@ function autoMergeFiles() {
   settings.forEach(setting => {
     const jobName = setting[headers.indexOf("Job Name")];
     const templateId = setting[headers.indexOf("Template ID")];
-    const outputSheetName = setting[headers.indexOf("Output Sheet")];
-    const outputFileNameTemplate = setting[headers.indexOf("Output File Name")];
-    const outputFileType = setting[headers.indexOf("Output File Type")];
-    const folderId = setting[headers.indexOf("Folders ID")];
+    const outputSheetName = setting[headers.indexOf("Data Sheet ID")];
+    const outputFileNameTemplate = setting[headers.indexOf("File Name")];
+    const outputFileType = setting[headers.indexOf("File Type")];
+    const folderId = setting[headers.indexOf("Folders")];
     const conditionals = JSON.parse(setting[headers.indexOf("Conditionals")]);
 
     const outputSheet = ss.getSheetByName(outputSheetName);
@@ -20,7 +20,7 @@ function autoMergeFiles() {
     // Create headers if they don't exist
     const idHeader = `Merged Doc ID - ${jobName}`;
     const urlHeader = `Merged Doc URL - ${jobName}`;
-    const downloadLinkHeader = `Merged Link Download - ${jobName}`;
+    const downloadLinkHeader = `Link Download - ${jobName}`;
     const timestampHeader = `Timestamp - ${jobName}`;
 
     let idColumn = outputHeaders.indexOf(idHeader);
@@ -152,20 +152,27 @@ function deleteFolderContents() {
     if (folderId) {
       const folder = DriveApp.getFolderById(folderId);
       const files = folder.getFiles();
+      let count = 0;
       while (files.hasNext()) {
         const file = files.next();
         file.setTrashed(true);
+        count++;
+        // Limit batch size to 100 deletions per iteration
+        if (count >= 100) {
+          Utilities.sleep(500); // Pause briefly to prevent rate limiting
+          count = 0; // Reset count for next batch
+        }
       }
     }
   });
 
-  ui.alert('Isi dari semua folder yang terdaftar telah dihapus.');
+  // ui.alert('Isi dari semua folder yang terdaftar telah dihapus.');
 }
 
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
-  ui.createMenu('Custom Menu')
-    .addItem('Run Auto Merge', 'autoMergeFiles')
-    .addItem('Delete isi Folder ID', 'deleteFolderContents')
+  ui.createMenu('Custom-Menu')
+    .addItem('Run AutoMerge', 'autoMergeFiles')
+    .addItem('Delete isi Folder', 'deleteFolderContents')
     .addToUi();
 }
