@@ -22,7 +22,7 @@ function autoMergeFiles() {
     const conditionals = JSON.parse(setting[headers.indexOf("Conditionals")]);
 
     const outputSheet = ss.getSheetByName(outputSheetName);
-    const outputData = outputSheet.getDataRange().getValues();
+    const outputData = outputSheet.getDataRange().getDisplayValues();
     let outputHeaders = outputData.length > 0 ? outputData.shift() : [];
 
     const idHeader = `Merged Doc ID - ${jobName}`;
