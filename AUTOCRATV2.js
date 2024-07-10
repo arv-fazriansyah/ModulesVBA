@@ -171,7 +171,7 @@ function deleteFolderContents() {
 
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
-  ui.createMenu('Custom-Menu')
+  ui.createMenu('CustomMenu')
     .addItem('Run AutoMerge', 'autoMergeFiles')
     .addItem('Delete isi Folder', 'deleteFolderContents')
     .addToUi();
