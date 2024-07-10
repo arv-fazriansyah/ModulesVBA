@@ -163,7 +163,7 @@ function deleteFolderContents() {
   const settingsSheet = ss.getSheetByName("SETTING");
   const settings = settingsSheet.getDataRange().getValues();
   const headers = settings.shift();
-  const folderIdColumn = headers.indexOf("Folders ID");
+  const folderIdColumn = headers.indexOf("Folders");
 
   settings.forEach(setting => {
     const folderId = setting[folderIdColumn];
