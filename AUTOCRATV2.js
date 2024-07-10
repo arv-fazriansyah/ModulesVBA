@@ -75,6 +75,9 @@ function autoMergeFiles() {
           outputSheet.getRange(nextRow, urlColumn + 1).setValue(fileUrl);
           outputSheet.getRange(nextRow, downloadLinkColumn + 1).setValue(downloadLink);
           outputSheet.getRange(nextRow, timestampColumn + 1).setValue(timestamp);
+
+          // Flush to ensure the changes are saved before proceeding
+          SpreadsheetApp.flush();
         }
       }
     });
