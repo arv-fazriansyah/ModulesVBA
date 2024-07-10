@@ -138,3 +138,34 @@ function generateDownloadLink(fileId, fileType) {
   }
   return '';
 }
+
+function deleteFolderContents() {
+  const ui = SpreadsheetApp.getUi();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const settingsSheet = ss.getSheetByName("SETTING");
+  const settings = settingsSheet.getDataRange().getValues();
+  const headers = settings.shift();
+  const folderIdColumn = headers.indexOf("Folders ID");
+
+  settings.forEach(setting => {
+    const folderId = setting[folderIdColumn];
+    if (folderId) {
+      const folder = DriveApp.getFolderById(folderId);
+      const files = folder.getFiles();
+      while (files.hasNext()) {
+        const file = files.next();
+        file.setTrashed(true);
+      }
+    }
+  });
+
+  ui.alert('Isi dari semua folder yang terdaftar telah dihapus.');
+}
+
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('Custom Menu')
+    .addItem('Run Auto Merge', 'autoMergeFiles')
+    .addItem('Delete isi Folder ID', 'deleteFolderContents')
+    .addToUi();
+}
