@@ -41,7 +41,7 @@ function autoMergeFiles() {
     }
 
     if (outputHeaders.length > 0) {
-      outputSheet.getRange(1, idColumn + 1, 1, 1).setValue(idHeader).setFontWeight('bold').setBackground('#D3D3D3');
+      outputSheet.getRange(1, idColumn + 1, 1, 1).setValue(idHeader).setFontWeight('bold').setBackground('#e06666');
       outputSheet.getRange(1, urlColumn + 1, 1, 1).setValue(urlHeader).setFontWeight('bold').setBackground('#D3D3D3');
       outputSheet.getRange(1, downloadLinkColumn + 1, 1, 1).setValue(downloadLinkHeader).setFontWeight('bold').setBackground('#D3D3D3');
     }
