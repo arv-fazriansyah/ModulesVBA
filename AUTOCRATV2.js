@@ -21,6 +21,7 @@ function autoMergeFiles() {
     const idHeader = `Merged Doc ID - ${jobName}`;
     const urlHeader = `Merged Doc URL - ${jobName}`;
     const downloadLinkHeader = `Merged Link Download - ${jobName}`;
+    const timestampHeader = `Timestamp - ${jobName}`;
 
     let idColumn = outputHeaders.indexOf(idHeader);
     if (idColumn === -1) {
@@ -40,10 +41,17 @@ function autoMergeFiles() {
       outputHeaders.push(downloadLinkHeader);
     }
 
+    let timestampColumn = outputHeaders.indexOf(timestampHeader);
+    if (timestampColumn === -1) {
+      timestampColumn = outputHeaders.length;
+      outputHeaders.push(timestampHeader);
+    }
+
     if (outputHeaders.length > 0) {
       outputSheet.getRange(1, idColumn + 1, 1, 1).setValue(idHeader).setFontWeight('bold').setBackground('#e06666');
       outputSheet.getRange(1, urlColumn + 1, 1, 1).setValue(urlHeader).setFontWeight('bold').setBackground('#D3D3D3');
       outputSheet.getRange(1, downloadLinkColumn + 1, 1, 1).setValue(downloadLinkHeader).setFontWeight('bold').setBackground('#D3D3D3');
+      outputSheet.getRange(1, timestampColumn + 1, 1, 1).setValue(timestampHeader).setFontWeight('bold').setBackground('#D3D3D3');
     }
 
     // Update headers range after potential changes
@@ -51,20 +59,26 @@ function autoMergeFiles() {
 
     const lastColumn = outputHeaders.length;
 
+    // Print headers before processing data rows
+    // Logger.log(`Headers for ${jobName}:`);
+    // Logger.log(outputHeaders);
+
     // Process data rows
     outputData.forEach((row, rowIndex) => {
-      if (!row[idColumn] || !row[urlColumn] || !row[downloadLinkColumn]) {
+      if (!row[idColumn] || !row[urlColumn] || !row[downloadLinkColumn] || !row[timestampColumn]) {
         if (checkConditionals(row, outputHeaders, conditionals)) {
           const outputFileName = generateFileName(row, outputHeaders, outputFileNameTemplate);
           const mergedFile = createMergedFile(templateId, row, outputHeaders, outputFileType, outputFileName);
           const fileId = saveFile(mergedFile, folderId);
           const fileUrl = `https://drive.google.com/file/d/${fileId}/view?usp=drivesdk`;
           const downloadLink = generateDownloadLink(fileId, outputFileType);
+          const timestamp = new Date().toLocaleString('en-GB', { hour12: false }).replace(',', '');
 
           const nextRow = rowIndex + 2; // +2 because of headers and 0-based index
           outputSheet.getRange(nextRow, idColumn + 1).setValue(fileId);
           outputSheet.getRange(nextRow, urlColumn + 1).setValue(fileUrl);
           outputSheet.getRange(nextRow, downloadLinkColumn + 1).setValue(downloadLink);
+          outputSheet.getRange(nextRow, timestampColumn + 1).setValue(timestamp);
         }
       }
     });
