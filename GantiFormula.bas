@@ -29,6 +29,12 @@ Sub CopyFormulas()
     For i = 2 To barisTerakhir
         Dim nilaiRumus As String
         nilaiRumus = SheetSumber.Cells(i, RumusKolomSumber).Formula2 ' Menggunakan .Formula2
+        
+        ' Ubah "#=" menjadi "=" di awal kalimat
+        If Left(nilaiRumus, 2) = "#=" Then
+            nilaiRumus = "=" & Mid(nilaiRumus, 3)
+        End If
+        
         nilaiRumus = Replace(nilaiRumus, ";", pemisah)
         nilaiRumus = Replace(nilaiRumus, ",", pemisah)
         
