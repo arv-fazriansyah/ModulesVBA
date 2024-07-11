@@ -14,10 +14,8 @@ Sub CopyFormulas()
     Dim SheetSumber As Worksheet
     On Error Resume Next
     Set SheetSumber = ThisWorkbook.Sheets(NamaSheetSumber)
-    ' On Error GoTo 0 ' Hapus baris ini
     
     If SheetSumber Is Nothing Then
-        MsgBox "Logout Aplikasi, kemudian Update pada halaman Login!", vbExclamation
         Exit Sub
     End If
     
@@ -25,23 +23,23 @@ Sub CopyFormulas()
     pemisah = Application.International(xlListSeparator)
     
     Dim barisTerakhir As Long
-    barisTerakhir = SheetSumber.Cells(SheetSumber.Rows.count, RumusKolomSumber).End(xlUp).row
+    barisTerakhir = SheetSumber.Cells(SheetSumber.Rows.Count, RumusKolomSumber).End(xlUp).Row
     
     Dim i As Long
     For i = 2 To barisTerakhir
         Dim nilaiRumus As String
-        nilaiRumus = SheetSumber.Cells(i, RumusKolomSumber).formula
+        nilaiRumus = SheetSumber.Cells(i, RumusKolomSumber).Formula2 ' Menggunakan .Formula2
         nilaiRumus = Replace(nilaiRumus, ";", pemisah)
         nilaiRumus = Replace(nilaiRumus, ",", pemisah)
         
         Dim namaLembarTujuan As String
-        namaLembarTujuan = SheetSumber.Cells(i, NamaSheetTujuanKolom).value
+        namaLembarTujuan = SheetSumber.Cells(i, NamaSheetTujuanKolom).Value
         
         Dim selTujuan As String
-        selTujuan = SheetSumber.Cells(i, SelTujuanKolom).value
+        selTujuan = SheetSumber.Cells(i, SelTujuanKolom).Value
         
         Dim passwordLembarTujuan As String
-        passwordLembarTujuan = SheetSumber.Cells(i, PasswordSheetTujuanKolom).value ' Ambil kata sandi
+        passwordLembarTujuan = SheetSumber.Cells(i, PasswordSheetTujuanKolom).Value
         
         If namaLembarTujuan <> "" And selTujuan <> "" Then
             If WorksheetExists(namaLembarTujuan) Then
@@ -50,25 +48,21 @@ Sub CopyFormulas()
                 
                 If Not lembarTujuan Is Nothing Then
                     If passwordLembarTujuan <> "" Then
-                        ' On Error Resume Next ' Hapus baris ini
                         lembarTujuan.Unprotect passwordLembarTujuan
-                        ' On Error GoTo 0 ' Hapus baris ini
                         If lembarTujuan.ProtectContents Then
-                            MsgBox "Kata sandi untuk " & lembarTujuan.Name & " salah!", vbExclamation
                             Exit Sub
                         End If
                     ElseIf lembarTujuan.ProtectContents Then
-                        MsgBox "Lembar " & lembarTujuan.Name & " terlindungi. Masukkan kata sandi!", vbExclamation
                         Exit Sub
                     End If
                     
                     If RangeExists(lembarTujuan, selTujuan) Then
                         Application.DisplayAlerts = False
-                        lembarTujuan.Range(selTujuan).value = nilaiRumus
+                        lembarTujuan.Range(selTujuan).Formula2 = nilaiRumus ' Menggunakan .Formula2
                         Application.DisplayAlerts = True
                         
                         Dim tautan As Variant
-                        tautan = ThisWorkbook.linkSources(xlExcelLinks)
+                        tautan = ThisWorkbook.LinkSources(xlExcelLinks)
                         
                         If Not IsEmpty(tautan) Then
                             Dim j As Long
@@ -77,29 +71,22 @@ Sub CopyFormulas()
                             Next j
                         End If
                         
-                        ' Lindungi lembar tujuan setelah mengisi nilai
                         If passwordLembarTujuan <> "" Then
                             lembarTujuan.Protect passwordLembarTujuan, UserInterfaceOnly:=True
                         End If
-                    Else
-                        MsgBox "Kolom Sel Tujuan '" & selTujuan & "' tidak ditemukan di Lembar '" & lembarTujuan.Name & "'!", vbExclamation
                     End If
                 End If
-            Else
-                MsgBox "Lembar Tujuan '" & namaLembarTujuan & "' tidak ditemukan!", vbExclamation
             End If
         End If
     Next i
 End Sub
 
-Function WorksheetExists(sheetName As String) As Boolean
+Function WorksheetExists(SheetName As String) As Boolean
     On Error Resume Next
-    WorksheetExists = Not ThisWorkbook.Sheets(sheetName) Is Nothing
-    ' On Error GoTo 0 ' Hapus baris ini
+    WorksheetExists = Not ThisWorkbook.Sheets(SheetName) Is Nothing
 End Function
 
 Function RangeExists(ws As Worksheet, rngAddress As String) As Boolean
     On Error Resume Next
     RangeExists = Not ws.Range(rngAddress) Is Nothing
-    ' On Error GoTo 0 ' Hapus baris ini
 End Function
