@@ -45,7 +45,7 @@ function autoMergeFiles() {
           const outputFileName = generateFileName(row, outputHeaders, outputFileNameTemplate);
           const mergedFile = createMergedFile(templateId, row, outputHeaders, outputFileType, outputFileName);
           const fileId = saveFile(mergedFile, folderId);
-          const fileUrl = `https://drive.google.com/file/d/${fileId}/view?usp=drivesdk`;
+          const fileUrl = mergedFile.getUrl();
           const downloadLink = generateDownloadLink(fileId, outputFileType);
           const timestamp = new Date().toLocaleString('en-GB', { hour12: false }).replace(',', '');
 
@@ -122,6 +122,40 @@ function generateDownloadLink(fileId, fileType) {
     return `https://drive.google.com/uc?export=download&id=${fileId}`;
   }
   return '';
+}
+
+function deleteFolderContents() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const settingsSheet = ss.getSheetByName("SETTING");
+  const settings = settingsSheet.getDataRange().getValues();
+  const headers = settings.shift();
+  const folderIdColumn = headers.indexOf("Folders");
+
+  settings.forEach(setting => {
+    const folderId = setting[folderIdColumn];
+    if (folderId) {
+      const folder = DriveApp.getFolderById(folderId);
+      const files = folder.getFiles();
+      let count = 0;
+      while (files.hasNext()) {
+        const file = files.next();
+        file.setTrashed(true);
+        count++;
+        if (count >= 100) {
+          Utilities.sleep(500);
+          count = 0;
+        }
+      }
+    }
+  });
+}
+
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('CustomMenu')
+    .addItem('Run AutoMerge', 'autoMergeFiles')
+    .addItem('Delete isi Folder', 'deleteFolderContents')
+    .addToUi();
 }
 
 function deleteFolderContents() {
