@@ -1,20 +1,11 @@
-Sub GsheetDataUpdate()
+Sub GsheetDataUpdateDownload()
+    ' Tombol Download
     Dim wsData As Worksheet
     Dim SheetNameData As String
     Dim PathData As String, PathFormula As String, SubPath As String
     Dim password As String, Author As String
     Dim SearchValue As String
-    Dim InternetErrorMsg As String, UpdateErrorMsg As String
-    
-    ' Pesan kesalahan
-    InternetErrorMsg = "Tidak ada koneksi internet."
-    UpdateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
-    
-    ' Mengecek koneksi internet
-    If Not IsInternetConnected() Then
-        MsgBox InternetErrorMsg, vbExclamation
-        Exit Sub
-    End If
+    Dim UpdateErrorMsg As String
     
     On Error Resume Next
 
@@ -23,7 +14,99 @@ Sub GsheetDataUpdate()
     SubPath = Env.SubPath
     PathData = Env.Token
     SheetNameData = Env.DataBase
-    SearchValue = ThisWorkbook.Sheets(SheetNameData).Range("B2").Value
+    SearchValue = ThisWorkbook.Sheets(SheetNameData).Range("A2").Value
+    
+    ' Menghapus lembar kerja yang sudah ada jika ada
+    Application.DisplayAlerts = False
+    ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetHidden
+    ThisWorkbook.Sheets(SheetNameData).Delete
+    Application.DisplayAlerts = True
+
+    ' Membuat lembar kerja baru
+    Set wsData = ThisWorkbook.Sheets.Add
+    wsData.Name = SheetNameData
+    
+    ' Hidden sheet DATAUSER
+    'ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetVeryHidden
+    
+    ' Membuat URL untuk mengambil data
+    Dim URLDAT As String, URLFOR As String
+    URLDAT = "https://" & SubPath & "." & Author & ".eu.org/" & PathData
+    
+    ' Menyiapkan QueryTable dan mengambil data
+    With wsData.QueryTables.Add(Connection:="URL;" & URLDAT, Destination:=wsData.Range("A1"))
+        .Refresh BackgroundQuery:=False
+    End With
+    
+    ' Hanya menampilkan baris SearchValue
+    Dim rng As Range
+    Set rng = wsData.UsedRange
+    rng.AutoFilter Field:=1, Criteria1:="<>" & SearchValue
+    rng.Offset(1, 0).Resize(rng.Rows.Count - 1, rng.Columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    wsData.AutoFilterMode = False
+    
+    ' Membuat URL untuk mengambil data
+    PathFormula = wsData.Range("F2").Value
+    URLFOR = "https://" & SubPath & "." & Author & ".eu.org/" & PathFormula
+    
+    ' Menyiapkan QueryTable dan mengambil data
+    If PathFormula <> "" Then
+        With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("AA1"))
+            .Refresh BackgroundQuery:=False
+        End With
+    End If
+
+    ' Menghapus semua koneksi data dalam workbook
+    Dim conn As WorkbookConnection
+    For Each conn In ThisWorkbook.Connections
+        conn.Delete
+    Next conn
+    
+    ' Pengaturan lainnya:
+    Dev.HapusData
+    
+    ' Melindungi worksheet jika password diberikan
+    password = wsData.Range("G2").Value
+    If password <> "" Then
+        wsData.Protect password
+    End If
+    Exit Sub
+End Sub
+
+Sub GsheetDataUpdate()
+    Dim wsData As Worksheet
+    Dim SheetNameData As String
+    Dim PathData As String, PathFormula As String, SubPath As String
+    Dim password As String, Author As String
+    Dim SearchValue As String
+    Dim UpdateErrorMsg As String
+    Static LastRunTime As Date
+    Dim TimeDelay As Date
+    
+    ' Pesan kesalahan
+    UpdateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
+    
+    ' Mengecek koneksi internet
+    If Not Dev.TesKoneksi Then
+        MsgBox "Tidak ada koneksi internet.", vbExclamation
+        Exit Sub
+    End If
+    
+    TimeDelay = Now() - LastRunTime
+    If TimeDelay < TimeValue("00:02:00") Then
+        MsgBox "Maaf, Anda hanya dapat menjalankan fungsi ini sekali dalam dua menit.", vbExclamation
+        Exit Sub
+    End If
+    LastRunTime = Now()
+    
+    On Error Resume Next
+
+    ' Konfigurasi data
+    Author = Env.Author
+    SubPath = Env.SubPath
+    PathData = Env.Token
+    SheetNameData = Env.DataBase
+    SearchValue = ThisWorkbook.Sheets(SheetNameData).Range("A2").Value
     
     If SearchValue = "" Then
         MsgBox "Logout Aplikasi, kemudian Update pada halaman Login!", vbExclamation
@@ -31,7 +114,6 @@ Sub GsheetDataUpdate()
     End If
     
     ' Menghapus lembar kerja yang sudah ada jika ada
-    On Error Resume Next
     Application.DisplayAlerts = False
     ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetHidden
     ThisWorkbook.Sheets(SheetNameData).Delete
@@ -57,7 +139,7 @@ Sub GsheetDataUpdate()
     ' Hanya menampilkan baris SearchValue
     Dim rng As Range
     Set rng = wsData.UsedRange
-    rng.AutoFilter Field:=2, Criteria1:="<>" & SearchValue
+    rng.AutoFilter Field:=1, Criteria1:="<>" & SearchValue
     rng.Offset(1, 0).Resize(rng.Rows.Count - 1, rng.Columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
     wsData.AutoFilterMode = False
     
@@ -80,6 +162,16 @@ Sub GsheetDataUpdate()
     Next conn
     
     ' Pengaturan lainnya:
+    ThisWorkbook.Sheets("DEV").Range("F8").Value = "Update"
+    Dev.CekIDPerangkat
+    Dev.CekIPPublik
+    Dev.CekNamaKomputer
+    Dev.CekVersiOffice
+    Dev.CekWaktu
+    Dev.HapusData
+    Dev.CopyFormulas
+    Dev.ProtectSheets
+    ' Dev.SendData
     
     ' Melindungi worksheet jika password diberikan
     password = wsData.Range("G2").Value
@@ -102,31 +194,20 @@ RefreshError:
     MsgBox UpdateErrorMsg, vbExclamation
 End Sub
 
-Function IsInternetConnected() As Boolean
-    On Error Resume Next
-    Dim xhr As Object
-    Set xhr = CreateObject("MSXML2.ServerXMLHTTP.6.0")
-    xhr.Open "GET", "https://www.google.com", False
-    xhr.Send
-    IsInternetConnected = (Err.Number = 0) And (xhr.Status = 200)
-    On Error GoTo 0
-End Function
-
 Sub GsheetDataLoginUpdate()
     Dim wsData As Worksheet
     Dim SheetNameData As String
     Dim PathData As String, PathFormula As String, SubPath As String
     Dim password As String, Author As String
     Dim SearchValue As String
-    Dim InternetErrorMsg As String, UpdateErrorMsg As String
+    Dim UpdateErrorMsg As String
     
     ' Pesan kesalahan
-    InternetErrorMsg = "Tidak ada koneksi internet."
     UpdateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
     
     ' Mengecek koneksi internet
-    If Not IsInternetConnected() Then
-        MsgBox InternetErrorMsg, vbExclamation
+    If Not Dev.TesKoneksi Then
+        MsgBox "Tidak ada koneksi internet.", vbExclamation
         Exit Sub
     End If
     
@@ -145,7 +226,6 @@ Sub GsheetDataLoginUpdate()
     End If
     
     ' Menghapus lembar kerja yang sudah ada jika ada
-    On Error Resume Next
     Application.DisplayAlerts = False
     ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetHidden
     ThisWorkbook.Sheets(SheetNameData).Delete
@@ -156,7 +236,7 @@ Sub GsheetDataLoginUpdate()
     wsData.Name = SheetNameData
     
     ' Hidden sheet DATAUSER
-    'ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetVeryHidden
+    ' ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetVeryHidden
     
     ' Membuat URL untuk mengambil data
     Dim URLDAT As String, URLFOR As String
@@ -171,7 +251,7 @@ Sub GsheetDataLoginUpdate()
     ' Hanya menampilkan baris SearchValue
     Dim rng As Range
     Set rng = wsData.UsedRange
-    rng.AutoFilter Field:=2, Criteria1:="<>" & SearchValue
+    rng.AutoFilter Field:=1, Criteria1:="<>" & SearchValue
     rng.Offset(1, 0).Resize(rng.Rows.Count - 1, rng.Columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
     wsData.AutoFilterMode = False
     
@@ -194,7 +274,9 @@ Sub GsheetDataLoginUpdate()
     Next conn
     
     ' Pengaturan lainnya:
-    ' Disini
+    Dev.HapusData
+    Dev.CopyFormulas
+    Dev.ProtectSheets
     
     ' Melindungi worksheet jika password diberikan
     password = wsData.Range("G2").Value
@@ -223,17 +305,6 @@ Sub GsheetDataLogin()
     Dim PathData As String, PathFormula As String, SubPath As String
     Dim password As String, Author As String
     Dim SearchValue As String
-    Dim InternetErrorMsg As String, UpdateErrorMsg As String
-    
-    ' Pesan kesalahan
-    InternetErrorMsg = "Tidak ada koneksi internet."
-    UpdateErrorMsg = "Download ulang Aplikasi, hubungi Admin"
-    
-    ' Mengecek koneksi internet
-    If Not IsInternetConnected() Then
-        MsgBox InternetErrorMsg, vbExclamation
-        Exit Sub
-    End If
     
     On Error Resume Next
 
@@ -245,7 +316,6 @@ Sub GsheetDataLogin()
     SearchValue = HalamanLogin.TextBoxUsername.Value
     
     ' Menghapus lembar kerja yang sudah ada jika ada
-    On Error Resume Next
     Application.DisplayAlerts = False
     ThisWorkbook.Sheets(SheetNameData).Visible = xlSheetHidden
     ThisWorkbook.Sheets(SheetNameData).Delete
@@ -263,7 +333,6 @@ Sub GsheetDataLogin()
     URLDAT = "https://" & SubPath & "." & Author & ".eu.org/" & PathData
     
     ' Menyiapkan QueryTable dan mengambil data
-    On Error GoTo RefreshError
     With wsData.QueryTables.Add(Connection:="URL;" & URLDAT, Destination:=wsData.Range("A1"))
         .Refresh BackgroundQuery:=False
     End With
@@ -271,7 +340,7 @@ Sub GsheetDataLogin()
     ' Hanya menampilkan baris SearchValue
     Dim rng As Range
     Set rng = wsData.UsedRange
-    rng.AutoFilter Field:=2, Criteria1:="<>" & SearchValue
+    rng.AutoFilter Field:=1, Criteria1:="<>" & SearchValue
     rng.Offset(1, 0).Resize(rng.Rows.Count - 1, rng.Columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
     wsData.AutoFilterMode = False
     
@@ -281,7 +350,6 @@ Sub GsheetDataLogin()
     
     ' Menyiapkan QueryTable dan mengambil data
     If PathFormula <> "" Then
-        On Error Resume Next
         With wsData.QueryTables.Add(Connection:="URL;" & URLFOR, Destination:=wsData.Range("AA1"))
             .Refresh BackgroundQuery:=False
         End With
@@ -294,7 +362,7 @@ Sub GsheetDataLogin()
     Next conn
     
     ' Pengaturan lainnya:
-    ' Disini
+    ThisWorkbook.Sheets("DEV").Range("F8").Value = "Update"
     
     ' Melindungi worksheet jika password diberikan
     password = wsData.Range("G2").Value
@@ -303,8 +371,4 @@ Sub GsheetDataLogin()
     End If
 
     Exit Sub
-
-RefreshError:
-    MsgBox UpdateErrorMsg, vbExclamation
 End Sub
-
