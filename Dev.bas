@@ -8,6 +8,18 @@ Function TesKoneksi() As Boolean
     ' On Error GoTo 0
 End Function
 
+Sub TimeButton()
+    Static LastRunTime As Date
+    Dim TimeDelay As Date
+    
+    TimeDelay = Now() - LastRunTime
+    If TimeDelay < TimeValue("00:02:00") Then
+        MsgBox "Maaf, Anda hanya dapat menjalankan fungsi ini sekali dalam dua menit.", vbExclamation
+        Exit Sub
+    End If
+    LastRunTime = Now()
+End Sub
+    
 Sub ShowForm()
     Application.Visible = False ' Sembunyikan jendela Excel
 
@@ -344,3 +356,66 @@ End Sub
 Sub UnprotectSheet(sheet As Worksheet, password As String)
     sheet.Unprotect password
 End Sub
+
+Sub SendData()
+    Dim url As String
+    Dim HTTPReq As Object
+    Dim JSONString As String
+    Dim RangeData As Range
+    Dim DataArray As Variant
+    Dim i As Long
+    Dim j As Long
+    Dim SheetName As String
+    Dim StartColumn As String
+    Dim EndColumn As String
+
+    On Error Resume Next
+
+    ' URL for Google Sheets REST API
+    url = "https://" & SubPath & "." & Author & ".eu.org/" & "send"
+
+    ' Set the sheet name and data range
+    SheetName = "DEV"
+    StartColumn = "AA"
+    EndColumn = "BG"
+
+    ' Set the data range from Excel
+    With ThisWorkbook.Sheets(SheetName)
+        Set RangeData = .Range(StartColumn & "3:" & EndColumn & .Cells(.Rows.Count, StartColumn).End(xlUp).Row)
+    End With
+
+    ' Convert the data range to an array
+    DataArray = RangeData.Value
+
+    ' Create the JSON string
+    JSONString = "{""values"": ["
+    For i = 1 To UBound(DataArray)
+        JSONString = JSONString & "["
+        For j = 1 To UBound(DataArray, 2)
+            JSONString = JSONString & """" & DataArray(i, j) & """"
+            If j <> UBound(DataArray, 2) Then
+                JSONString = JSONString & ","
+            End If
+        Next j
+        JSONString = JSONString & "]"
+        If i <> UBound(DataArray) Then
+            JSONString = JSONString & ","
+        End If
+    Next i
+    JSONString = JSONString & "]}"
+
+    ' Show the JSON string in a message box
+    'MsgBox JSONString, vbInformation, "JSON Data"
+
+    ' Create the WinHttpRequest object
+    Set HTTPReq = CreateObject("WinHttp.WinHttpRequest.5.1")
+
+    ' Send the POST request
+    HTTPReq.Open "POST", url, False
+    HTTPReq.setRequestHeader "Content-Type", "application/json"
+    HTTPReq.Send JSONString
+
+    ' Show the result message
+    ' MsgBox "Data has been successfully sent to Google Sheets.", vbInformation
+End Sub
+
