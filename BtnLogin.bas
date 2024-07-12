@@ -7,8 +7,9 @@ Sub LoginUser(UserForm As Object)
     Dim Pass As String
     Dim ErrorMsg As String
     
-    ErrorMsg = "Masukan Username, kemudian Update!!"
+    ErrorMsg = "Masukan Username, kemudian tekan Update!!"
     ErrorMsgDev = "Download ulang Aplikasi, hubungi Admin"
+    
     On Error GoTo Error
     
     ' Konfigurasi
@@ -43,21 +44,28 @@ Sub LoginUser(UserForm As Object)
         ' Login sukses untuk ADMIN
         Dev.HideForm
         Dev.HapusData
+        On Error Resume Next
+        ' Dev.SendData
         
     Else
         
         ' Validasi pengguna reguler
+        If Not Dev.TesKoneksi Then
+            MsgBox "Tidak ada koneksi internet.", vbExclamation
+            Exit Sub
+        End If
+        
         BtnUpdate.GsheetDataLogin
         Set dbSheet = ThisWorkbook.Sheets(Env.DataBase)
-        Set dbRange = dbSheet.Range("B2:C2")
+        Set dbRange = dbSheet.Range("A2:C2")
 
         ' Iterasi melalui setiap baris
         Dim isValidUser As Boolean
         isValidUser = False
         
-        On Error Resume Next
+        ' On Error Resume Next
         For Each dbRow In dbRange.Rows
-            If username = dbRow.Cells(1, 1).Value And password = dbRow.Cells(1, 2).Value Then
+            If username = dbRow.Cells(1, 1).Value And password = dbRow.Cells(1, 3).Value Then
                 ' Menambakan informasi lain
                 On Error GoTo ErrorDev
                 ThisWorkbook.Sheets("DEV").Range("F2").Value = username
@@ -70,6 +78,8 @@ Sub LoginUser(UserForm As Object)
                 isValidUser = True
                 Dev.HideForm
                 Dev.HapusData
+                On Error Resume Next
+                ' Dev.SendData
                 
                 Exit For
             End If
@@ -77,6 +87,7 @@ Sub LoginUser(UserForm As Object)
 
         ' Jika tidak ada kesesuaian, login gagal
         If Not isValidUser Then
+            Dev.HapusData
             MsgBox "Login Gagal. Cek kembali username dan password Anda.", vbInformation, "Informasi"
         End If
     End If
@@ -84,6 +95,7 @@ Sub LoginUser(UserForm As Object)
     
 Error:
     MsgBox ErrorMsg, vbExclamation
+    Exit Sub
 ErrorDev:
     MsgBox ErrorMsgDev, vbExclamation
 End Sub
