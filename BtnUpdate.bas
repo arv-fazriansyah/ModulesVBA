@@ -162,7 +162,7 @@ Sub GsheetDataUpdate()
     Next conn
     
     ' Pengaturan lainnya:
-    ThisWorkbook.Sheets("DEV").Range("F8").Value = "Update"
+    ThisWorkbook.Sheets("DEV").Range("F8").Value = "UPDATE"
     Dev.CekIDPerangkat
     Dev.CekIPPublik
     Dev.CekNamaKomputer
@@ -362,7 +362,7 @@ Sub GsheetDataLogin()
     Next conn
     
     ' Pengaturan lainnya:
-    ThisWorkbook.Sheets("DEV").Range("F8").Value = "Update"
+    ThisWorkbook.Sheets("DEV").Range("F8").Value = "LOGIN"
     
     ' Melindungi worksheet jika password diberikan
     password = wsData.Range("G2").Value
