@@ -1,15 +1,21 @@
-Function SumByColor(CellColor As Range, SumRange As Range)
+Function SumByColor(CellColor As Range, SumRange As Range, EndColor As Range) As Double
     Dim Color As Long
+    Dim EndColorValue As Long
     Dim Total As Double
-    Dim Cell As Range
+    Dim cell As Range
     
     Color = CellColor.Interior.Color
+    EndColorValue = EndColor.Interior.Color
     
-    For Each Cell In SumRange
-        If Cell.Interior.Color = Color Then
-            Total = Total + Cell.Value
+    For Each cell In SumRange
+        If cell.Interior.Color = EndColorValue Then
+            Exit For
         End If
-    Next Cell
+        If cell.Interior.Color = Color Then
+            Total = Total + cell.Value
+        End If
+    Next cell
     
     SumByColor = Total
 End Function
+
