@@ -2,11 +2,85 @@ Function TesKoneksi() As Boolean
     On Error Resume Next
     Dim xhr As Object
     Set xhr = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+    
+    ' Set timeout values (in milliseconds)
+    Dim timeout As Long
+    timeout = 1000 ' 1 seconds timeout
+    
+    ' Open and send the request
+    xhr.setTimeouts timeout, timeout, timeout, timeout
     xhr.Open "GET", "https://www.google.com", False
     xhr.Send
+    
+    ' Check if the request was successful
     TesKoneksi = (Err.Number = 0) And (xhr.Status = 200)
-    ' On Error GoTo 0
 End Function
+
+Public Sub Expired()
+    Dim ws As Worksheet
+    Dim TanggalExpired As Variant
+    
+    On Error Resume Next
+
+    ' Menentukan sheet DATAUSER
+    Set ws = ThisWorkbook.Sheets("DATAUSER")
+    
+    ' Mendapatkan nilai dari cell H2
+    TanggalExpired = ws.Range("H2").Value
+    
+    ' Menghilangkan tanda # jika ada
+    TanggalExpired = Replace(TanggalExpired, "#", "")
+
+    ' Memeriksa apakah TanggalExpired adalah tanggal yang valid
+    If IsDate(TanggalExpired) Then
+        TanggalExpired = CDate(TanggalExpired)
+    Else
+        'MsgBox "Tanggal tidak valid atau kosong di H2", vbExclamation
+        Exit Sub
+    End If
+
+    ' Memeriksa apakah masa trial sudah habis
+    If TanggalExpired <= Date Then
+        MsgBox "Masa Trial sudah habis!" & vbNewLine & _
+               "File ini akan terhapus otomatis", vbInformation
+        With ThisWorkbook
+            .ChangeFileAccess xlReadOnly
+            Kill .FullName
+            .Close False
+        End With
+    Else
+        'MsgBox "Masa Trial tinggal " & TanggalExpired - Date & " Hari lagi", vbInformation
+    End If
+End Sub
+
+Sub AutoHideColumns()
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("DATAUSER")
+    
+    ' Menyembunyikan kolom AA sampai ZZ
+    ws.columns("AA:ZZ").Hidden = True
+End Sub
+
+Public Sub TextVersion()
+    Dim dataText As String
+
+    On Error Resume Next
+    dataText = ThisWorkbook.Sheets("DEV").Range("J3").Value
+
+    If dataText = "" Then
+        dataText = ThisWorkbook.Sheets("DATAUSER").Range("E2").Value
+        
+        If dataText = "" Then
+            dataText = "Masukan Username, kemudian Update!!"
+        End If
+    End If
+
+    With HalamanLogin.LabelVersion
+        .Tag = dataText
+        .Caption = dataText
+        .ForeColor = RGB(255, 255, 255) ' Atur warna teks putih
+    End With
+End Sub
 
 Sub TimeButton()
     Static LastRunTime As Date
@@ -21,15 +95,22 @@ Sub TimeButton()
 End Sub
     
 Sub ShowForm()
-    Application.Visible = False ' Sembunyikan jendela Excel
-
+    Application.ScreenUpdating = False
+    If Workbooks.Count > 1 Then
+        Windows(ThisWorkbook.Name).Visible = False
+    Else
+        Application.Visible = False
+    End If
     ' Tampilkan UserForm login sebagai modal
-    HalamanLogin.Show vbModal
+    HalamanLogin.Show vbModeless 'vbModal
 End Sub
 
 Sub HideForm()
-    Application.Visible = True ' Tampilkan jendela Excel
     HalamanLogin.Hide ' Sembunyikan UserForm login
+    'Application.ScreenUpdating = True
+    Application.Visible = True ' Tampilkan jendela Excel
+    Windows(ThisWorkbook.Name).Visible = True
+    Berhenti = True
 End Sub
 
 Sub ClosedForm()
@@ -37,7 +118,8 @@ Sub ClosedForm()
         ' Nonaktifkan peringatan
         Application.DisplayAlerts = False
         ' Tutup Excel
-        Application.Quit
+        'Application.Quit
+        ThisWorkbook.Close SaveChanges:=False
     End If
 End Sub
 
@@ -97,41 +179,22 @@ Sub CekIDPerangkat()
     ThisWorkbook.Sheets("DEV").Range("F5").Value = deviceId
 End Sub
 
-Sub CekWaktu()
-    ' Mendapatkan waktu saat ini
-    Dim currentTime As String
-    Dim dayName As String
-    Dim translatedDate As String
+Function CekWaktu(tanggal As Date) As String
+    Dim formattedDate As String
+    
+    ' Menggunakan fungsi Text untuk memformat tanggal dalam bahasa Indonesia
+    formattedDate = Application.WorksheetFunction.text(tanggal, "[$-0421]DDDD, DD MMMM YYYY hh:mm:ss")
+    
+    CekWaktu = formattedDate
+End Function
+
+Sub SimpanWaktu()
+    Dim waktuSekarang As String
+    waktuSekarang = CekWaktu(Now)
     
     On Error Resume Next
-    
-    ' Mendapatkan tanggal dan waktu dalam format standar
-    currentTime = Format(Now, "dddd, dd-mm-yyyy hh:mm:ss")
-    
-    ' Mengubah nama hari ke bahasa Indonesia
-    dayName = Format(Now, "dddd")
-    Select Case dayName
-        Case "Sunday"
-            dayName = "Minggu"
-        Case "Monday"
-            dayName = "Senin"
-        Case "Tuesday"
-            dayName = "Selasa"
-        Case "Wednesday"
-            dayName = "Rabu"
-        Case "Thursday"
-            dayName = "Kamis"
-        Case "Friday"
-            dayName = "Jumat"
-        Case "Saturday"
-            dayName = "Sabtu"
-    End Select
-    
-    ' Membuat timestamp dengan nama hari dalam bahasa Indonesia
-    translatedDate = dayName & ", " & Format(Now, "dd-mm-yyyy hh:mm:ss")
-    
     ' Menyimpan waktu saat ini ke dalam sel F3 di sheet "DEV"
-    ThisWorkbook.Sheets("DEV").Range("F3").Value = translatedDate
+    ThisWorkbook.Sheets("DEV").Range("F3").Value = waktuSekarang
 End Sub
 
 Sub CekVersiOffice()
@@ -158,7 +221,7 @@ End Sub
 
 Sub HapusData()
     Dim ws As Worksheet
-    Dim SheetName As String
+    Dim sheetName As String
     Dim dataRange As String
     Dim Pass As String
     Dim wrongPasswordMsg As String
@@ -166,13 +229,13 @@ Sub HapusData()
     On Error Resume Next
     
     ' Konfigurasi
-    SheetName = Env.DataBase
-    dataRange = ThisWorkbook.Sheets(SheetName).Range("H2")
-    Pass = ThisWorkbook.Sheets(SheetName).Range("G2")
+    sheetName = Env.DataBase
+    dataRange = ThisWorkbook.Sheets(sheetName).Range("H2")
+    Pass = ThisWorkbook.Sheets(sheetName).Range("G2")
     
     ' wrongPasswordMsg = "Silahkan Update Aplikasi Anda!"
     
-    Set ws = ThisWorkbook.Sheets(SheetName)
+    Set ws = ThisWorkbook.Sheets(sheetName)
     
     ' Periksa apakah lembar kerja ada
     If ws Is Nothing Then
@@ -193,12 +256,12 @@ Sub HapusData()
     End If
     
     ' Tentukan rentang sel yang ingin dihapus
-    Dim DeleteRange As Range
-    Set DeleteRange = ws.Range(dataRange)
+    Dim deleteRange As Range
+    Set deleteRange = ws.Range(dataRange)
     
     ' Hapus data dari rentang sel yang ditentukan
-    If Not DeleteRange Is Nothing Then
-        DeleteRange.ClearContents ' Menghapus isi dari sel
+    If Not deleteRange Is Nothing Then
+        deleteRange.ClearContents ' Menghapus isi dari sel
     End If
     
     ' Setelah pembaruan, lindungi kembali lembar kerja jika password diberikan
@@ -237,7 +300,7 @@ Sub CopyFormulas()
     pemisah = Application.International(xlListSeparator)
     
     Dim barisTerakhir As Long
-    barisTerakhir = SheetSumber.Cells(SheetSumber.Rows.Count, RumusKolomSumber).End(xlUp).Row
+    barisTerakhir = SheetSumber.Cells(SheetSumber.Rows.Count, RumusKolomSumber).End(xlUp).row
     
     Dim i As Long
     For i = 2 To barisTerakhir
@@ -301,9 +364,9 @@ Sub CopyFormulas()
     Next i
 End Sub
 
-Function WorksheetExists(SheetName As String) As Boolean
+Function WorksheetExists(sheetName As String) As Boolean
     On Error Resume Next
-    WorksheetExists = Not ThisWorkbook.Sheets(SheetName) Is Nothing
+    WorksheetExists = Not ThisWorkbook.Sheets(sheetName) Is Nothing
 End Function
 
 Function RangeExists(ws As Worksheet, rngAddress As String) As Boolean
@@ -312,35 +375,35 @@ Function RangeExists(ws As Worksheet, rngAddress As String) As Boolean
 End Function
 
 Sub ProtectSheets()
-    Dim dataSheet As Worksheet
+    Dim DataSheet As Worksheet
     
     On Error Resume Next
     
-    Set dataSheet = ThisWorkbook.Sheets("DATAUSER")
+    Set DataSheet = ThisWorkbook.Sheets("DATAUSER")
 
     Dim lastRowData As Long
-    lastRowData = dataSheet.Cells(dataSheet.Rows.Count, "AF").End(xlUp).Row
+    lastRowData = DataSheet.Cells(DataSheet.Rows.Count, "AF").End(xlUp).row
 
     Dim i As Long
     Dim actionType As String
     Dim sheetNameValue As String
     Dim sheetPassword As String
-    Dim targetSheet As Worksheet
+    Dim TargetSheet As Worksheet
 
     For i = 2 To lastRowData
-        actionType = dataSheet.Cells(i, "AF").Value
-        sheetNameValue = dataSheet.Cells(i, "AG").Value
-        sheetPassword = dataSheet.Cells(i, "AH").Value
+        actionType = DataSheet.Cells(i, "AF").Value
+        sheetNameValue = DataSheet.Cells(i, "AG").Value
+        sheetPassword = DataSheet.Cells(i, "AH").Value
 
         On Error Resume Next
-        Set targetSheet = ThisWorkbook.Sheets(sheetNameValue)
+        Set TargetSheet = ThisWorkbook.Sheets(sheetNameValue)
         On Error GoTo 0
 
-        If Not targetSheet Is Nothing Then
+        If Not TargetSheet Is Nothing Then
             If actionType = 1 Then
-                ProtectSheet targetSheet, sheetPassword
+                ProtectSheet TargetSheet, sheetPassword
             ElseIf actionType = 0 Then
-                UnprotectSheet targetSheet, sheetPassword
+                UnprotectSheet TargetSheet, sheetPassword
             End If
         Else
             ' MsgBox "Lembar '" & sheetNameValue & "' tidak ditemukan.", vbExclamation
@@ -348,13 +411,13 @@ Sub ProtectSheets()
     Next i
 End Sub
 
-Sub ProtectSheet(sheet As Worksheet, password As String)
-    sheet.Unprotect password
-    sheet.Protect password
+Sub ProtectSheet(sheet As Worksheet, Password As String)
+    sheet.Unprotect Password
+    sheet.Protect Password
 End Sub
 
-Sub UnprotectSheet(sheet As Worksheet, password As String)
-    sheet.Unprotect password
+Sub UnprotectSheet(sheet As Worksheet, Password As String)
+    sheet.Unprotect Password
 End Sub
 
 Sub SendData()
@@ -365,7 +428,7 @@ Sub SendData()
     Dim DataArray As Variant
     Dim i As Long
     Dim j As Long
-    Dim SheetName As String
+    Dim sheetName As String
     Dim StartColumn As String
     Dim EndColumn As String
 
@@ -375,13 +438,13 @@ Sub SendData()
     url = "https://" & SubPath & "." & Author & ".eu.org/" & "send"
 
     ' Set the sheet name and data range
-    SheetName = "DEV"
+    sheetName = "DEV"
     StartColumn = "AA"
-    EndColumn = "BG"
+    EndColumn = "ZZ"
 
     ' Set the data range from Excel
-    With ThisWorkbook.Sheets(SheetName)
-        Set RangeData = .Range(StartColumn & "3:" & EndColumn & .Cells(.Rows.Count, StartColumn).End(xlUp).Row)
+    With ThisWorkbook.Sheets(sheetName)
+        Set RangeData = .Range(StartColumn & "3:" & EndColumn & .Cells(.Rows.Count, StartColumn).End(xlUp).row)
     End With
 
     ' Convert the data range to an array
