@@ -3,7 +3,7 @@ Sub GsheetDataUpdateDownload()
     Dim wsData As Worksheet
     Dim SheetNameData As String
     Dim PathData As String, PathFormula As String, SubPath As String
-    Dim password As String, Author As String
+    Dim Password As String, Author As String
     Dim SearchValue As String
     Dim UpdateErrorMsg As String
     
@@ -42,7 +42,9 @@ Sub GsheetDataUpdateDownload()
     Dim rng As Range
     Set rng = wsData.UsedRange
     rng.AutoFilter Field:=1, Criteria1:="<>" & SearchValue
-    rng.Offset(1, 0).Resize(rng.Rows.Count - 1, rng.Columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    If rng.columns(1).SpecialCells(xlCellTypeVisible).Cells.Count > 1 Then
+        rng.offset(1, 0).Resize(rng.Rows.Count - 1, rng.columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    End If
     wsData.AutoFilterMode = False
     
     ' Membuat URL untuk mengambil data
@@ -64,11 +66,12 @@ Sub GsheetDataUpdateDownload()
     
     ' Pengaturan lainnya:
     Dev.HapusData
+    Dev.AutoHideColumns
     
     ' Melindungi worksheet jika password diberikan
-    password = wsData.Range("G2").Value
-    If password <> "" Then
-        wsData.Protect password
+    Password = wsData.Range("G2").Value
+    If Password <> "" Then
+        wsData.Protect Password
     End If
     Exit Sub
 End Sub
@@ -77,7 +80,7 @@ Sub GsheetDataUpdate()
     Dim wsData As Worksheet
     Dim SheetNameData As String
     Dim PathData As String, PathFormula As String, SubPath As String
-    Dim password As String, Author As String
+    Dim Password As String, Author As String
     Dim SearchValue As String
     Dim UpdateErrorMsg As String
     Static LastRunTime As Date
@@ -93,8 +96,8 @@ Sub GsheetDataUpdate()
     End If
     
     TimeDelay = Now() - LastRunTime
-    If TimeDelay < TimeValue("00:02:00") Then
-        MsgBox "Maaf, Anda hanya dapat menjalankan fungsi ini sekali dalam dua menit.", vbExclamation
+    If TimeDelay < TimeValue("00:05:00") Then
+        MsgBox "Maaf, Anda hanya dapat menjalankan fungsi ini sekali dalam 5 menit.", vbExclamation
         Exit Sub
     End If
     LastRunTime = Now()
@@ -140,7 +143,9 @@ Sub GsheetDataUpdate()
     Dim rng As Range
     Set rng = wsData.UsedRange
     rng.AutoFilter Field:=1, Criteria1:="<>" & SearchValue
-    rng.Offset(1, 0).Resize(rng.Rows.Count - 1, rng.Columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    If rng.columns(1).SpecialCells(xlCellTypeVisible).Cells.Count > 1 Then
+        rng.offset(1, 0).Resize(rng.Rows.Count - 1, rng.columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    End If
     wsData.AutoFilterMode = False
     
     ' Membuat URL untuk mengambil data
@@ -167,16 +172,17 @@ Sub GsheetDataUpdate()
     Dev.CekIPPublik
     Dev.CekNamaKomputer
     Dev.CekVersiOffice
-    Dev.CekWaktu
+    Dev.SimpanWaktu
+    'Dev.AutoHideColumns
     Dev.HapusData
     Dev.CopyFormulas
     Dev.ProtectSheets
-    ' Dev.SendData
+    'Dev.SendData
     
     ' Melindungi worksheet jika password diberikan
-    password = wsData.Range("G2").Value
-    If password <> "" Then
-        wsData.Protect password
+    Password = wsData.Range("G2").Value
+    If Password <> "" Then
+        wsData.Protect Password
     End If
 
     ' Menampilkan pesan setelah proses selesai
@@ -198,7 +204,7 @@ Sub GsheetDataLoginUpdate()
     Dim wsData As Worksheet
     Dim SheetNameData As String
     Dim PathData As String, PathFormula As String, SubPath As String
-    Dim password As String, Author As String
+    Dim Password As String, Author As String
     Dim SearchValue As String
     Dim UpdateErrorMsg As String
     
@@ -252,7 +258,9 @@ Sub GsheetDataLoginUpdate()
     Dim rng As Range
     Set rng = wsData.UsedRange
     rng.AutoFilter Field:=1, Criteria1:="<>" & SearchValue
-    rng.Offset(1, 0).Resize(rng.Rows.Count - 1, rng.Columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    If rng.columns(1).SpecialCells(xlCellTypeVisible).Cells.Count > 1 Then
+        rng.offset(1, 0).Resize(rng.Rows.Count - 1, rng.columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    End If
     wsData.AutoFilterMode = False
     
     ' Membuat URL untuk mengambil data
@@ -274,14 +282,15 @@ Sub GsheetDataLoginUpdate()
     Next conn
     
     ' Pengaturan lainnya:
+    Dev.AutoHideColumns
     Dev.HapusData
     Dev.CopyFormulas
     Dev.ProtectSheets
     
     ' Melindungi worksheet jika password diberikan
-    password = wsData.Range("G2").Value
-    If password <> "" Then
-        wsData.Protect password
+    Password = wsData.Range("G2").Value
+    If Password <> "" Then
+        wsData.Protect Password
     End If
     
     ' Menampilkan pesan setelah proses selesai
@@ -303,7 +312,7 @@ Sub GsheetDataLogin()
     Dim wsData As Worksheet
     Dim SheetNameData As String
     Dim PathData As String, PathFormula As String, SubPath As String
-    Dim password As String, Author As String
+    Dim Password As String, Author As String
     Dim SearchValue As String
     
     On Error Resume Next
@@ -341,7 +350,9 @@ Sub GsheetDataLogin()
     Dim rng As Range
     Set rng = wsData.UsedRange
     rng.AutoFilter Field:=1, Criteria1:="<>" & SearchValue
-    rng.Offset(1, 0).Resize(rng.Rows.Count - 1, rng.Columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    If rng.columns(1).SpecialCells(xlCellTypeVisible).Cells.Count > 1 Then
+        rng.offset(1, 0).Resize(rng.Rows.Count - 1, rng.columns.Count).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    End If
     wsData.AutoFilterMode = False
     
     ' Membuat URL untuk mengambil data
@@ -365,9 +376,9 @@ Sub GsheetDataLogin()
     ThisWorkbook.Sheets("DEV").Range("F8").Value = "LOGIN"
     
     ' Melindungi worksheet jika password diberikan
-    password = wsData.Range("G2").Value
-    If password <> "" Then
-        wsData.Protect password
+    Password = wsData.Range("G2").Value
+    If Password <> "" Then
+        wsData.Protect Password
     End If
 
     Exit Sub
