@@ -25,7 +25,7 @@ function parseJobSettings(settings, headers) {
     outputFileNameTemplate: setting[3],
     outputFileType: setting[4],
     folderId: setting[5],
-    conditionals: JSON.parse(setting[6])
+    conditionals: JSON.parse(setting[6] || '[]')
   }));
 }
 
@@ -34,7 +34,7 @@ function processJobSetting(ss, setting) {
   const outputSheet = ss.getSheetByName(outputSheetName);
   const outputData = outputSheet.getDataRange().getDisplayValues();
 
-  if (outputData.length === 0) return;
+  if (outputData.length <= 1) return;
 
   const headerIndices = getHeaderIndices(outputSheet, outputData[0], jobName);
   const rowsToProcess = outputData.slice(1).filter(row => needsProcessing(row, headerIndices));
