@@ -25,7 +25,7 @@ function parseJobSettings(settings, headers) {
     outputFileNameTemplate: setting[3],
     outputFileType: setting[4],
     folderId: setting[5],
-    conditionals: JSON.parse(setting[6] || '[]')
+    conditionals: JSON.parse(setting[headers.indexOf("Conditionals")])
   }));
 }
 
