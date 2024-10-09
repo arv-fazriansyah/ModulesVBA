@@ -38,15 +38,15 @@
           <button id="Input" 
                   visible="true" 
                   size="large" 
-                  label="Input Data" 
-                  imageMso="SignatureLineInsert" 
-                  onAction="InputData" />
+                  label="Update" 
+                  imageMso="Refresh" 
+                  onAction="Update" />
           <button id="DB" 
                   visible="true" 
                   size="large" 
-                  label="Database" 
-                  imageMso="AccessTableContacts" 
-                  onAction="Database" />
+                  label="Upload" 
+                  imageMso="FillMenu" 
+                  onAction="Upload" />
         </group>
         <group id="customGroup2" label="Tentang">
           <button id="tentang" 
