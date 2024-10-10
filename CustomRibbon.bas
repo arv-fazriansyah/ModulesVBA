@@ -5,7 +5,7 @@
     <command idMso="TabOfficeStart" enabled="false" />
     <command idMso="TabRecent" enabled="false" />
     <command idMso="TabSave" enabled="false" />
-    <command idMso="TabPrint" enabled="true" />
+    <command idMso="TabPrint" enabled="false" />
     <command idMso="ShareDocument" enabled="false" />
     <command idMso="Publish2Tab" enabled="false" />
     <command idMso="TabPublish" enabled="false" />
@@ -65,12 +65,12 @@
                   label="Lembar RKAS" 
                   imageMso="MasterDocumentShow" 
                   onAction="LembarRKAS" />
-          <button id="Print" 
+          <button id="PrintView" 
                   visible="true" 
                   size="large" 
                   label="Print" 
                   imageMso="FilePrint" 
-                  onAction="Print" />
+                  onAction="PrintView" />
         </group>
         <group id="customGroup2" label="Data">
           <button id="Data" 
