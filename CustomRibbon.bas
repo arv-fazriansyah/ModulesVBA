@@ -26,7 +26,7 @@
       <tab idMso="TabPageLayoutExcel" visible="false" />
       <tab idMso="TabAddIns" visible="false" />
       <tab idMso="TabFormulas" visible="false" />
-      <tab idMso="TabDeveloper" visible="false" />
+      <tab idMso="TabDeveloper" visible="true" />
       <tab id="customTab" label="Menu">
         <group id="customGroup1" label="Home">
           <button id="Dash" 
@@ -65,6 +65,12 @@
                   label="Lembar RKAS" 
                   imageMso="MasterDocumentShow" 
                   onAction="LembarRKAS" />
+          <button id="Print" 
+                  visible="true" 
+                  size="large" 
+                  label="Print" 
+                  imageMso="FilePrint" 
+                  onAction="Print" />
         </group>
         <group id="customGroup2" label="Data">
           <button id="Data" 
