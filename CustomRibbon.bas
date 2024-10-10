@@ -17,7 +17,7 @@
   </commands>
   <ribbon startFromScratch="false">
     <tabs>
-      <tab idMso="TabHome" visible="true" />
+      <tab idMso="TabHome" visible="false" />
       <tab idMso="TabView" visible="false" />
       <tab idMso="TabReview" visible="false" />
       <tab idMso="TabData" visible="false" />
@@ -25,8 +25,8 @@
       <tab idMso="TabInsert" visible="false" />
       <tab idMso="TabPageLayoutExcel" visible="false" />
       <tab idMso="TabAddIns" visible="false" />
-      <tab idMso="TabFormulas" visible="true" />
-      <tab idMso="TabDeveloper" visible="true" />
+      <tab idMso="TabFormulas" visible="false" />
+      <tab idMso="TabDeveloper" visible="false" />
       <tab id="customTab" label="Menu">
         <group id="customGroup1" label="Home">
           <button id="Dash" 
