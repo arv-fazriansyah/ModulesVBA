@@ -26,7 +26,7 @@
       <tab idMso="TabPageLayoutExcel" visible="false" />
       <tab idMso="TabAddIns" visible="false" />
       <tab idMso="TabFormulas" visible="false" />
-      <tab idMso="TabDeveloper" visible="true" />
+      <tab idMso="TabDeveloper" visible="false" />
       <tab id="customTab" label="Menu">
         <group id="customGroup1" label="Home">
           <button id="Dash" 
@@ -149,12 +149,6 @@
                   label="RKAS SIPD" 
                   imageMso="ContentControlDate" 
                   onAction="RKASSIPD" />
-          <button id="BARKAS" 
-                  visible="true" 
-                  size="large" 
-                  label="BA RKAS" 
-                  imageMso="DatabaseAnalyzeTable" 
-                  onAction="BARKAS" />
         </group>
         <group id="customGroup5" label="Rencana">
           <button id="RBK" 
