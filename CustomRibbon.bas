@@ -110,7 +110,7 @@
                   size="large" 
                   label="Analisis Gugus" 
                   imageMso="FormatCellsDialog" 
-                  onAction="Analisis Gugus" />
+                  onAction="AnalisisGugus" />
           <button id="AnalisisBuku" 
                   visible="true" 
                   size="large" 
