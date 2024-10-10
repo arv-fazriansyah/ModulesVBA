@@ -45,7 +45,7 @@
                   visible="true" 
                   size="large" 
                   label="Upload" 
-                  imageMso="FillMenu" 
+                  imageMso="FileOpen" 
                   onAction="Upload" />
           <button id="PetaBenahi" 
                   visible="true" 
