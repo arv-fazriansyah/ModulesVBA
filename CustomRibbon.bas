@@ -163,6 +163,18 @@
                   label="RBK" 
                   imageMso="BlogCategories" 
                   onAction="RBK" />
+          <button id="RBK2" 
+                  visible="true" 
+                  size="large" 
+                  label="RBK2" 
+                  imageMso="BlogCategories" 
+                  onAction="RBK2" />
+          <button id="RBKReload" 
+                  visible="true" 
+                  size="large" 
+                  label="Refresh" 
+                  imageMso="AccessRefreshAllLists" 
+                  onAction="RBKReload" />
         </group>
         <group id="customGroup6" label="Download">
           <button id="CoverRKAS" 
