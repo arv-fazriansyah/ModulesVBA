@@ -52,7 +52,7 @@
                   size="large" 
                   label="Peta Benahi" 
                   imageMso="DocumentMapReadingView" 
-                  onAction="Peta Benahi" />
+                  onAction="PetaBenahi" />
           <button id="LembarRKT" 
                   visible="true" 
                   size="large" 
