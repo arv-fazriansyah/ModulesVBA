@@ -1,6 +1,6 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui">
   <commands>
-    <command idMso="ApplicationOptionsDialog" enabled="false" />
+    <command idMso="ApplicationOptionsDialog" getEnabled="GetEnabled" />
     <command idMso="TabInfo" getEnabled="GetEnabled" />
     <command idMso="TabOfficeStart" getEnabled="GetEnabled" />
     <command idMso="TabRecent" getEnabled="GetEnabled" />
