@@ -1,4 +1,4 @@
-<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui">
+<customUI  onLoad="RibbonLoaded_myAddin" xmlns="http://schemas.microsoft.com/office/2006/01/customui">
   <commands>
     <command idMso="ApplicationOptionsDialog" getEnabled="GetEnabled" />
     <command idMso="TabInfo" getEnabled="GetEnabled" />
