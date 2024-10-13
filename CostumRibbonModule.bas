@@ -45,3 +45,17 @@ Sub GetVisible(control As IRibbonControl, ByRef MakeVisible)
         Case Else:                      MakeVisible = False
     End Select
 End Sub
+
+Public myRibbon As IRibbonUI
+Sub RibbonLoaded_myAddin(ribbon As IRibbonUI)
+Set myRibbon = ribbon
+End Sub
+Sub RefreshRibbon()
+On Error GoTo RestartExcel
+myRibbon.Invalidate
+On Error GoTo 0
+Exit Sub
+RestartExcel:
+MsgBox "Please restart Excel for Ribbon UI changes to take effect", _
+vbCritical, "Ribbon UI Refresh Failed"
+End Sub
