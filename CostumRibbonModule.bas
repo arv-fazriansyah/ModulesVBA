@@ -2,6 +2,7 @@
 Sub GetEnabled(control As IRibbonControl, ByRef MakeVisible)
     Dim SheetName As String
     SheetName = "DEV"
+    On Error Resume Next
     Dim ws As Worksheet
     Set ws = ThisWorkbook.Sheets(SheetName)
     Select Case control.ID
@@ -27,6 +28,7 @@ End Sub
 Sub GetVisible(control As IRibbonControl, ByRef MakeVisible)
     Dim SheetName As String
     SheetName = "DEV"
+    On Error Resume Next
     Dim ws As Worksheet
     Set ws = ThisWorkbook.Sheets(SheetName)
     Select Case control.ID
@@ -43,4 +45,5 @@ Sub GetVisible(control As IRibbonControl, ByRef MakeVisible)
         Case Else:                      MakeVisible = False
     End Select
 End Sub
+
 
