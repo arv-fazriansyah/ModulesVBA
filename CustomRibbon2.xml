@@ -15,7 +15,7 @@
     <command idMso="HistoryTab" getEnabled="GetEnabled" />
     <command idMso="FileClose" getEnabled="GetEnabled" />
   </commands>
-  <ribbon startFromScratch="false">
+  <ribbon startFromScratch="true">
     <tabs>
       <tab idMso="TabHome" getVisible="GetVisible" />
       <tab idMso="TabView" getVisible="GetVisible" />
