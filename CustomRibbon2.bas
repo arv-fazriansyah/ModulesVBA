@@ -1,19 +1,19 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui">
   <commands>
     <command idMso="ApplicationOptionsDialog" enabled="false" />
-    <command idMso="TabInfo" enabled="false" />
-    <command idMso="TabOfficeStart" enabled="false" />
-    <command idMso="TabRecent" enabled="false" />
+    <command idMso="TabInfo" getEnabled="GetEnabled" />
+    <command idMso="TabOfficeStart" getEnabled="GetEnabled" />
+    <command idMso="TabRecent" getEnabled="GetEnabled" />
     <command idMso="TabSave" getEnabled="GetEnabled" />
-    <command idMso="TabPrint" enabled="false" />
-    <command idMso="ShareDocument" enabled="false" />
-    <command idMso="Publish2Tab" enabled="false" />
-    <command idMso="TabPublish" enabled="false" />
-    <command idMso="TabHelp" enabled="false" />
-    <command idMso="TabOfficeFeedback" enabled="false" />
-    <command idMso="FileSave" enabled="false" />
-    <command idMso="HistoryTab" enabled="false" />
-    <command idMso="FileClose" enabled="false" />
+    <command idMso="TabPrint" getEnabled="GetEnabled" />
+    <command idMso="ShareDocument" getEnabled="GetEnabled" />
+    <command idMso="Publish2Tab" getEnabled="GetEnabled" />
+    <command idMso="TabPublish" getEnabled="GetEnabled" />
+    <command idMso="TabHelp" getEnabled="GetEnabled" />
+    <command idMso="TabOfficeFeedback" getEnabled="GetEnabled" />
+    <command idMso="FileSave" getEnabled="GetEnabled" />
+    <command idMso="HistoryTab" getEnabled="GetEnabled" />
+    <command idMso="FileClose" getEnabled="GetEnabled" />
   </commands>
   <ribbon startFromScratch="false">
     <tabs>
