@@ -148,34 +148,34 @@ Sub GetVisible(control As IRibbonControl, ByRef MakeVisible)
         Case "LembarRKT":               MakeVisible = ws.Range("L37").value
         Case "LembarRKAS":              MakeVisible = ws.Range("L38").value
         Case "PrintView":               MakeVisible = ws.Range("L39").value
-        Case "Saved":                   MakeVisible = ws.Range("L20").value
+        Case "Saved":                   MakeVisible = ws.Range("L40").value
         
-        Case "Data":                    MakeVisible = ws.Range("L21").value
-        Case "Matrix":                  MakeVisible = ws.Range("L22").value
-        Case "HarsatBarjas":            MakeVisible = ws.Range("L23").value
-        Case "HarsatModal":             MakeVisible = ws.Range("L24").value
+        Case "Data":                    MakeVisible = ws.Range("L41").value
+        Case "Matrix":                  MakeVisible = ws.Range("L42").value
+        Case "HarsatBarjas":            MakeVisible = ws.Range("L43").value
+        Case "HarsatModal":             MakeVisible = ws.Range("L44").value
         
-        Case "AnalisisGugus":           MakeVisible = ws.Range("L25").value
-        Case "AnalisisBuku":            MakeVisible = ws.Range("L26").value
-        Case "AnalisisEkskul":          MakeVisible = ws.Range("L23").value
-        Case "AnalisisHonor":           MakeVisible = ws.Range("L24").value
+        Case "AnalisisGugus":           MakeVisible = ws.Range("L45").value
+        Case "AnalisisBuku":            MakeVisible = ws.Range("L46").value
+        Case "AnalisisEkskul":          MakeVisible = ws.Range("L47").value
+        Case "AnalisisHonor":           MakeVisible = ws.Range("L48").value
         
-        Case "RKASROB":                 MakeVisible = ws.Range("L25").value
-        Case "RKASPerTahap":            MakeVisible = ws.Range("L26").value
-        Case "RKASSNP":                 MakeVisible = ws.Range("L17").value
-        Case "RKASSIPD":                MakeVisible = ws.Range("L18").value
+        Case "RKASROB":                 MakeVisible = ws.Range("L49").value
+        Case "RKASPerTahap":            MakeVisible = ws.Range("L50").value
+        Case "RKASSNP":                 MakeVisible = ws.Range("L51").value
+        Case "RKASSIPD":                MakeVisible = ws.Range("L52").value
         
-        Case "RBK":                     MakeVisible = ws.Range("L25").value
-        Case "RBK2":                    MakeVisible = ws.Range("L26").value
-        Case "RBKReload":               MakeVisible = ws.Range("L17").value
+        Case "RBK":                     MakeVisible = ws.Range("L53").value
+        Case "RBK2":                    MakeVisible = ws.Range("L54").value
+        Case "RBKReload":               MakeVisible = ws.Range("L55").value
         
-        Case "CoverRKAS":               MakeVisible = ws.Range("L18").value
-        Case "CoverRKASPerubahan":      MakeVisible = ws.Range("L25").value
-        Case "SKBendahara":             MakeVisible = ws.Range("L26").value
-        Case "SKTimBOS":                MakeVisible = ws.Range("L17").value
-        Case "SKTimPBJSekolah":         MakeVisible = ws.Range("L18").value
-        Case "BeritaAcara":             MakeVisible = ws.Range("L25").value
-        Case "LembarPengesahan":        MakeVisible = ws.Range("L26").value
+        Case "CoverRKAS":               MakeVisible = ws.Range("L56").value
+        Case "CoverRKASPerubahan":      MakeVisible = ws.Range("L57").value
+        Case "SKBendahara":             MakeVisible = ws.Range("L58").value
+        Case "SKTimBOS":                MakeVisible = ws.Range("L59").value
+        Case "SKTimPBJSekolah":         MakeVisible = ws.Range("L60").value
+        Case "BeritaAcara":             MakeVisible = ws.Range("L61").value
+        Case "LembarPengesahan":        MakeVisible = ws.Range("L62").value
         Case Else:                      MakeVisible = False
     End Select
 End Sub
