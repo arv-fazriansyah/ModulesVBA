@@ -179,3 +179,5 @@ Sub GetVisible(control As IRibbonControl, ByRef MakeVisible)
         Case Else:                      MakeVisible = False
     End Select
 End Sub
+
+
