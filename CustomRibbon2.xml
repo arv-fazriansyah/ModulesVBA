@@ -27,7 +27,7 @@
       <tab idMso="TabAddIns" getVisible="GetVisible" />
       <tab idMso="TabFormulas" getVisible="GetVisible" />
       <tab idMso="TabDeveloper" getVisible="GetVisible" />
-      <tab id="customTab" label="Menu">
+      <tab id="customTab" label="Menu" getVisible="GetVisible">
         <group id="customGroup1" label="Home" getVisible="GetVisible" >
           <button id="Dash" 
                   getVisible="GetVisible" 
