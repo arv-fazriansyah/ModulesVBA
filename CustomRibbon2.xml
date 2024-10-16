@@ -129,6 +129,26 @@
                   label="Analisis Honor" 
                   imageMso="FormatCellsDialog" 
                   onAction="AnalisisHonor" />
+         </group>
+         <group id="customGroup5" label="Rencana" getVisible="GetVisible" >
+          <button id="RBK" 
+                  getVisible="GetVisible"  
+                  size="large" 
+                  label="RBK" 
+                  imageMso="BlogCategories" 
+                  onAction="RBK" />
+          <button id="RBK2" 
+                  getVisible="GetVisible"  
+                  size="large" 
+                  label="RBK2" 
+                  imageMso="BlogCategories" 
+                  onAction="RBK2" />
+          <button id="RBKReload" 
+                  getVisible="GetVisible"  
+                  size="large" 
+                  label="Refresh" 
+                  imageMso="AccessRefreshAllLists" 
+                  onAction="RBKReload" />
         </group>
         <group id="customGroup4" label="RKAS" getVisible="GetVisible" >
           <button id="RKASROB" 
@@ -155,26 +175,6 @@
                   label="RKAS SIPD" 
                   imageMso="ContentControlDate" 
                   onAction="RKASSIPD" />
-        </group>
-        <group id="customGroup5" label="Rencana" getVisible="GetVisible" >
-          <button id="RBK" 
-                  getVisible="GetVisible"  
-                  size="large" 
-                  label="RBK" 
-                  imageMso="BlogCategories" 
-                  onAction="RBK" />
-          <button id="RBK2" 
-                  getVisible="GetVisible"  
-                  size="large" 
-                  label="RBK2" 
-                  imageMso="BlogCategories" 
-                  onAction="RBK2" />
-          <button id="RBKReload" 
-                  getVisible="GetVisible"  
-                  size="large" 
-                  label="Refresh" 
-                  imageMso="AccessRefreshAllLists" 
-                  onAction="RBKReload" />
         </group>
         <group id="customGroup6" label="Download" getVisible="GetVisible" >
           <button id="CoverRKAS" 
@@ -219,6 +219,12 @@
                   label="Lembar Pengesahan" 
                   imageMso="FillDown" 
                   onAction="LembarPengesahan" />
+          <button id="ConvertPDF" 
+                  getVisible="GetVisible"  
+                  size="large" 
+                  label="Convert PDF" 
+                  imageMso="FillDown" 
+                  onAction="ConvertPDF" />
         </group>
       </tab>
     </tabs>
