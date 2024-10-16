@@ -88,6 +88,9 @@ End Sub
 Sub LembarPengesahan(ByVal control As IRibbonControl)
 Download.DownLembarPengesahan
 End Sub
+Sub ConvertPDF(ByVal control As IRibbonControl)
+
+End Sub
 
 ' Untuk menentukan apakah tab tertentu aktif atau tidak
 Sub GetEnabled(control As IRibbonControl, ByRef MakeVisible)
@@ -177,6 +180,7 @@ Sub GetVisible(control As IRibbonControl, ByRef MakeVisible)
         Case "SKTimPBJSekolah":         MakeVisible = ws.Range("L61").value
         Case "BeritaAcara":             MakeVisible = ws.Range("L62").value
         Case "LembarPengesahan":        MakeVisible = ws.Range("L63").value
+        Case "ConvertPDF":              MakeVisible = ws.Range("L64").value
         Case Else:                      MakeVisible = False
     End Select
 End Sub
