@@ -89,7 +89,7 @@ Sub LembarPengesahan(ByVal control As IRibbonControl)
 Download.DownLembarPengesahan
 End Sub
 Sub ConvertPDF(ByVal control As IRibbonControl)
-
+Convert2PDF.ConvertToPDF
 End Sub
 
 ' Untuk menentukan apakah tab tertentu aktif atau tidak
