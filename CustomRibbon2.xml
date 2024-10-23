@@ -85,6 +85,12 @@
                   label="Data" 
                   imageMso="BusinessCardInsertMenu" 
                   onAction="Data" />
+          <button id="DataRapat" 
+                  getVisible="GetVisible"  
+                  size="large" 
+                  label="Data Rapat" 
+                  imageMso="AccountMenu" 
+                  onAction="DataRapat" />
           <button id="Matrix" 
                   getVisible="GetVisible"  
                   size="large" 
@@ -140,8 +146,8 @@
           <button id="RBK2" 
                   getVisible="GetVisible"  
                   size="large" 
-                  label="RBK2" 
-                  imageMso="BlogCategories" 
+                  label="Extract" 
+                  imageMso="FillRight" 
                   onAction="RBK2" />
           <button id="RBKReload" 
                   getVisible="GetVisible"  
