@@ -181,6 +181,12 @@
                   label="RKAS SIPD" 
                   imageMso="ContentControlDate" 
                   onAction="RKASSIPD" />
+          <button id="KomponenBOS" 
+                  getVisible="GetVisible"  
+                  size="large" 
+                  label="RKAS SNP" 
+                  imageMso="ContentControlDate" 
+                  onAction="KomponenBOS" />
         </group>
         <group id="customGroup6" label="Download" getVisible="GetVisible" >
           <button id="CoverRKAS" 
