@@ -49,6 +49,9 @@ End Sub
 Sub RKASSIPD(ByVal control As IRibbonControl)
 Unhide.RKAS_SIPD
 End Sub
+Sub KomponenBOS(ByVal control As IRibbonControl)
+Unhide.Komponen_BOS
+End Sub
 Sub RBK(ByVal control As IRibbonControl)
 Unhide.RBK_1
 End Sub
@@ -172,19 +175,20 @@ Sub GetVisible(control As IRibbonControl, ByRef MakeVisible)
         Case "RKASPerTahap":            MakeVisible = ws.Range("L52").value
         Case "RKASSNP":                 MakeVisible = ws.Range("L53").value
         Case "RKASSIPD":                MakeVisible = ws.Range("L54").value
+        Case "KomponenBOS":             MakeVisible = ws.Range("L55").value
         
-        Case "RBK":                     MakeVisible = ws.Range("L55").value
-        Case "RBK2":                    MakeVisible = ws.Range("L56").value
-        Case "RBKReload":               MakeVisible = ws.Range("L57").value
+        Case "RBK":                     MakeVisible = ws.Range("L56").value
+        Case "RBK2":                    MakeVisible = ws.Range("L57").value
+        Case "RBKReload":               MakeVisible = ws.Range("L58").value
         
-        Case "CoverRKAS":               MakeVisible = ws.Range("L58").value
-        Case "CoverRKASPerubahan":      MakeVisible = ws.Range("L59").value
-        Case "SKBendahara":             MakeVisible = ws.Range("L60").value
-        Case "SKTimBOS":                MakeVisible = ws.Range("L61").value
-        Case "SKTimPBJSekolah":         MakeVisible = ws.Range("L62").value
-        Case "BeritaAcara":             MakeVisible = ws.Range("L63").value
-        Case "LembarPengesahan":        MakeVisible = ws.Range("L64").value
-        Case "ConvertPDF":              MakeVisible = ws.Range("L65").value
+        Case "CoverRKAS":               MakeVisible = ws.Range("L59").value
+        Case "CoverRKASPerubahan":      MakeVisible = ws.Range("L60").value
+        Case "SKBendahara":             MakeVisible = ws.Range("L61").value
+        Case "SKTimBOS":                MakeVisible = ws.Range("L62").value
+        Case "SKTimPBJSekolah":         MakeVisible = ws.Range("L63").value
+        Case "BeritaAcara":             MakeVisible = ws.Range("L64").value
+        Case "LembarPengesahan":        MakeVisible = ws.Range("L65").value
+        Case "ConvertPDF":              MakeVisible = ws.Range("L66").value
         Case Else:                      MakeVisible = False
     End Select
 End Sub
