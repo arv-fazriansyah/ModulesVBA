@@ -1,0 +1,223 @@
+<customUI  onLoad="RibbonLoaded_myAddin" xmlns="http://schemas.microsoft.com/office/2009/07/customui">
+  <commands>
+    <command idMso="ApplicationOptionsDialog" getEnabled="GetEnabled" />
+    <command idMso="TabInfo" getEnabled="GetEnabled" />
+    <command idMso="TabOfficeStart" getEnabled="GetEnabled" />
+    <command idMso="TabRecent" getEnabled="GetEnabled" />
+    <command idMso="TabSave" getEnabled="GetEnabled" />
+    <command idMso="TabPrint" getEnabled="GetEnabled" />
+    <command idMso="ShareDocument" getEnabled="GetEnabled" />
+    <command idMso="Publish2Tab" getEnabled="GetEnabled" />
+    <command idMso="TabPublish" getEnabled="GetEnabled" />
+    <command idMso="TabHelp" getEnabled="GetEnabled" />
+    <command idMso="TabOfficeFeedback" getEnabled="GetEnabled" />
+    <command idMso="FileSave" getEnabled="GetEnabled" />
+    <command idMso="HistoryTab" getEnabled="GetEnabled" />
+    <command idMso="FileClose" getEnabled="GetEnabled" />
+  </commands>
+  <ribbon startFromScratch="true">
+    <tabs>
+      <tab idMso="TabHome" getVisible="GetVisible" />
+      <tab idMso="TabView" getVisible="GetVisible" />
+      <tab idMso="TabReview" getVisible="GetVisible" />
+      <tab idMso="TabData" getVisible="GetVisible" />
+      <tab idMso="TabAutomate" getVisible="GetVisible" />
+      <tab idMso="TabInsert" getVisible="GetVisible" />
+      <tab idMso="TabPageLayoutExcel" getVisible="GetVisible" />
+      <tab idMso="TabAddIns" getVisible="GetVisible" />
+      <tab idMso="TabFormulas" getVisible="GetVisible" />
+      <tab idMso="TabDeveloper" getVisible="GetVisible" />
+      <tab id="customTab" label="Menu" getVisible="GetVisible" insertBeforeMso="TabHome" >
+        <group id="customGroup1" getVisible="GetVisible" >
+          <menu id="menuHome" label="Home" size="large" image="home" >
+              <button id="Dash" 
+                      getVisible="GetVisible" 
+                      label="Dashboard" 
+                      imageMso="OpenStartPage" 
+                      onAction="Dashboard" />
+              <button id="Update" 
+                      getVisible="GetVisible"  
+                      label="Update" 
+                      imageMso="Refresh" 
+                      onAction="Update" />
+              <button id="Upload" 
+                      getVisible="GetVisible"  
+                      label="Upload" 
+                      imageMso="FileOpen" 
+                      onAction="Upload" />
+              <button id="PetaBenahi" 
+                      getVisible="GetVisible"  
+                      label="Peta Benahi" 
+                      imageMso="DocumentMapReadingView" 
+                      onAction="PetaBenahi" />
+              <button id="LembarRKT" 
+                      getVisible="GetVisible"  
+                      label="Lembar RKT" 
+                      imageMso="MasterDocumentShow" 
+                      onAction="LembarRKT" />
+              <button id="LembarRKAS" 
+                      getVisible="GetVisible"  
+                      label="Lembar RKAS" 
+                      imageMso="MasterDocumentShow" 
+                      onAction="LembarRKAS" />
+              <button id="PrintView" 
+                      getVisible="GetVisible"  
+                      label="Print" 
+                      imageMso="FilePrint" 
+                      onAction="PrintView" />
+              <button id="Saved" 
+                      getVisible="GetVisible"  
+                      label="Save" 
+                      imageMso="FileSave" 
+                      onAction="Saved" />
+          </menu>
+        </group>
+        <group id="customGroup2" getVisible="GetVisible" >
+          <menu id="menuData" label="Data" size="large" image="data" >
+              <button id="Data" 
+                      getVisible="GetVisible"   
+                      label="Data" 
+                      imageMso="BusinessCardInsertMenu" 
+                      onAction="Data" />
+              <button id="DataRapat" 
+                      getVisible="GetVisible"  
+                      label="Data Rapat" 
+                      imageMso="AccountMenu" 
+                      onAction="DataRapat" />
+              <button id="Matrix" 
+                      getVisible="GetVisible"  
+                      label="Matrix" 
+                      imageMso="ViewMasterDocumentViewClassic" 
+                      onAction="Matrix" />
+              <button id="HarsatBarjas" 
+                      getVisible="GetVisible"  
+                      label="Harsat Barjas" 
+                      imageMso="DatabaseDocumenter" 
+                      onAction="HarsatBarjas" />
+              <button id="HarsatModal" 
+                      getVisible="GetVisible"  
+                      label="Harsat Modal" 
+                      imageMso="DatabaseDocumenter" 
+                      onAction="HarsatModal" />
+          </menu>
+        </group>
+        <group id="customGroup3" getVisible="GetVisible" >
+          <menu id="menuAnalisis" label="Analisis" size="large" image="analisis" >
+              <button id="AnalisisGugus" 
+                      getVisible="GetVisible"  
+                      label="Analisis Gugus" 
+                      imageMso="FormatCellsDialog" 
+                      onAction="AnalisisGugus" />
+              <button id="AnalisisBuku" 
+                      getVisible="GetVisible"  
+                      label="Analisis Buku" 
+                      imageMso="FormatCellsDialog" 
+                      onAction="AnalisisBuku" />
+              <button id="AnalisisEkskul" 
+                      getVisible="GetVisible"  
+                      label="Analisis Jasa Ekskul" 
+                      imageMso="FormatCellsDialog" 
+                      onAction="AnalisisEkskul" />
+              <button id="AnalisisHonor" 
+                      getVisible="GetVisible"  
+                      label="Analisis Honor" 
+                      imageMso="FormatCellsDialog" 
+                      onAction="AnalisisHonor" />
+           </menu>
+         </group>
+         <group id="customGroup5" getVisible="GetVisible" >
+           <menu id="menuRBK" label="Rencana" size="large" image="rbk" >
+              <button id="RBK" 
+                      getVisible="GetVisible"   
+                      label="RBK" 
+                      imageMso="BlogCategories" 
+                      onAction="RBK" />
+              <button id="RBK1" 
+                      getVisible="GetVisible"   
+                      label="Planning BOS Semester I" 
+                      imageMso="FillRight" 
+                      onAction="RBK1" />
+              <button id="RBK2" 
+                      getVisible="GetVisible"  
+                      label="Planning BOS Semester II" 
+                      imageMso="FillRight" 
+                      onAction="RBK2" />
+           </menu>
+        </group>
+        <group id="customGroup4" getVisible="GetVisible" >
+          <menu id="menuRKAS" label="RKAS" size="large" image="rkas" >
+              <button id="RKASROB" 
+                      getVisible="GetVisible"  
+                      label="RKAS ROB" 
+                      imageMso="ContentControlDate" 
+                      onAction="RKASROB" />
+              <button id="RKASPerTahap" 
+                      getVisible="GetVisible" 
+                      label="RKAS Per Tahap" 
+                      imageMso="ContentControlDate" 
+                      onAction="RKASPerTahap" />
+              <button id="RKASSNP" 
+                      getVisible="GetVisible"   
+                      label="RKAS SNP" 
+                      imageMso="ContentControlDate" 
+                      onAction="RKASSNP" />
+              <button id="RKASSIPD" 
+                      getVisible="GetVisible"  
+                      label="RKAS SIPD" 
+                      imageMso="ContentControlDate" 
+                      onAction="RKASSIPD" />
+              <button id="KomponenBOS" 
+                      getVisible="GetVisible"   
+                      label="Komponen BOS" 
+                      imageMso="ContentControlDate" 
+                      onAction="KomponenBOS" />
+          </menu>
+        </group>
+        <group id="customGroup6" getVisible="GetVisible" >
+          <menu id="menuDown" label="Download" size="large" image="download" >
+              <button id="CoverRKAS" 
+                      getVisible="GetVisible"  
+                      label="Cover RKAS" 
+                      imageMso="FillDown" 
+                      onAction="CoverRKAS" />
+              <button id="CoverRKASPerubahan" 
+                      getVisible="GetVisible"   
+                      label="Cover RKAS Perubahan" 
+                      imageMso="FillDown" 
+                      onAction="CoverRKASPerubahan" />
+              <button id="SKBendahara" 
+                      getVisible="GetVisible"   
+                      label="SK Bendahara" 
+                      imageMso="FillDown" 
+                      onAction="SKBendahara" />
+              <button id="SKTimBOS" 
+                      getVisible="GetVisible"   
+                      label="SK Tim BOS" 
+                      imageMso="FillDown" 
+                      onAction="SKTimBOS" />
+              <button id="SKTimPBJSekolah" 
+                      getVisible="GetVisible"   
+                      label="SK Tim PBJ Sekolah" 
+                      imageMso="FillDown" 
+                      onAction="SKTimPBJSekolah" />
+              <button id="BeritaAcara" 
+                      getVisible="GetVisible"   
+                      label="Berita Acara" 
+                      imageMso="FillDown" 
+                      onAction="BeritaAcara" />
+              <button id="LembarPengesahan" 
+                      getVisible="GetVisible"   
+                      label="Lembar Pengesahan" 
+                      imageMso="FillDown" 
+                      onAction="LembarPengesahan" />
+              <button id="ConvertPDF" 
+                      getVisible="GetVisible"   
+                      label="Convert PDF" 
+                      imageMso="FillDown" 
+                      onAction="ConvertPDF" />
+          </menu>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
