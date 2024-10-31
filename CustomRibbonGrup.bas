@@ -76,15 +76,15 @@ Unhide.RBK_1
 End Sub
 Sub Planning1(ByVal control As IRibbonControl)
 On Error Resume Next
-
+DuplikatRBK.semester1
 End Sub
 Sub Planning2(ByVal control As IRibbonControl)
 On Error Resume Next
-
+DuplikatRBK.semester2
 End Sub
 Sub PlanningTahun(ByVal control As IRibbonControl)
 On Error Resume Next
-
+DuplikatRBK.setahun
 End Sub
 Sub AnalisisGugus(ByVal control As IRibbonControl)
 On Error Resume Next
