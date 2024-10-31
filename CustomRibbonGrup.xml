@@ -207,20 +207,20 @@
                       getVisible="GetVisible"  
                       label="Update"
                       size="large"  
-                      imageMso="Refresh" 
+                      image="update" 
                       onAction="Update" />
-              <button id="PrintView" 
-                      getVisible="GetVisible"  
-                      label="Print"
-                      size="large" 
-                      imageMso="FilePrint" 
-                      onAction="PrintView" />
               <button id="Saved" 
                       getVisible="GetVisible"  
                       label="Save"
                       size="large" 
-                      imageMso="FileSave" 
+                      image="save" 
                       onAction="Saved" />
+              <button id="PrintView" 
+                      getVisible="GetVisible"  
+                      label="Print"
+                      size="large" 
+                      image="print" 
+                      onAction="PrintView" />
          </group>
       </tab>
     </tabs>
