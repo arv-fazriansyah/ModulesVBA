@@ -36,7 +36,21 @@
                       image="home" 
                       onAction="Dashboard" />
          </group>
-         <group id="customGroup2" getVisible="GetVisible" >
+        <group id="customGroup2" getVisible="GetVisible" >
+          <menu id="menuData" label="Data" size="large" image="data" >
+              <button id="Data" 
+                      getVisible="GetVisible"   
+                      label="Data Umum" 
+                      imageMso="BusinessCardInsertMenu" 
+                      onAction="Data" />
+              <button id="DataRapat" 
+                      getVisible="GetVisible"  
+                      label="Daftar Hadir Rapat" 
+                      imageMso="AccountMenu" 
+                      onAction="DataRapat" />
+          </menu>
+        </group>
+         <group id="customGroup3" getVisible="GetVisible" >
           <menu id="RaporPendidikan" label="Rapor Pendidikan" size="large" image="rapor" >
               <button id="Upload" 
                       getVisible="GetVisible"  
@@ -60,18 +74,8 @@
                       onAction="LembarRKAS" />
           </menu>
         </group>
-        <group id="customGroup3" getVisible="GetVisible" >
-          <menu id="menuData" label="Data" size="large" image="data" >
-              <button id="Data" 
-                      getVisible="GetVisible"   
-                      label="Data" 
-                      imageMso="BusinessCardInsertMenu" 
-                      onAction="Data" />
-              <button id="DataRapat" 
-                      getVisible="GetVisible"  
-                      label="Data Rapat" 
-                      imageMso="AccountMenu" 
-                      onAction="DataRapat" />
+        <group id="customGroup4" getVisible="GetVisible" >
+          <menu id="menuHarsat" label="Harga Satuan" size="large" image="harsat" >
               <button id="Matrix" 
                       getVisible="GetVisible"  
                       label="Matrix" 
@@ -89,7 +93,7 @@
                       onAction="HarsatModal" />
           </menu>
         </group>
-        <group id="customGroup4" getVisible="GetVisible" >
+        <group id="customGroup5" getVisible="GetVisible" >
           <menu id="menuAnalisis" label="Analisis" size="large" image="analisis" >
               <button id="AnalisisGugus" 
                       getVisible="GetVisible"  
@@ -113,7 +117,7 @@
                       onAction="AnalisisHonor" />
            </menu>
          </group>
-        <group id="customGroup5" getVisible="GetVisible">
+        <group id="customGroup6" getVisible="GetVisible">
             <menu id="menuRBK" label="Rencana" size="large" image="rbk1" >
                 <button id="RBK" 
                         getVisible="GetVisible"   
@@ -126,25 +130,6 @@
                         image="reloadrbk" 
                         onAction="ReloadRBK" />
             </menu>
-        </group>
-         <group id="customGroup6" getVisible="GetVisible" >
-           <menu id="menuPlanning" label="Planning BOS" size="large" image="rbk" >
-              <button id="Planning1" 
-                      getVisible="GetVisible"   
-                      label="Planning BOS Semester I" 
-                      imageMso="FillRight" 
-                      onAction="Planning1" />
-              <button id="Planning2" 
-                      getVisible="GetVisible"  
-                      label="Planning BOS Semester II" 
-                      imageMso="FillRight" 
-                      onAction="Planning2" />
-              <button id="PlanningTahun" 
-                      getVisible="GetVisible"   
-                      label="Planning BOS Per Tahun" 
-                      imageMso="FillRight" 
-                      onAction="PlanningTahun" />
-           </menu>
         </group>
         <group id="customGroup7" getVisible="GetVisible" >
           <menu id="menuRKAS" label="RKAS" size="large" image="rkas" >
@@ -173,9 +158,42 @@
                       label="Komponen BOS" 
                       imageMso="ContentControlDate" 
                       onAction="KomponenBOS" />
+              <button id="RekonSaldo" 
+                      getVisible="GetVisible"   
+                      label="Rekon Saldo" 
+                      imageMso="ContentControlDate" 
+                      onAction="RekonSaldo" />
           </menu>
         </group>
-        <group id="customGroup8" getVisible="GetVisible" >
+ 
+        <group id="customGroup8" getVisible="GetVisible">
+              <button id="Update" 
+                      getVisible="GetVisible"  
+                      label="Update"
+                      size="large"  
+                      image="update" 
+                      onAction="Update" />
+         </group>
+         <group id="customGroup9" getVisible="GetVisible" >
+           <menu id="menuPlanning" label="Planning BOS" size="large" image="rbk" >
+              <button id="Planning1" 
+                      getVisible="GetVisible"   
+                      label="Planning BOS Semester I" 
+                      imageMso="FillRight" 
+                      onAction="Planning1" />
+              <button id="Planning2" 
+                      getVisible="GetVisible"  
+                      label="Planning BOS Semester II" 
+                      imageMso="FillRight" 
+                      onAction="Planning2" />
+              <button id="PlanningTahun" 
+                      getVisible="GetVisible"   
+                      label="Planning BOS Per Tahun" 
+                      imageMso="FillRight" 
+                      onAction="PlanningTahun" />
+           </menu>
+        </group>
+        <group id="customGroup10" getVisible="GetVisible" >
           <menu id="menuDown" label="Download" size="large" image="download" >
                   <button id="LembarPengesahan" 
                           getVisible="GetVisible"   
@@ -193,6 +211,11 @@
                           label="Belanja Modal" 
                           imageMso="FillDown" 
                           onAction="BelanjaModal" />
+                  <button id="PenggunaanDana" 
+                          getVisible="GetVisible"   
+                          label="Penggunaan Dana" 
+                          imageMso="FillDown" 
+                          onAction="PenggunaanDana" />
               </menu>     
               <menu id="menuCover" label="Cover" imageMso="FillDown">
                   <button id="CoverRKAS" 
@@ -233,15 +256,24 @@
                       label="Instrument Verval" 
                       imageMso="FillDown" 
                       onAction="Verval" />
+              <button id="RKJM" 
+                      getVisible="GetVisible"   
+                      label="RKJM" 
+                      imageMso="FillDown" 
+                      onAction="RKJM" />
+              <button id="RKT" 
+                      getVisible="GetVisible"   
+                      label="RKT" 
+                      imageMso="FillDown" 
+                      onAction="RKT" />
+              <button id="Optionals" 
+                      getVisible="GetVisible"   
+                      getLabel="GetLabel" 
+                      imageMso="FillDown" 
+                      onAction="Optionals" />
           </menu>
         </group>
-        <group id="customGroup9" getVisible="GetVisible">
-              <button id="Update" 
-                      getVisible="GetVisible"  
-                      label="Update"
-                      size="large"  
-                      image="update" 
-                      onAction="Update" />
+        <group id="customGroup11" getVisible="GetVisible">
               <button id="Saved" 
                       getVisible="GetVisible"  
                       label="Save"
