@@ -1,3 +1,5 @@
+@echo off
+
 set "install_dir=%CD%"
 set "source=%install_dir%\temp\home"
 set "exe=%install_dir%\temp\zip\7-Zip.exe"
@@ -10,8 +12,10 @@ for %%i in ("%install_dir%\*.xlsb") do (
     goto :file_found
 )
 
-echo Simpan terlebih dahulu file RBK disini %install_dir%
+echo Simpan terlebih dahulu file RBK disini:
+echo %install_dir%
 echo.
+
 goto :end
 
 :file_found
