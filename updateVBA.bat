@@ -1,15 +1,8 @@
-@echo off
-
 set "install_dir=%CD%"
 set "source=%install_dir%\temp\home"
 set "exe=%install_dir%\temp\zip\7-Zip.exe"
 set "backup_dir=%install_dir%\backup"
 set "file="
-
-:: Membuat folder backup jika belum ada
-if not exist "%backup_dir%" (
-    mkdir "%backup_dir%"
-)
 
 :: Mencari file Excel (.xlsb) di direktori instalasi
 for %%i in ("%install_dir%\*.xlsb") do (
@@ -19,10 +12,14 @@ for %%i in ("%install_dir%\*.xlsb") do (
 
 echo Simpan terlebih dahulu file RBK disini %install_dir%
 echo.
-
 goto :end
 
 :file_found
+
+:: Membuat folder backup jika belum ada
+if not exist "%backup_dir%" (
+    mkdir "%backup_dir%"
+)
 
 :: Membackup file Excel ke folder backup
 echo Membackup file: %file% ke folder backup...
