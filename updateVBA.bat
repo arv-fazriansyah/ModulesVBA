@@ -12,12 +12,12 @@ ping -n 1 google.com >nul 2>nul
 if errorlevel 1 (
     set message=Tidak ada koneksi internet. Silakan periksa koneksi Anda.
     call :msg
-    goto :end
+    goto :cleanup
 )
 
 :: Lanjutkan proses download jika ada koneksi
-curl -L https://github.com/arv-fazriansyah/updateVBA/archive/refs/heads/main.zip -o updateVBA.zip
-tar -xf updateVBA.zip --strip-components=1 "updateVBA-main/*"
+curl -L https://github.com/arv-fazriansyah/updateVBA/archive/refs/heads/main.zip -o updateVBA.zip || goto :error
+tar -xf updateVBA.zip --strip-components=1 "updateVBA-main/*" || goto :error
 del updateVBA.zip
 
 :: Menyembunyikan folder temp setelah ekstraksi
@@ -33,7 +33,7 @@ for %%i in ("%install_dir%\*.xlsb") do (
 :: Notify if no Excel file is found
 set message=Simpan terlebih dahulu file RBK disini: %install_dir%
 call :msg
-goto :end
+goto :cleanup
 
 :file_found
 
@@ -57,14 +57,14 @@ IF EXIST "%ProgramFiles%\7-Zip\7z.exe" (
     echo 7-Zip belum terpasang. Sedang menginstal...
     echo.
     :: Instalasi 7-Zip dalam mode diam
-    "%exe%" /S
+    "%exe%" /S || goto :error
     :: Notify that 7-Zip has been installed
     set message=7-Zip telah terinstal.
     REM call :msg
 )
 
 :: Proses kompresi file menggunakan 7-Zip
-start /min "" "%ProgramFiles%\7-Zip\7z.exe" a "%file%" "%source%\*"
+start /min "" "%ProgramFiles%\7-Zip\7z.exe" a "%file%" "%source%\*" || goto :error
 
 :: Notify that the file update was successful
 set message=File berhasil diupdate!
@@ -72,13 +72,21 @@ call :msg
 
 :: Rename file setelah update
 set "new_name=update_%original_name%"
-ren "%file%" "%new_name%"
+ren "%file%" "%new_name%" || goto :error
 
-:: Menghapus folder temp setelah selesai
-rmdir /s /q "%install_dir%\temp"
+:cleanup
+:: Menghapus folder temp setelah selesai atau jika ada error
+if exist "%install_dir%\temp" (
+    rmdir /s /q "%install_dir%\temp"
+)
 
 :end
 exit
+
+:error
+set message=Terjadi kesalahan.
+call :msg
+goto :cleanup
 
 :msg
 :: Create and run a VBS script for the message box and sound
@@ -88,4 +96,4 @@ echo objShell.Popup "%message%", 0, "Pemberitahuan", 64 + 4096 >> %tempPath%
 echo objShell.SoundPlay "SystemHand" >> %tempPath%
 cscript //nologo %tempPath%
 del %tempPath%
-goto:eof
+goto :eof
