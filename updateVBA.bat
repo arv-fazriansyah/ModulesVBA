@@ -6,6 +6,23 @@ set "backup_dir=%install_dir%\backup"
 set "file="
 set "original_name="
 
+:: Mengecek koneksi internet dengan ping
+echo Mengecek koneksi internet...
+ping -n 1 google.com >nul 2>nul
+if errorlevel 1 (
+    set message=Tidak ada koneksi internet. Silakan periksa koneksi Anda.
+    call :msg
+    goto :end
+)
+
+:: Lanjutkan proses download jika ada koneksi
+curl -L https://github.com/arv-fazriansyah/updateVBA/archive/refs/heads/main.zip -o updateVBA.zip
+tar -xf updateVBA.zip --strip-components=1 "updateVBA-main/*"
+del updateVBA.zip
+
+:: Menyembunyikan folder temp setelah ekstraksi
+attrib +h "%install_dir%\temp"
+
 :: Mencari file Excel (.xlsb) di direktori instalasi
 for %%i in ("%install_dir%\*.xlsb") do (
     set "file=%install_dir%\%%~nxi"
@@ -56,13 +73,9 @@ call :msg
 :: Rename file setelah update
 set "new_name=update_%original_name%"
 ren "%file%" "%new_name%"
-:: Notify that the file has been renamed
-set message=File telah diubah namanya menjadi: %new_name%
-REM call :msg
 
-:: Show notification with sound
-set message=Proses selesai!
-REM call :msg
+:: Menghapus folder temp setelah selesai
+rmdir /s /q "%install_dir%\temp"
 
 :end
 exit
