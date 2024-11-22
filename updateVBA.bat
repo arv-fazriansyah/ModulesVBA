@@ -55,5 +55,19 @@ ren "%file%" "%new_name%"
 REM echo File telah diubah namanya menjadi: %new_name%
 echo.
 
+:: Show notification with sound
+set message=File Berhasil diupdate!
+call :msg
+
 :end
-pause
+exit
+
+:msg
+:: Create and run a VBS script for the message box and sound
+set tempPath=%temp%\msgbox.vbs
+echo Set objShell = CreateObject("WScript.Shell") > %tempPath%
+echo objShell.Popup "%message%", 5, "Pemberitahuan", 64 >> %tempPath%
+echo objShell.SoundPlay "SystemHand" >> %tempPath%
+cscript //nologo %tempPath%
+del %tempPath%
+goto:eof
