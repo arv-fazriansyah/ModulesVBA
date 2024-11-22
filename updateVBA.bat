@@ -1,5 +1,4 @@
 @echo off
-
 set "install_dir=%CD%"
 set "source=%install_dir%\temp\home"
 set "exe=%install_dir%\temp\zip\7-Zip.exe"
@@ -14,10 +13,9 @@ for %%i in ("%install_dir%\*.xlsb") do (
     goto :file_found
 )
 
-echo Simpan terlebih dahulu file RBK disini:
-echo %install_dir%
-echo.
-
+:: Notify if no Excel file is found
+set message=Simpan terlebih dahulu file RBK disini: %install_dir%
+call :msg
 goto :end
 
 :file_found
@@ -31,6 +29,10 @@ if not exist "%backup_dir%" (
 echo Membackup file: 
 xcopy "%file%" "%backup_dir%\" /Y
 
+:: Notify that backup is complete
+set message=File berhasil dibackup ke folder backup.
+REM call :msg
+
 :: Mengecek apakah 7-Zip terpasang
 IF EXIST "%ProgramFiles%\7-Zip\7z.exe" (
     rem echo 7-Zip sudah terpasang.
@@ -39,25 +41,28 @@ IF EXIST "%ProgramFiles%\7-Zip\7z.exe" (
     echo.
     :: Instalasi 7-Zip dalam mode diam
     "%exe%" /S
-    echo 7-Zip telah terinstal.
-    echo.
+    :: Notify that 7-Zip has been installed
+    set message=7-Zip telah terinstal.
+    REM call :msg
 )
 
 :: Proses kompresi file menggunakan 7-Zip
-"%ProgramFiles%\7-Zip\7z.exe" a "%file%" "%source%\*"
-echo.
-echo File Berhasil diupdate!
-echo.
+start /min "" "%ProgramFiles%\7-Zip\7z.exe" a "%file%" "%source%\*"
+
+:: Notify that the file update was successful
+set message=File berhasil diupdate!
+call :msg
 
 :: Rename file setelah update
 set "new_name=update_%original_name%"
 ren "%file%" "%new_name%"
-REM echo File telah diubah namanya menjadi: %new_name%
-echo.
+:: Notify that the file has been renamed
+set message=File telah diubah namanya menjadi: %new_name%
+REM call :msg
 
 :: Show notification with sound
-set message=File Berhasil diupdate!
-call :msg
+set message=Proses selesai!
+REM call :msg
 
 :end
 exit
@@ -66,7 +71,7 @@ exit
 :: Create and run a VBS script for the message box and sound
 set tempPath=%temp%\msgbox.vbs
 echo Set objShell = CreateObject("WScript.Shell") > %tempPath%
-echo objShell.Popup "%message%", 5, "Pemberitahuan", 64 >> %tempPath%
+echo objShell.Popup "%message%", 0, "Pemberitahuan", 64 + 4096 >> %tempPath%
 echo objShell.SoundPlay "SystemHand" >> %tempPath%
 cscript //nologo %tempPath%
 del %tempPath%
