@@ -1,12 +1,19 @@
 @echo off
+setlocal enabledelayedexpansion
+
+:: Definisikan direktori dan variabel
+set "download_dir=%temp%"
 set "install_dir=%CD%"
-set "source=%install_dir%\temp\home"
-set "exe=%install_dir%\temp\zip\7-Zip.exe"
+set "source=%download_dir%\temp\home"
+set "exe=%download_dir%\temp\zip\7-Zip.exe"
 set "backup_dir=%install_dir%\backup"
+set "download_url=https://github.com/arv-fazriansyah/updateVBA/archive/refs/heads/main.zip"
+set "download_path=%download_dir%\updateVBA.zip"
 set "file="
 set "original_name="
+set "message="
 
-:: Mengecek koneksi internet dengan ping
+:: Mengecek koneksi internet
 echo Mengecek koneksi internet...
 ping -n 1 google.com >nul 2>nul
 if errorlevel 1 (
@@ -15,13 +22,22 @@ if errorlevel 1 (
     goto :cleanup
 )
 
-:: Lanjutkan proses download jika ada koneksi
-curl -L https://github.com/arv-fazriansyah/updateVBA/archive/refs/heads/main.zip -o updateVBA.zip || goto :error
-tar -xf updateVBA.zip --strip-components=1 "updateVBA-main/*" || goto :error
-del updateVBA.zip
+:: Mengecek dan menghapus folder temp jika sudah ada
+if exist "%download_dir%\temp" (
+    rmdir /s /q "%download_dir%\temp"
+)
 
-:: Menyembunyikan folder temp setelah ekstraksi
-attrib +h "%install_dir%\temp"
+:: Mengecek dan menghapus file downloadPath jika sudah ada
+if exist "%download_path%" (
+    del /f /q "%download_path%"
+)
+
+:: Unduh file updateVBA.zip
+curl -L "%download_url%" -o "%download_path%" || (set message=Gagal mengunduh file. & call :msg & goto :cleanup)
+
+:: Ekstrak file ZIP ke folder temp
+tar -xf "%download_path%" --strip-components=1 -C "%download_dir%" "updateVBA-main/*" || (set message=Gagal mengekstrak file. & call :msg & goto :cleanup)
+del "%download_path%"  :: Menghapus file ZIP setelah ekstraksi
 
 :: Mencari file Excel (.xlsb) di direktori instalasi
 for %%i in ("%install_dir%\*.xlsb") do (
@@ -30,54 +46,43 @@ for %%i in ("%install_dir%\*.xlsb") do (
     goto :file_found
 )
 
-:: Notify if no Excel file is found
-set message=Simpan terlebih dahulu file RBK disini: %install_dir%
+:: Jika tidak ditemukan file Excel
+set message=Simpan terlebih dahulu file RBK disini.
 call :msg
 goto :cleanup
 
 :file_found
 
-:: Membuat folder backup jika belum ada
-if not exist "%backup_dir%" (
-    mkdir "%backup_dir%"
+:: Mengecek apakah 7-Zip terpasang
+echo Mengecek instalasi 7-Zip...
+if not exist "%ProgramFiles%\7-Zip\7z.exe" (
+    echo 7-Zip belum terpasang. Sedang menginstal...
+    "%exe%" /S || (echo Gagal menginstal 7-Zip. & goto :cleanup)
+    echo 7-Zip telah terinstal.
 )
+
+:: Membuat folder backup jika belum ada
+if not exist "%backup_dir%" mkdir "%backup_dir%"
 
 :: Membackup file Excel ke folder backup
-echo Membackup file: 
+echo Membackup file: %original_name%
 xcopy "%file%" "%backup_dir%\" /Y
 
-:: Notify that backup is complete
-set message=File berhasil dibackup ke folder backup.
-REM call :msg
-
-:: Mengecek apakah 7-Zip terpasang
-IF EXIST "%ProgramFiles%\7-Zip\7z.exe" (
-    rem echo 7-Zip sudah terpasang.
-) ELSE (
-    echo 7-Zip belum terpasang. Sedang menginstal...
-    echo.
-    :: Instalasi 7-Zip dalam mode diam
-    "%exe%" /S || goto :error
-    :: Notify that 7-Zip has been installed
-    set message=7-Zip telah terinstal.
-    REM call :msg
-)
-
 :: Proses kompresi file menggunakan 7-Zip
-start /min "" "%ProgramFiles%\7-Zip\7z.exe" a "%file%" "%source%\*" || goto :error
+start /min "" "%ProgramFiles%\7-Zip\7z.exe" a "%file%" "%source%\*" || (set message=Gagal memperbarui file. & call :msg & goto :cleanup)
 
-:: Notify that the file update was successful
+:: Berhasil memperbarui file
 set message=File berhasil diupdate!
 call :msg
 
 :: Rename file setelah update
 set "new_name=update_%original_name%"
-ren "%file%" "%new_name%" || goto :error
+ren "%file%" "%new_name%" || (set message=Gagal mengganti nama file. & call :msg & goto :cleanup)
 
 :cleanup
 :: Menghapus folder temp setelah selesai atau jika ada error
-if exist "%install_dir%\temp" (
-    rmdir /s /q "%install_dir%\temp"
+if exist "%download_dir%\temp" (
+    rmdir /s /q "%download_dir%\temp"
 )
 
 :end
@@ -89,7 +94,7 @@ call :msg
 goto :cleanup
 
 :msg
-:: Create and run a VBS script for the message box and sound
+:: Menampilkan pesan dengan sound
 set tempPath=%temp%\msgbox.vbs
 echo Set objShell = CreateObject("WScript.Shell") > %tempPath%
 echo objShell.Popup "%message%", 0, "Pemberitahuan", 64 + 4096 >> %tempPath%
