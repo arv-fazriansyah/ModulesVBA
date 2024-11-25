@@ -37,7 +37,8 @@ curl -L "%download_url%" -o "%download_path%" || (set message=Gagal mengunduh fi
 
 :: Ekstrak file ZIP ke folder temp
 tar -xf "%download_path%" --strip-components=1 -C "%download_dir%" "updateVBA-main/*" || (set message=Gagal mengekstrak file. & call :msg & goto :cleanup)
-del "%download_path%"  :: Menghapus file ZIP setelah ekstraksi
+
+del "%download_path%"
 
 :: Mencari file Excel (.xlsb) di direktori instalasi
 for %%i in ("%install_dir%\*.xlsb") do (
