@@ -1,4 +1,4 @@
-REM @echo off
+
 setlocal enabledelayedexpansion
 
 :: Definisikan direktori dan variabel
