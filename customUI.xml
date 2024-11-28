@@ -1,0 +1,13 @@
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui">
+  <ribbon>
+    <tabs>
+      <tab id="remoteTab" label="Tab Remote">
+        <group id="remoteGroup" label="Grup Remote">
+          <button id="remoteButton" label="Tombol Remote" 
+                  onAction="RemoteButton_Click" 
+                  imageMso="HappyFace" />
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
