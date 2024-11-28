@@ -66,7 +66,7 @@ xcopy "%file%" "%backup_dir%\" /Y >nul 2>nul
 start /min "" "%ProgramFiles%\7-Zip\7z.exe" a "%file%" "%source%\*" || (set message=Gagal memperbarui file. & call :msg & exit /b)
 
 :: Berhasil memperbarui file
-set message=File berhasil diganti!
+set message=File berhasil diupdate!
 call :msg
 
 :: Rename file setelah update
