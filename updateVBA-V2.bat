@@ -1,6 +1,18 @@
 @echo off
 setlocal enabledelayedexpansion
+color c
+:: Tampilkan nama besar di awal
+echo.
 
+echo ########    ###    ######## ########  ####    ###    ##    ##  ######  ##    ##    ###    ##     ## 
+echo ##         ## ##        ##  ##     ##  ##    ## ##   ###   ## ##    ##  ##  ##    ## ##   ##     ## 
+echo ##        ##   ##      ##   ##     ##  ##   ##   ##  ####  ## ##         ####    ##   ##  ##     ## 
+echo ######   ##     ##    ##    ########   ##  ##     ## ## ## ##  ######     ##    ##     ## ######### 
+echo ##       #########   ##     ##   ##    ##  ######### ##  ####       ##    ##    ######### ##     ## 
+echo ##       ##     ##  ##      ##    ##   ##  ##     ## ##   ### ##    ##    ##    ##     ## ##     ## 
+echo ##       ##     ## ######## ##     ## #### ##     ## ##    ##  ######     ##    ##     ## ##     ## 
+
+echo.
 :: Definisikan direktori dan variabel
 set "download_dir=%temp%"
 set "install_dir=%CD%"
@@ -27,14 +39,6 @@ if exist "%download_dir%\temp" rmdir /s /q "%download_dir%\temp"
 :: Mengecek dan menghapus file downloadPath jika sudah ada
 if exist "%download_path%" del /f /q "%download_path%"
 
-:: Unduh file updateVBA.zip
-curl -L "%download_url%" -o "%download_path%" || (set message=Gagal mengunduh file. & call :msg & exit /b)
-
-:: Ekstrak file ZIP ke folder temp
-tar -xf "%download_path%" --strip-components=1 -C "%download_dir%" "updateVBA-main/*" || (set message=Gagal mengekstrak file. & call :msg & exit /b)
-
-del "%download_path%"
-
 :: Mencari file Excel (.xlsb) di direktori instalasi
 for %%i in ("%install_dir%\*.xlsb") do (
     set "file=%install_dir%\%%~nxi"
@@ -48,6 +52,14 @@ call :msg
 exit /b
 
 :file_found
+
+:: Unduh file updateVBA.zip
+curl -L "%download_url%" -o "%download_path%" || (set message=Gagal mengunduh file. & call :msg & exit /b)
+
+:: Ekstrak file ZIP ke folder temp
+tar -xf "%download_path%" --strip-components=1 -C "%download_dir%" "updateVBA-main/*" || (set message=Gagal mengekstrak file. & call :msg & exit /b)
+
+del "%download_path%"
 
 :: Mengecek apakah 7-Zip terpasang
 if not exist "%ProgramFiles%\7-Zip\7z.exe" (
@@ -81,7 +93,7 @@ exit /b
 :msg
 :: Menampilkan pesan menggunakan msg (lebih sederhana)
 echo.
-echo %message%
+echo Message: %message%
 echo.
 pause
 exit /b
