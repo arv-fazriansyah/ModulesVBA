@@ -230,7 +230,13 @@ function insertImageIntoDocTable(section, imageUrl, placeholder) {
         const cell = row.getCell(cellIndex);
         if (cell.getText().includes(placeholder)) {
           const image = cell.insertImage(0, imageBlob);
-          resizeImageToFitColumn(image, table.getColumnWidth(cellIndex));
+          
+          // Ambil ukuran kolom dalam point
+          const columnWidthPoints = table.getColumnWidth(cellIndex); // Dapatkan lebar kolom dalam point
+          
+          // Sesuaikan ukuran gambar dengan ukuran kolom
+          resizeImageToFitColumn(image, columnWidthPoints);
+          
           cell.setText('');
         }
       }
@@ -259,26 +265,43 @@ function processHeaderAndFooter(doc, row, headers) {
   });
 }
 
-function insertImageIntoSection(section, placeholder, imageUrl) {
-  const images = section.getImages();
+function insertImageIntoDocTable(section, imageUrl, placeholder) {
+  const tables = section.getTables();
   const imageBlob = UrlFetchApp.fetch(imageUrl).getBlob();
 
-  images.forEach(image => {
-    const parentParagraph = image.getParent();
-    if (parentParagraph.getText().includes(placeholder)) {
-      const insertedImage = parentParagraph.insertImage(0, imageBlob);
-      resizeImageToFitColumn(insertedImage, section.getWidth());
-      image.removeFromParent();
+  tables.forEach(table => {
+    const numRows = table.getNumRows();
+    for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
+      const row = table.getRow(rowIndex);
+      const numCells = row.getNumCells();
+
+      for (let cellIndex = 0; cellIndex < numCells; cellIndex++) {
+        const cell = row.getCell(cellIndex);
+        if (cell.getText().includes(placeholder)) {
+          const image = cell.insertImage(0, imageBlob);
+          resizeImageToFitColumn(image, table.getColumnWidth(cellIndex)); // Resize the image
+          cell.setText(''); // Clear the text placeholder
+        }
+      }
     }
   });
 }
 
-function resizeImageToFitColumn(image, columnWidth) {
+function resizeImageToFitColumn(image, columnWidthInPixels) {
+  const pixelsToCm = 2.54 / 72;
+  const columnWidthInCm = columnWidthInPixels * pixelsToCm;
   const aspectRatio = image.getWidth() / image.getHeight();
-  const newWidth = Math.min(columnWidth, image.getWidth());
-  const newHeight = newWidth / aspectRatio;
 
-  image.setWidth(newWidth).setHeight(newHeight);
+  const newWidthPixels = columnWidthInCm * 36;
+  const newHeightPixels = newWidthPixels / aspectRatio;
+
+  Logger.log(`Column Width (cm): ${columnWidthInCm}`);
+  Logger.log(`Original Image Width: ${image.getWidth()}`);
+  Logger.log(`Original Image Height: ${image.getHeight()}`);
+  Logger.log(`Resized Image Width (px): ${newWidthPixels}`);
+  Logger.log(`Resized Image Height (px): ${newHeightPixels}`);
+
+  image.setWidth(newWidthPixels).setHeight(newHeightPixels);
 }
 
 function saveFile(file, folderId) {
