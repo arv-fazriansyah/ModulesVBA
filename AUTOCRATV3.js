@@ -19,12 +19,12 @@ function getOrCreateSettingsSheet(ss) {
 
 function parseJobSettings(settings, headers) {
   return settings.map(setting => ({
-    jobName: setting[0],
-    templateId: setting[1],
-    outputSheetName: setting[2],
-    outputFileNameTemplate: setting[3],
-    outputFileType: setting[4],
-    folderId: setting[5],
+    jobName: setting[headers.indexOf("Job Name")],
+    templateId: setting[headers.indexOf("Template ID")],
+    outputSheetName: setting[headers.indexOf("Data Sheet ID")],
+    outputFileNameTemplate: setting[headers.indexOf("File Name")],
+    outputFileType: setting[headers.indexOf("File Type")],
+    folderId: setting[headers.indexOf("Folders")],
     conditionals: JSON.parse(setting[headers.indexOf("Conditionals")])
   }));
 }
