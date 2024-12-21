@@ -37,11 +37,16 @@ function processJobSetting(ss, setting) {
   if (outputData.length <= 1) return;
 
   const headerIndices = getHeaderIndices(outputSheet, outputData[0], jobName);
-  const rowsToProcess = outputData.slice(1).filter(row => needsProcessing(row, headerIndices));
+  const rowsToProcess = outputData.slice(1);
 
   rowsToProcess.forEach((row, rowIndex) => {
-    if (checkConditionals(row, outputData[0], conditionals)) {
-      processRow(row, outputData[0], templateId, outputFileNameTemplate, outputFileType, folderId, headerIndices, rowIndex + 2, outputSheet);
+    const outputId = row[headerIndices.id]; // Get the Output ID for the row
+
+    // Check if Output ID is empty, and regenerate if necessary
+    if (!outputId || outputId === "") {
+      if (checkConditionals(row, outputData[0], conditionals)) {
+        processRow(row, outputData[0], templateId, outputFileNameTemplate, outputFileType, folderId, headerIndices, rowIndex + 2, outputSheet);
+      }
     }
   });
 }
