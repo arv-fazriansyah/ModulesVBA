@@ -116,14 +116,22 @@ function generateFileName(row, headers, template) {
 function createMergedFile(templateId, row, headers, fileType, fileName) {
   const templateFile = DriveApp.getFileById(templateId);
   const mimeType = templateFile.getMimeType();
-  const file = mimeType === MimeType.GOOGLE_SLIDES ? createMergedSlideFile(templateFile, row, headers, fileType, fileName) : createMergedDocFile(templateFile, row, headers, fileType, fileName);
-  
+
+  // Buat salinan file dan langsung pindahkan ke folder trash
+  const fileCopy = templateFile.makeCopy(fileName);
+  fileCopy.setTrashed(true); // Pindahkan ke folder trash
+
+  const file = mimeType === MimeType.GOOGLE_SLIDES
+    ? createMergedSlideFile(fileCopy, row, headers, fileType, fileName)
+    : createMergedDocFile(fileCopy, row, headers, fileType, fileName);
+
+  // Konversi ke PDF jika diperlukan
   if (fileType.toLowerCase() === 'pdf') {
     const pdfBlob = DriveApp.getFileById(file.getId()).getAs('application/pdf');
-    file.setTrashed(true);
+    file.setTrashed(true); // Pindahkan file sumber ke trash setelah konversi
     return DriveApp.createFile(pdfBlob).setName(fileName);
   }
-  
+
   return file;
 }
 
