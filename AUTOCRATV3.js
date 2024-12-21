@@ -73,6 +73,8 @@ function needsProcessing(row, headerIndices) {
 function processRow(row, headers, templateId, outputFileNameTemplate, outputFileType, folderId, headerIndices, rowIndex, outputSheet) {
   const outputFileName = generateFileName(row, headers, outputFileNameTemplate);
   const mergedFile = createMergedFile(templateId, row, headers, outputFileType, outputFileName);
+
+  // Only generate and save if it's a new file
   const fileId = saveFile(mergedFile, folderId);
   const fileUrl = mergedFile.getUrl();
   const downloadLink = generateDownloadLink(fileId, outputFileType);
@@ -84,7 +86,7 @@ function processRow(row, headers, templateId, outputFileNameTemplate, outputFile
   outputSheet.getRange(nextRow, headerIndices.downloadLink + 1).setValue(downloadLink);
   outputSheet.getRange(nextRow, headerIndices.timestamp + 1).setValue(timestamp);
 
-  SpreadsheetApp.flush();
+  SpreadsheetApp.flush(); // Flush to ensure all changes are applied
 }
 
 function ensureHeader(sheet, headers, headerName, color) {
@@ -139,7 +141,7 @@ function createMergedSlideFile(templateFile, row, headers, fileType, fileName) {
           replaceText: text
         }
       };
-      
+
       if (header.toLowerCase().includes('image')) {
         const imageUrl = row[index];
         if (imageUrl) {
@@ -156,6 +158,7 @@ function createMergedSlideFile(templateFile, row, headers, fileType, fileName) {
     });
   });
 
+  // Make batch update once after processing all requests
   if (slideRequests.length > 0) {
     Slides.Presentations.batchUpdate({ requests: slideRequests }, slides.getId());
   }
@@ -167,8 +170,9 @@ function createMergedSlideFile(templateFile, row, headers, fileType, fileName) {
 function createMergedDocFile(templateFile, row, headers, fileType, fileName) {
   const docFile = templateFile.makeCopy(fileName);
   const doc = DocumentApp.openById(docFile.getId());
-  const p = doc.getBody().getParent();
   const requests = [];
+
+  const p = doc.getBody().getParent();
 
   for (let i = 0; i < p.getNumChildren(); i++) {
     const element = p.getChild(i);
@@ -182,6 +186,7 @@ function createMergedDocFile(templateFile, row, headers, fileType, fileName) {
     }
   }
 
+  // Make batch update once after processing all requests
   if (requests.length > 0) {
     Docs.Documents.batchUpdate({ requests: requests }, doc.getId());
   }
