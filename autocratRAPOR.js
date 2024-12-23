@@ -1,6 +1,6 @@
 function autoMergeFiles() {
   const settingsSheetId = '1_tj2qwnxDwtQDLzUVQtPHJidSS9cz5vMwTogsFDow5s'; // ID of the spreadsheet containing the 'SETTING' sheet
-  const settingsSheet = SpreadsheetApp.openById(settingsSheetId).getSheetByName('AUTOCRAT');
+  const settingsSheet = SpreadsheetApp.openById(settingsSheetId).getSheetByName('SETTING');
 
   if (!settingsSheet) {
     throw new Error('SETTING sheet not found in the provided spreadsheet.');
@@ -217,8 +217,19 @@ function createMergedDocFile(templateFile, row, headers, fileType, fileName) {
 }
 
 function checkTables(docId) {
+  // Open the Google Doc once
   const doc = DocumentApp.openById(docId);
-  const tables = doc.getBody().getTables();
+  const body = doc.getBody();
+  const tables = body.getTables();
+
+  // Get the value from cell D11 in the "1. SEKOLAH" sheet
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetSEKOLAH);
+  const cellValue = sheet.getRange("D11").getValue();
+
+  // If the value in D11 is "Ganjil", delete specific columns in table 6 (if it exists)
+  if (cellValue === "Ganjil") {
+    deleteKenaikan(tables); // Pass tables directly to deleteKenaikan
+  }
 
   // Ambil tabel ke-3 dan ke-4
   var table3 = tables[2];
@@ -228,8 +239,8 @@ function checkTables(docId) {
   deleteRow(table3, 0);
   deleteRow(table4, 0);
 
+  // Save and close the document
   doc.saveAndClose();
-
 }
 
 // Fungsi untuk menghapus baris kosong di kolom tertentu
@@ -239,6 +250,27 @@ function deleteRow(table, columnIndex) {
     if (cell.getText().trim() === "") {
       table.removeRow(i);
     }
+  }
+}
+
+// Fungsi untuk menghapus kolom 5 dan 6 pada tabel ke-6 (indeks 5)
+function deleteKenaikan(tables) {
+  // Check if there are at least 6 tables in the document
+  if (tables.length >= 6) {
+    const table = tables[5]; // Table 6 is at index 5
+    Logger.log("Deleting Columns 5 and 6 in Table 6...");
+
+    const rowCount = table.getNumRows();
+    
+    // Delete Column 6 (index 5) and Column 5 (index 4) across all rows
+    for (let row = 0; row < rowCount; row++) {
+      table.getRow(row).removeCell(5); // Removes Column 6 (index 5)
+      table.getRow(row).removeCell(4); // Removes Column 5 (index 4)
+    }
+
+    Logger.log("Columns 5 and 6 have been deleted.");
+  } else {
+    Logger.log("Table 6 does not exist in this document.");
   }
 }
 
