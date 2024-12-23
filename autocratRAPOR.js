@@ -84,8 +84,9 @@ function processRow(row, headers, templateId, outputFileNameTemplate, outputFile
   const outputFileName = generateFileName(row, headers, outputFileNameTemplate);
   const mergedFile = createMergedFile(templateId, row, headers, outputFileType, outputFileName);
 
-  // Only generate and save if it's a new file
+  // Hanya proses file jika berhasil dibuat
   const fileId = saveFile(mergedFile, folderId);
+
   const fileUrl = mergedFile.getUrl();
   const downloadLink = generateDownloadLink(fileId, outputFileType);
   const timestamp = new Date().toLocaleString('en-GB', { hour12: false }).replace(',', '');
@@ -96,7 +97,7 @@ function processRow(row, headers, templateId, outputFileNameTemplate, outputFile
   outputSheet.getRange(nextRow, headerIndices.downloadLink + 1).setValue(downloadLink);
   outputSheet.getRange(nextRow, headerIndices.timestamp + 1).setValue(timestamp);
 
-  SpreadsheetApp.flush(); // Flush to ensure all changes are applied
+  SpreadsheetApp.flush(); // Pastikan semua perubahan diterapkan
 }
 
 function ensureHeader(sheet, headers, headerName, color) {
@@ -134,6 +135,8 @@ function createMergedFile(templateId, row, headers, fileType, fileName) {
   const file = mimeType === MimeType.GOOGLE_SLIDES
     ? createMergedSlideFile(fileCopy, row, headers, fileType, fileName)
     : createMergedDocFile(fileCopy, row, headers, fileType, fileName);
+
+    checkTables(file.getId());
 
   // Konversi ke PDF jika diperlukan
   if (fileType.toLowerCase() === 'pdf') {
@@ -211,6 +214,32 @@ function createMergedDocFile(templateFile, row, headers, fileType, fileName) {
 
   doc.saveAndClose();
   return docFile;
+}
+
+function checkTables(docId) {
+  const doc = DocumentApp.openById(docId);
+  const tables = doc.getBody().getTables();
+
+  // Ambil tabel ke-3 dan ke-4
+  var table3 = tables[2];
+  var table4 = tables[3];
+
+  // Hapus baris kosong di kolom pertama untuk kedua tabel
+  deleteRow(table3, 0);
+  deleteRow(table4, 0);
+
+  doc.saveAndClose();
+
+}
+
+// Fungsi untuk menghapus baris kosong di kolom tertentu
+function deleteRow(table, columnIndex) {
+  for (var i = table.getNumRows() - 1; i >= 0; i--) {
+    var cell = table.getRow(i).getCell(columnIndex);
+    if (cell.getText().trim() === "") {
+      table.removeRow(i);
+    }
+  }
 }
 
 function mergeSectionContent(section, row, headers, requests) {
