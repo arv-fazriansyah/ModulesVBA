@@ -50,8 +50,10 @@ function processJobSetting(outputSpreadsheet, setting) {
 
   rowsToProcess.forEach((row, rowIndex) => {
     const outputId = row[headerIndices.id]; // Get the Output ID for the row
+    const outputUrl = row[headerIndices.url]; // Get the URL for the row
 
-    if (!outputId || outputId === "") {
+    // Check if URL is empty, then regenerate
+    if (!outputId || !outputUrl || outputUrl === "") {
       if (checkConditionals(row, outputData[0], conditionals)) {
         processRow(row, outputData[0], templateId, outputFileNameTemplate, outputFileType, folderId, headerIndices, rowIndex + 2, outputSheet);
       }
