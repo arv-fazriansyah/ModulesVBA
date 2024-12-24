@@ -223,21 +223,44 @@ function checkTables(docId) {
   const tables = body.getTables();
 
   // Get the value from cell D11 in the "1. SEKOLAH" sheet
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetSEKOLAH);
-  const cellValue = sheet.getRange("D11").getValue();
+  const sheetSekolah = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetSEKOLAH);
+  const cellValueSekolah = sheetSekolah.getRange("D11").getValue();
 
   // If the value in D11 is "Ganjil", delete specific columns in table 6 (if it exists)
-  if (cellValue === "Ganjil") {
+  if (cellValueSekolah === "Ganjil") {
     deleteKenaikan(tables); // Pass tables directly to deleteKenaikan
   }
 
+  // Get the value from cell M5 in the "3. MAPEL" sheet
+  const sheetMapel = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetMAPEL);
+  const cellValueMapel = sheetMapel.getRange("M5").getValue();
+
   // Ambil tabel ke-3 dan ke-4
-  var table3 = tables[2];
-  var table4 = tables[3];
+  const table3 = tables[2];
+  const table4 = tables[3];
 
   // Hapus baris kosong di kolom pertama untuk kedua tabel
   deleteRow(table3, 0);
   deleteRow(table4, 0);
+
+  // If the value in M5 is 0, delete table 4 (index 3)
+  if (cellValueMapel === 0 && tables.length > 3) {
+    Logger.log("Deleting Table 4 because M5 is 0...");
+
+    // Remove Table 4
+    body.removeChild(tables[3]);
+
+    const paragraphs = body.getParagraphs();
+    const paragraphIndexToRemove = 81;
+
+    // Remove the specific paragraph if it exists
+    if (paragraphs[paragraphIndexToRemove]) {
+      body.removeChild(paragraphs[paragraphIndexToRemove]);
+      Logger.log('Paragraph break removed at index ' + paragraphIndexToRemove);
+    } else {
+      Logger.log('No paragraph found at index ' + paragraphIndexToRemove);
+    }
+  }
 
   // Save and close the document
   doc.saveAndClose();
