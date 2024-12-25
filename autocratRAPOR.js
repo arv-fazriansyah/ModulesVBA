@@ -1,5 +1,5 @@
 function autoMergeFiles() {
-  const settingsSheetId = '1_tj2qwnxDwtQDLzUVQtPHJidSS9cz5vMwTogsFDow5s'; // ID of the spreadsheet containing the 'SETTING' sheet
+  const settingsSheetId = '1_tj2qwnxDwtQDLzUVQtPHJidSS9cz5vMwTogsFDow5s';
   const settingsSheet = SpreadsheetApp.openById(settingsSheetId).getSheetByName('SETTING');
 
   if (!settingsSheet) {
@@ -64,7 +64,7 @@ function processJobSetting(outputSpreadsheet, setting) {
 function getHeaderIndices(sheet, headers, jobName) {
   const headersToAdd = {
     id: `Merged Doc ID - ${jobName}`,
-    url: `Merged Doc URL - ${jobName}`,
+    url: `${jobName}`,
     downloadLink: `Link Download - ${jobName}`,
     timestamp: `Timestamp - ${jobName}`
   };
@@ -136,7 +136,13 @@ function createMergedFile(templateId, row, headers, fileType, fileName) {
     ? createMergedSlideFile(fileCopy, row, headers, fileType, fileName)
     : createMergedDocFile(fileCopy, row, headers, fileType, fileName);
 
+  // Cek jika nama file mengandung "RAPOR"
+  if (fileName.toUpperCase().includes("RAPOR")) {
+    Logger.log(`Nama file '${fileName}' mengandung kata "RAPOR". Memeriksa tabel...`);
     checkTables(file.getId());
+  } else {
+    Logger.log(`Nama file '${fileName}' tidak mengandung kata "RAPOR". Melewati pemeriksaan tabel.`);
+  }
 
   // Konversi ke PDF jika diperlukan
   if (fileType.toLowerCase() === 'pdf') {
