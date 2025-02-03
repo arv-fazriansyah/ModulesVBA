@@ -29,11 +29,16 @@ function parseJobSettings(settings, headers) {
   }));
 }
 
-function processJobSetting(ss, setting) {
+function processJobSetting(outputSpreadsheet, setting) {
   const { jobName, templateId, outputSheetName, outputFileNameTemplate, outputFileType, folderId, conditionals } = setting;
-  const outputSheet = ss.getSheetByName(outputSheetName);
-  const outputData = outputSheet.getDataRange().getDisplayValues();
+  const outputSheet = outputSpreadsheet.getSheetByName(outputSheetName);
 
+  if (!outputSheet) {
+    Logger.log(`Sheet '${outputSheetName}' not found in the active spreadsheet.`);
+    return;
+  }
+
+  const outputData = outputSheet.getDataRange().getDisplayValues();
   if (outputData.length <= 1) return;
 
   const headerIndices = getHeaderIndices(outputSheet, outputData[0], jobName);
@@ -41,9 +46,10 @@ function processJobSetting(ss, setting) {
 
   rowsToProcess.forEach((row, rowIndex) => {
     const outputId = row[headerIndices.id]; // Get the Output ID for the row
+    const outputUrl = row[headerIndices.url]; // Get the URL for the row
 
-    // Check if Output ID is empty, and regenerate if necessary
-    if (!outputId || outputId === "") {
+    // Check if URL is empty, then regenerate
+    if (!outputId || !outputUrl || outputUrl === "") {
       if (checkConditionals(row, outputData[0], conditionals)) {
         processRow(row, outputData[0], templateId, outputFileNameTemplate, outputFileType, folderId, headerIndices, rowIndex + 2, outputSheet);
       }
