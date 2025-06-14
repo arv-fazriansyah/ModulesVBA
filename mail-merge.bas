@@ -6,23 +6,18 @@ Sub MailMerged()
     Dim outputFolder As String, filePath As String, pdfPath As String
     Dim downloadURL As String
     Dim header As String, value As String
-    Dim i As Long, lastCol As Long
+    Dim i As Long, j As Long, lastCol As Long, lastRow As Long
 
-    ' Inisialisasi objek
     Set fso = CreateObject("Scripting.FileSystemObject")
     Set ws = ThisWorkbook.Sheets("mail")
     basePath = ThisWorkbook.Path & "\"
-
-    ' Path folder RBKdownload
     tempFolder = basePath & "RBKdownload\"
-    tempFolderClean = basePath & "RBKdownload" ' tanpa backslash, untuk delete
+    tempFolderClean = basePath & "RBKdownload"
     If Not fso.FolderExists(tempFolder) Then fso.CreateFolder tempFolder
 
-    ' Path folder output
     outputFolder = basePath & "GENERATE RBK 2025\"
     If Not fso.FolderExists(outputFolder) Then fso.CreateFolder outputFolder
 
-    ' Download file template
     downloadURL = "https://docs.google.com/document/d/1O6gAYOr3B4CNybingzGrXNAPcsFR2MWUBAwRBR9T-nE/export?format=doc"
     filePath = tempFolder & "template.docx"
 
@@ -33,10 +28,10 @@ Sub MailMerged()
     If http.Status = 200 Then
         Set stream = CreateObject("ADODB.Stream")
         With stream
-            .Type = 1 ' Binary
+            .Type = 1
             .Open
             .Write http.responseBody
-            .SaveToFile filePath, 2 ' Overwrite
+            .SaveToFile filePath, 2
             .Close
         End With
     Else
@@ -44,42 +39,41 @@ Sub MailMerged()
         Exit Sub
     End If
 
-    ' Buka dokumen Word
     Set wordApp = CreateObject("Word.Application")
     wordApp.Visible = False
-    Set wordDoc = wordApp.Documents.Open(filePath)
 
-    ' Ambil data dari sheet "mail" baris 2
     lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
-    For i = 1 To lastCol
-        header = Trim(ws.Cells(1, i).value)
-        value = ws.Cells(2, i).value
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
 
-        With wordDoc.Content.Find
-            .Text = "<<" & header & ">>"
-            .Replacement.Text = value
-            .Forward = True
-            .Wrap = 1 ' wdFindContinue
-            .Execute Replace:=2 ' wdReplaceAll
-        End With
+    ' Loop setiap baris data mulai dari baris ke-2
+    For i = 2 To lastRow
+        Set wordDoc = wordApp.Documents.Open(filePath)
+        
+        For j = 1 To lastCol
+            header = Trim(ws.Cells(1, j).value)
+            value = ws.Cells(i, j).value
+
+            With wordDoc.Content.Find
+                .Text = "<<" & header & ">>"
+                .Replacement.Text = value
+                .Forward = True
+                .Wrap = 1
+                .Execute Replace:=2
+            End With
+        Next j
+
+        pdfPath = outputFolder & "RBK_" & Format(Now, "yyyymmdd_hhnnss") & "_" & i & ".pdf"
+        wordDoc.ExportAsFixedFormat OutputFileName:=pdfPath, ExportFormat:=17
+        wordDoc.Close False
     Next i
 
-    ' Simpan dokumen sebagai PDF
-    pdfPath = outputFolder & "RBK_" & Format(Now, "yyyymmdd_hhmmss") & ".pdf"
-    wordDoc.ExportAsFixedFormat OutputFileName:=pdfPath, ExportFormat:=17
-
-    ' Tutup Word
-    wordDoc.Close False
     wordApp.Quit
-    Set wordDoc = Nothing
     Set wordApp = Nothing
 
-    ' Bersihkan folder sementara
     On Error Resume Next
     If fso.FolderExists(tempFolderClean) Then
         fso.DeleteFolder tempFolderClean, True
     End If
 
-    MsgBox "PDF berhasil dibuat!", vbInformation
+    MsgBox "PDF berhasil dibuat sebanyak " & (lastRow - 1) & " file.", vbInformation
 End Sub
-
